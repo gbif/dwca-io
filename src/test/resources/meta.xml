@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archive xmlns="http://rs.tdwg.org/dwc/text/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://rs.tdwg.org/dwc/text/ http://darwincore.googlecode.com/svn/trunk/text/tdwg_dwc_text.xsd"
+    metadata=""
+    >
+    <core encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" rowType="http://rs.tdwg.org/dwc/terms/Taxon">
+        <files>
+            <location>DarwinCore.txt</location>
+        </files>
+        <!-- the name identifier used in source, if existing a globally unique one -->
+        <id index="1"/>
+        <field term="http://rs.tdwg.org/dwc/terms/ScientificName" index="2"/>
+        <field term="http://rs.tdwg.org/dwc/terms/TaxonRank" index="3"/>
+        <!-- enumeration as defined by dwc -->
+        <field term="http://rs.tdwg.org/dwc/terms/NomenclaturalCode" index="4"/>
+        <field term="http://rs.tdwg.org/dwc/terms/Kingdom" index="5"/>
+        <field term="http://purl.org/dc/terms/modified" index="6"/>
+    </core>
+    
+    <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" rowType="http://rs.tdwg.org/invented/Links">
+        <files>
+            <location>links.txt</location>
+        </files>
+        <!-- foreign key pointing to the id of the corresponding core record -->
+        <coreid index="1"/>
+        <!-- the link as a URL -->
+        <field term="http://purl.org/dc/terms/source" index="2"/>
+        <!-- the MIME type or for xml the full namespace of the most important namespace, e.g. http://rs.tdwg.org/dwc/terms -->
+        <field term="http://purl.org/dc/terms/format" index="3"/>
+    </extension>
+    
+    <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" rowType="http://rs.tdwg.org/invented/LexicalGroup">
+        <files>
+            <location>lexical_groups.txt</location>
+        </files>
+        <!-- foreign key pointing to the id of the corresponding core record -->
+        <coreid index="1"/>
+        <!-- the lexical group ID -->
+        <field term="http://purl.org/dc/terms/identifier" index="2"/>
+        <!-- qualifier why this name belongs to this lexical group. e.g. orthographical variant -->
+        <field term="http://globalnames.org/gni/qualifier" index="3"/>
+    </extension>
+    
+</archive>

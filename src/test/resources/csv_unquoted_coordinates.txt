@@ -1,0 +1,4 @@
+ID,scientificName,decimalLatitude,decimalLongitude,locality
+10, P. concolor,10'12",22'33",copenhagen 
+10,P concolor,10'12",22'33",copenhagen 
+10,Puma concolor,11'12",22'33",copenhagen 
