@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>DarwinCoreRecordTest xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../testapidocs/org/gbif/dwc/record/DarwinCoreRecordTest.html">View Javadoc</a></div><pre>
+
+<a class="jxr_linenumber" name="1" href="#1">1</a>   <strong class="jxr_keyword">package</strong> org.gbif.dwc.record;
+<a class="jxr_linenumber" name="2" href="#2">2</a>   
+<a class="jxr_linenumber" name="3" href="#3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.terms.DwcTerm;
+<a class="jxr_linenumber" name="4" href="#4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.text.ArchiveField;
+<a class="jxr_linenumber" name="5" href="#5">5</a>   
+<a class="jxr_linenumber" name="6" href="#6">6</a>   <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="7" href="#7">7</a>   <strong class="jxr_keyword">import</strong> java.util.HashSet;
+<a class="jxr_linenumber" name="8" href="#8">8</a>   <strong class="jxr_keyword">import</strong> java.util.Set;
+<a class="jxr_linenumber" name="9" href="#9">9</a>   
+<a class="jxr_linenumber" name="10" href="#10">10</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="11" href="#11">11</a>  
+<a class="jxr_linenumber" name="12" href="#12">12</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.Assert.assertEquals;
+<a class="jxr_linenumber" name="13" href="#13">13</a>  
+<a class="jxr_linenumber" name="14" href="#14">14</a>  
+<a class="jxr_linenumber" name="15" href="#15">15</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/gbif/dwc/record/DarwinCoreRecordTest.html">DarwinCoreRecordTest</a> {
+<a class="jxr_linenumber" name="16" href="#16">16</a>  
+<a class="jxr_linenumber" name="17" href="#17">17</a>    @Test
+<a class="jxr_linenumber" name="18" href="#18">18</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testProperties() {
+<a class="jxr_linenumber" name="19" href="#19">19</a>      DarwinCoreRecord dwc = <strong class="jxr_keyword">new</strong> DarwinCoreRecord();
+<a class="jxr_linenumber" name="20" href="#20">20</a>      <strong class="jxr_keyword">for</strong> (DwcTerm t : DwcTerm.values()) {
+<a class="jxr_linenumber" name="21" href="#21">21</a>        <em class="jxr_comment">// only test non class terms</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>        <strong class="jxr_keyword">if</strong> (t.isClass()) {
+<a class="jxr_linenumber" name="23" href="#23">23</a>          <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="24" href="#24">24</a>        }
+<a class="jxr_linenumber" name="25" href="#25">25</a>        <em class="jxr_comment">// ignore measurements and relationship group terms</em>
+<a class="jxr_linenumber" name="26" href="#26">26</a>        <strong class="jxr_keyword">if</strong> (DwcTerm.GROUP_MEASUREMENTORFACT.equalsIgnoreCase(t.getGroup())) {
+<a class="jxr_linenumber" name="27" href="#27">27</a>          <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="28" href="#28">28</a>        }
+<a class="jxr_linenumber" name="29" href="#29">29</a>        <strong class="jxr_keyword">if</strong> (DwcTerm.GROUP_RESOURCERELATIONSHIP.equalsIgnoreCase(t.getGroup())) {
+<a class="jxr_linenumber" name="30" href="#30">30</a>          <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="31" href="#31">31</a>        }
+<a class="jxr_linenumber" name="32" href="#32">32</a>        String val = <strong class="jxr_keyword">new</strong> Date().toString();
+<a class="jxr_linenumber" name="33" href="#33">33</a>        dwc.setProperty(t, val);
+<a class="jxr_linenumber" name="34" href="#34">34</a>        assertEquals(<span class="jxr_string">"missing term "</span> + t.qualifiedName(), val, dwc.getProperty(t));
+<a class="jxr_linenumber" name="35" href="#35">35</a>      }
+<a class="jxr_linenumber" name="36" href="#36">36</a>    }
+<a class="jxr_linenumber" name="37" href="#37">37</a>  
+<a class="jxr_linenumber" name="38" href="#38">38</a>    @Test
+<a class="jxr_linenumber" name="39" href="#39">39</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDefaultValue() {
+<a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">final</strong> String DATASET = <span class="jxr_string">"ITIS"</span>;
+<a class="jxr_linenumber" name="41" href="#41">41</a>      ArchiveField id = <strong class="jxr_keyword">new</strong> ArchiveField(0, DwcTerm.taxonID, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="42" href="#42">42</a>      Set&lt;ArchiveField&gt; fields = <strong class="jxr_keyword">new</strong> HashSet&lt;ArchiveField&gt;();
+<a class="jxr_linenumber" name="43" href="#43">43</a>      fields.add(<strong class="jxr_keyword">new</strong> ArchiveField(1, DwcTerm.datasetName, DATASET, <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="44" href="#44">44</a>      RecordImpl rec = <strong class="jxr_keyword">new</strong> RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="45" href="#45">45</a>      DarwinCoreRecord dwc = <strong class="jxr_keyword">new</strong> DarwinCoreRecord();
+<a class="jxr_linenumber" name="46" href="#46">46</a>  
+<a class="jxr_linenumber" name="47" href="#47">47</a>      String[] row = {<span class="jxr_string">"5432"</span>, <span class="jxr_string">"IPNI"</span>};
+<a class="jxr_linenumber" name="48" href="#48">48</a>      rec.setRow(row);
+<a class="jxr_linenumber" name="49" href="#49">49</a>      assertEquals(row[1], rec.value(DwcTerm.datasetName));
+<a class="jxr_linenumber" name="50" href="#50">50</a>  
+<a class="jxr_linenumber" name="51" href="#51">51</a>      row = <strong class="jxr_keyword">new</strong> String[] {<span class="jxr_string">"5432"</span>, <strong class="jxr_keyword">null</strong>};
+<a class="jxr_linenumber" name="52" href="#52">52</a>      rec.setRow(row);
+<a class="jxr_linenumber" name="53" href="#53">53</a>      assertEquals(DATASET, rec.value(DwcTerm.datasetName));
+<a class="jxr_linenumber" name="54" href="#54">54</a>  
+<a class="jxr_linenumber" name="55" href="#55">55</a>      row = <strong class="jxr_keyword">new</strong> String[] {<span class="jxr_string">"5432"</span>, <span class="jxr_string">""</span>};
+<a class="jxr_linenumber" name="56" href="#56">56</a>      rec.setRow(row);
+<a class="jxr_linenumber" name="57" href="#57">57</a>      assertEquals(DATASET, rec.value(DwcTerm.datasetName));
+<a class="jxr_linenumber" name="58" href="#58">58</a>    }
+<a class="jxr_linenumber" name="59" href="#59">59</a>  }
+</pre>
+<hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
+</html>
+
