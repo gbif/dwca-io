@@ -126,6 +126,7 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String startDayOfYear;
   private String stateProvince;
   private String typeStatus;
+  private String typifiedName;
   private String verbatimCoordinateSystem;
   private String verbatimCoordinates;
   private String verbatimDepth;
@@ -639,6 +640,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return typeStatus;
   }
 
+  public String getTypifiedName() {
+    return typifiedName;
+  }
+
   public String getVerbatimCoordinates() {
     return verbatimCoordinates;
   }
@@ -1083,6 +1088,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setTypeStatus(String typeStatus) {
     this.typeStatus = norm(typeStatus);
+  }
+
+  public void setTypifiedName(String typifiedName) {
+    this.typifiedName = typifiedName;
   }
 
   public void setVerbatimCoordinates(String verbatimCoordinates) {

@@ -44,7 +44,7 @@
     </developer>
   </developers>
 
-  <scm>	  
+  <scm>
 	  <connection>scm:git:git@github.com:gbif/dwca-reader.git</connection>
 	  <url>https://github.com/gbif/dwca-reader</url>
 	  <developerConnection>scm:git:git@github.com:gbif/dwca-reader.git</developerConnection>

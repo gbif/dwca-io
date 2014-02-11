@@ -84,6 +84,14 @@ public class DarwinCoreTaxonTest {
     dwc.setScientificNameAuthorship("Saether 2000");
     assertEquals(dwc.getScientificName(), dwc.getFullScientificName());
 
+    // test genericName
+    dwc = new DarwinCoreTaxon();
+    dwc.setScientificName("Aagaardia protensa Saether, 2000");
+    dwc.setGenericName("Aagaardia");
+    dwc.setSpecificEpithet("protensa");
+    dwc.setScientificNameAuthorship("Saether 2000");
+    assertEquals(dwc.getScientificName(), dwc.getFullScientificName());
+
     // test authors with single letter that is part of the name
     dwc = new DarwinCoreTaxon();
     dwc.setScientificName("Trifolium repens");

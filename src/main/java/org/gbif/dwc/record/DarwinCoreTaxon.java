@@ -34,6 +34,7 @@ public class DarwinCoreTaxon {
   private String family;
   private String genus;
   private String subgenus;
+  private String genericName;
   private String specificEpithet;
   private String infraspecificEpithet;
   private String scientificName;
@@ -164,7 +165,8 @@ public class DarwinCoreTaxon {
     }
     if (scientificName == null) {
       String sciname = null;
-      if (genus != null) {
+      if (genericName != null || this.genus != null) {
+        String genus = genericName != null ? genericName : this.genus;
         if (specificEpithet != null) {
           sciname = genus + " " + specificEpithet;
           if (infraspecificEpithet != null) {
@@ -188,6 +190,10 @@ public class DarwinCoreTaxon {
 
   public String getGenus() {
     return genus;
+  }
+
+  public String getGenericName() {
+    return genericName;
   }
 
   public String getHigherClassification() {
@@ -441,6 +447,10 @@ public class DarwinCoreTaxon {
 
   public void setGenus(String genus) {
     this.genus = norm(genus);
+  }
+
+  public void setGenericName(String genericName) {
+    this.genericName = genericName;
   }
 
   public void setHigherClassification(String higherClassification) {
