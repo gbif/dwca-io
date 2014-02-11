@@ -354,8 +354,8 @@ public class ArchiveFactory {
     for (String head : headers) {
       // there are never any quotes in term names - remove them just in case the csvreader didnt recognize them
       if (head != null && head.length() > 1) {
-        Term dt = TERM_FACTORY.findTerm(head);
-        if (dt != null) {
+        try {
+          Term dt = TERM_FACTORY.findTerm(head);
           ArchiveField field = new ArchiveField(index, dt, null, DataType.string);
           if (dwcFile.getId() == null &&
               (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt.equals(DcTerm.identifier))) {
@@ -363,6 +363,8 @@ public class ArchiveFactory {
           } else {
             dwcFile.addField(field);
           }
+        } catch (IllegalArgumentException e) {
+          LOG.warn("Illegal term name >>{}<< found in header, ignore column {}", head, index);
         }
       }
       index++;
