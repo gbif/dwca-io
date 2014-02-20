@@ -93,7 +93,6 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.class_, null);
     writer.addCoreColumn(DwcTerm.order, null);
     writer.addCoreColumn(DwcTerm.family, null);
-    writer.addCoreColumn(GbifTerm.unitQualifier, null);
     writer.addCoreColumn(GbifTerm.depth, null);
     writer.addCoreColumn(GbifTerm.depthAccuracy, null);
 
@@ -105,7 +104,6 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.family, "Asteraceae");
 
     writer.newRecord("dummy3");
-    writer.addCoreColumn(GbifTerm.unitQualifier, null);
     writer.addCoreColumn(GbifTerm.depth, "2");
     writer.addCoreColumn(GbifTerm.depthAccuracy, "1");
 
@@ -128,7 +126,7 @@ public class DwcaWriterTest {
     // check if taxon file contains headers
     String[] headers = getFirstRow(cf);
     LOG.debug(Joiner.on("; ").useForNull("NULL").join(headers));
-    assertEquals(15, headers.length);
+    assertEquals(14, headers.length);
     assertEquals("taxonID", headers[0]);
     assertEquals("parentNameUsageID", headers[1]);
     assertEquals("kingdom", headers[7]);
