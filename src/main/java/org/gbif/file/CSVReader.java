@@ -14,7 +14,7 @@
 package org.gbif.file;
 
 import org.gbif.dwc.text.ArchiveFile;
-import org.gbif.utils.file.ClosableIterator;
+import org.gbif.utils.file.ClosableReportingIterator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,13 +25,14 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.apache.commons.lang3.text.StrTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CSVReader implements ClosableIterator<String[]>, Iterable<String[]> {
+public class CSVReader implements ClosableReportingIterator<String[]>, Iterable<String[]> {
 
   private static final Logger LOG = LoggerFactory.getLogger(CSVReader.class);
   public final int headerRows;
@@ -45,6 +46,9 @@ public class CSVReader implements ClosableIterator<String[]>, Iterable<String[]>
   private int readRows;
   private final Map<Integer, String> emptyLines;
   private final BufferedReader br;
+  private boolean rowError;
+  private String errorMessage;
+  private Exception exception;
 
   public CSVReader(File source, String encoding, String delimiter, Character quotes, Integer headerRows)
     throws IOException {
@@ -143,7 +147,7 @@ public class CSVReader implements ClosableIterator<String[]>, Iterable<String[]>
     return row != null;
   }
 
-  public ClosableIterator<String[]> iterator() {
+  public ClosableReportingIterator<String[]> iterator() {
     return this;
   }
 
@@ -156,6 +160,7 @@ public class CSVReader implements ClosableIterator<String[]>, Iterable<String[]>
       return null;
     }
     tokenizer.reset(row);
+    resetReportingIterator();
     try {
       row = br.readLine();
       rows++;
@@ -168,13 +173,49 @@ public class CSVReader implements ClosableIterator<String[]>, Iterable<String[]>
       }
       readRows++;
     } catch (IOException e) {
-      row = null;
       LOG.debug("Exception caught", e);
+      rowError = true;
+      exception = e;
+
+      // construct error message showing exception and problem row
+      StringBuilder msg = new StringBuilder();
+      msg.append("Exception caught: ");
+      msg.append(e.getMessage());
+      if (!Strings.isNullOrEmpty(row)) {
+        msg.append("\n");
+        msg.append("Row: ");
+        msg.append(row);
+      }
+      errorMessage = msg.toString();
+
+      // ensure iteration terminates
+      row = null;
     }
     return tokenizer.getTokenArray();
   }
 
+  /**
+   * Reset all reporting parameters.
+   */
+  private void resetReportingIterator() {
+    rowError = false;
+    exception = null;
+    errorMessage = null;
+  }
+
   public void remove() {
     throw new UnsupportedOperationException("Remove not supported");
+  }
+
+  public boolean hasRowError() {
+    return rowError;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
+  public Exception getException() {
+    return exception;
   }
 }

@@ -20,7 +20,7 @@
     <commons-lang.version>3.1</commons-lang.version>
     <dwc-api.version>1.5-SNAPSHOT</dwc-api.version>
     <freemarker.version>2.3.19</freemarker.version>
-    <gbif-common.version>0.10</gbif-common.version>
+    <gbif-common.version>0.15-SNAPSHOT</gbif-common.version>
     <gbif-metadata-profile.version>1.0.2.2</gbif-metadata-profile.version>
     <guava.version>13.0.1</guava.version>
     <junit.version>4.11</junit.version>
