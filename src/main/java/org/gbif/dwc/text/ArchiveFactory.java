@@ -155,7 +155,12 @@ public class ArchiveFactory {
       } else if (localName.equalsIgnoreCase("extension")) {
         // update location to absolute path incl archive path
 //      makeLocationPathsAbsolute(af, archive.getLocation());
-        archive.addExtension(af);
+        
+        if (af.getId() != null && af.getId().getIndex() != null) {
+          archive.addExtension(af);    
+        } else {
+          log.warn("Skipping extension [" + af.getRowType() + "] with no index attribute");  
+        }        
       } else if (localName.equalsIgnoreCase("location")) {
         // a file location
         af.addLocation(content);

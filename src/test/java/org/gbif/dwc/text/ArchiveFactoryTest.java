@@ -10,8 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -395,4 +396,21 @@ public class ArchiveFactoryTest {
     assertEquals(3, count);
     assertTrue(found);
   }
+  
+  /**
+   * Ensure that extensions are just skipped for archives that do not have the core id in the mapped extension. 
+   * https://code.google.com/p/darwincore/issues/detail?id=232
+   */
+  @Test
+  public void testNullCoreID() throws IOException {
+    try {
+      Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), new File(System.getProperty("java.io.tmpdir")));
+      Iterator<StarRecord> iter = archive.iterator();
+      while (iter.hasNext()) {
+        iter.next();
+      }
+    } catch (UnsupportedArchiveException e) {
+      fail("Extensions with no core IDs should be ignored");
+    }
+  }  
 }
