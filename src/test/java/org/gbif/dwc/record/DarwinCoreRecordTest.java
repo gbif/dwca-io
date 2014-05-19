@@ -7,31 +7,38 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.fail;
 
 public class DarwinCoreRecordTest {
 
   @Test
   public void testProperties() {
+    final Set<String> IGNORE = ImmutableSet.of(DwcTerm.GROUP_MEASUREMENTORFACT, DwcTerm.GROUP_RESOURCERELATIONSHIP);
+
     DarwinCoreRecord dwc = new DarwinCoreRecord();
     for (DwcTerm t : DwcTerm.values()) {
       // only test non class terms
       if (t.isClass()) {
         continue;
       }
-      // ignore measurements and relationship group terms
-      if (DwcTerm.GROUP_MEASUREMENTORFACT.equalsIgnoreCase(t.getGroup())) {
-        continue;
+
+      if (IGNORE.contains(t.getGroup())) {
+        try {
+          dwc.getProperty(t);
+          fail("term " + t.qualifiedName() + " should not exist on DarwinCoreRecord");
+        } catch (IllegalArgumentException e) {
+          // expected
+        }
+
+      } else {
+        String val = new Date().toString();
+        dwc.setProperty(t, val);
+        assertEquals("missing term " + t.qualifiedName(), val, dwc.getProperty(t));
       }
-      if (DwcTerm.GROUP_RESOURCERELATIONSHIP.equalsIgnoreCase(t.getGroup())) {
-        continue;
-      }
-      String val = new Date().toString();
-      dwc.setProperty(t, val);
-      assertEquals("missing term " + t.qualifiedName(), val, dwc.getProperty(t));
     }
   }
 

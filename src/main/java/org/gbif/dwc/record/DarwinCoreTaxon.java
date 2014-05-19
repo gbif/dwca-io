@@ -16,6 +16,7 @@ public class DarwinCoreTaxon {
   private static final Logger LOG = LoggerFactory.getLogger(DarwinCoreTaxon.class);
   private static final String CLASSIFICATION_DELIMITER = ";";
   private static final Pattern NORM_AUTHORS = Pattern.compile("[^a-z0-9]+");
+  private String basisOfRecord;
   private String taxonID;
   private String taxonConceptID;
   private String datasetID;
@@ -60,6 +61,13 @@ public class DarwinCoreTaxon {
   private String taxonRemarks;
   private String dynamicProperties;
   private String namePublishedInYear;
+  private String collectionCode;
+  private String collectionID;
+  private String dataGeneralizations;
+  private String informationWithheld;
+  private String institutionCode;
+  private String institutionID;
+  private String ownerInstitutionCode;
 
   public DarwinCoreTaxon() {
   }
@@ -115,6 +123,22 @@ public class DarwinCoreTaxon {
       buf.deleteCharAt(buf.length() - 1);
     }
     return buf.toString();
+  }
+
+  public String getInstitutionID() {
+    return institutionID;
+  }
+
+  public void setInstitutionID(String institutionID) {
+    this.institutionID = institutionID;
+  }
+
+  public String getOwnerInstitutionCode() {
+    return ownerInstitutionCode;
+  }
+
+  public void setOwnerInstitutionCode(String ownerInstitutionCode) {
+    this.ownerInstitutionCode = ownerInstitutionCode;
   }
 
   public void clear() {
@@ -297,7 +321,8 @@ public class DarwinCoreTaxon {
     String getter = String.format("get%s", getPropertyName(prop));
     try {
       Method m = getClass().getMethod(getter);
-      return m.invoke(this).toString();
+      Object val = m.invoke(this);
+      return val == null ? null : val.toString();
 
     } catch (NoSuchMethodException e) {
       throw new IllegalArgumentException("non existing dwc property: " + prop);
@@ -306,6 +331,54 @@ public class DarwinCoreTaxon {
       // should never happen
       throw new RuntimeException(e);
     }
+  }
+
+  public String getBasisOfRecord() {
+    return basisOfRecord;
+  }
+
+  public void setBasisOfRecord(String basisOfRecord) {
+    this.basisOfRecord = norm(basisOfRecord);
+  }
+
+  public String getCollectionCode() {
+    return collectionCode;
+  }
+
+  public String getCollectionID() {
+    return collectionID;
+  }
+
+  public String getDataGeneralizations() {
+    return dataGeneralizations;
+  }
+
+  public String getInformationWithheld() {
+    return informationWithheld;
+  }
+
+  public String getInstitutionCode() {
+    return institutionCode;
+  }
+
+  public void setCollectionCode(String collectionCode) {
+    this.collectionCode = norm(collectionCode);
+  }
+
+  public void setCollectionID(String collectionID) {
+    this.collectionID = norm(collectionID);
+  }
+
+  public void setDataGeneralizations(String dataGeneralizations) {
+    this.dataGeneralizations = norm(dataGeneralizations);
+  }
+
+  public void setInformationWithheld(String informationWithheld) {
+    this.informationWithheld = norm(informationWithheld);
+  }
+
+  public void setInstitutionCode(String institutionCode) {
+    this.institutionCode = norm(institutionCode);
   }
 
   private String getPropertyName(Term prop) {

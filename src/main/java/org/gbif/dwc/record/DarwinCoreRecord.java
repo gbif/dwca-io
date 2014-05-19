@@ -14,19 +14,15 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String associatedReferences;
   private String associatedSequences;
   private String associatedTaxa;
-  private String basisOfRecord;
   private String bed;
   private String behavior;
   private String catalogNumber;
-  private String collectionCode;
-  private String collectionID;
   private String continent;
   private String coordinatePrecision;
   private String coordinateUncertaintyInMeters;
   private String country;
   private String countryCode;
   private String county;
-  private String dataGeneralizations;
   private String dateIdentified;
   private String day;
   private String decimalLatitude;
@@ -69,8 +65,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String identifiedBy;
   private String individualCount;
   private String individualID;
-  private String informationWithheld;
-  private String institutionCode;
   private String island;
   private String islandGroup;
   private String latestAgeOrHighestStage;
@@ -89,15 +83,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String maximumDepthInMeters;
   private String maximumDistanceAboveSurfaceInMeters;
   private String maximumElevationInMeters;
-  private String measurementAccuracy;
-  private String measurementDeterminedBy;
-  private String measurementDeterminedDate;
-  private String measurementID;
-  private String measurementMethod;
-  private String measurementRemarks;
-  private String measurementType;
-  private String measurementUnit;
-  private String measurementValue;
   private String member;
   private String minimumDepthInMeters;
   private String minimumDistanceAboveSurfaceInMeters;
@@ -113,14 +98,7 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String previousIdentifications;
   private String recordNumber;
   private String recordedBy;
-  private String relatedResourceID;
-  private String relationshipAccordingTo;
-  private String relationshipEstablishedDate;
-  private String relationshipOfResource;
-  private String relationshipRemarks;
   private String reproductiveCondition;
-  private String resourceID;
-  private String resourceRelationshipID;
   private String samplingProtocol;
   private String sex;
   private String startDayOfYear;
@@ -141,11 +119,9 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String footprintSRS;
   private String georeferencedDate;
   private String identificationVerificationStatus;
-  private String institutionID;
   private String locationAccordingTo;
   private String municipality;
   private String occurrenceStatus;
-  private String ownerInstitutionCode;
   private String samplingEffort;
   private String verbatimSRS;
 
@@ -173,14 +149,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.identificationVerificationStatus = identificationVerificationStatus;
   }
 
-  public String getInstitutionID() {
-    return institutionID;
-  }
-
-  public void setInstitutionID(String institutionID) {
-    this.institutionID = institutionID;
-  }
-
   public String getLocationAccordingTo() {
     return locationAccordingTo;
   }
@@ -203,14 +171,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setOccurrenceStatus(String occurrenceStatus) {
     this.occurrenceStatus = occurrenceStatus;
-  }
-
-  public String getOwnerInstitutionCode() {
-    return ownerInstitutionCode;
-  }
-
-  public void setOwnerInstitutionCode(String ownerInstitutionCode) {
-    this.ownerInstitutionCode = ownerInstitutionCode;
   }
 
   public String getSamplingEffort() {
@@ -261,24 +221,12 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return associatedTaxa;
   }
 
-  public String getBasisOfRecord() {
-    return basisOfRecord;
-  }
-
   public String getBehavior() {
     return behavior;
   }
 
   public String getCatalogNumber() {
     return catalogNumber;
-  }
-
-  public String getCollectionCode() {
-    return collectionCode;
-  }
-
-  public String getCollectionID() {
-    return collectionID;
   }
 
   public String getContinent() {
@@ -303,10 +251,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getCounty() {
     return county;
-  }
-
-  public String getDataGeneralizations() {
-    return dataGeneralizations;
   }
 
   public String getDateIdentified() {
@@ -448,14 +392,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return individualID;
   }
 
-  public String getInformationWithheld() {
-    return informationWithheld;
-  }
-
-  public String getInstitutionCode() {
-    return institutionCode;
-  }
-
   public String getIsland() {
     return island;
   }
@@ -494,42 +430,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getMaximumElevationInMeters() {
     return maximumElevationInMeters;
-  }
-
-  public String getMeasurementAccuracy() {
-    return measurementAccuracy;
-  }
-
-  public String getMeasurementDeterminedBy() {
-    return measurementDeterminedBy;
-  }
-
-  public String getMeasurementDeterminedDate() {
-    return measurementDeterminedDate;
-  }
-
-  public String getMeasurementID() {
-    return measurementID;
-  }
-
-  public String getMeasurementMethod() {
-    return measurementMethod;
-  }
-
-  public String getMeasurementRemarks() {
-    return measurementRemarks;
-  }
-
-  public String getMeasurementType() {
-    return measurementType;
-  }
-
-  public String getMeasurementUnit() {
-    return measurementUnit;
-  }
-
-  public String getMeasurementValue() {
-    return measurementValue;
   }
 
   public String getMinimumDepthInMeters() {
@@ -588,36 +488,8 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return recordNumber;
   }
 
-  public String getRelatedResourceID() {
-    return relatedResourceID;
-  }
-
-  public String getRelationshipAccordingTo() {
-    return relationshipAccordingTo;
-  }
-
-  public String getRelationshipEstablishedDate() {
-    return relationshipEstablishedDate;
-  }
-
-  public String getRelationshipOfResource() {
-    return relationshipOfResource;
-  }
-
-  public String getRelationshipRemarks() {
-    return relationshipRemarks;
-  }
-
   public String getReproductiveCondition() {
     return reproductiveCondition;
-  }
-
-  public String getResourceID() {
-    return resourceID;
-  }
-
-  public String getResourceRelationshipID() {
-    return resourceRelationshipID;
   }
 
   public String getSamplingProtocol() {
@@ -711,24 +583,12 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.associatedTaxa = norm(associatedTaxa);
   }
 
-  public void setBasisOfRecord(String basisOfRecord) {
-    this.basisOfRecord = norm(basisOfRecord);
-  }
-
   public void setBehavior(String behavior) {
     this.behavior = norm(behavior);
   }
 
   public void setCatalogNumber(String catalogNumber) {
     this.catalogNumber = norm(catalogNumber);
-  }
-
-  public void setCollectionCode(String collectionCode) {
-    this.collectionCode = norm(collectionCode);
-  }
-
-  public void setCollectionID(String collectionID) {
-    this.collectionID = norm(collectionID);
   }
 
   public void setContinent(String continent) {
@@ -753,10 +613,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setCounty(String county) {
     this.county = norm(county);
-  }
-
-  public void setDataGeneralizations(String dataGeneralizations) {
-    this.dataGeneralizations = norm(dataGeneralizations);
   }
 
   public void setDateIdentified(String dateIdentified) {
@@ -898,14 +754,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.individualID = norm(individualID);
   }
 
-  public void setInformationWithheld(String informationWithheld) {
-    this.informationWithheld = norm(informationWithheld);
-  }
-
-  public void setInstitutionCode(String institutionCode) {
-    this.institutionCode = norm(institutionCode);
-  }
-
   public void setIsland(String island) {
     this.island = norm(island);
   }
@@ -944,42 +792,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setMaximumElevationInMeters(String maximumElevationInMeters) {
     this.maximumElevationInMeters = norm(maximumElevationInMeters);
-  }
-
-  public void setMeasurementAccuracy(String measurementAccuracy) {
-    this.measurementAccuracy = norm(measurementAccuracy);
-  }
-
-  public void setMeasurementDeterminedBy(String measurementDeterminedBy) {
-    this.measurementDeterminedBy = norm(measurementDeterminedBy);
-  }
-
-  public void setMeasurementDeterminedDate(String measurementDeterminedDate) {
-    this.measurementDeterminedDate = norm(measurementDeterminedDate);
-  }
-
-  public void setMeasurementID(String measurementID) {
-    this.measurementID = norm(measurementID);
-  }
-
-  public void setMeasurementMethod(String measurementMethod) {
-    this.measurementMethod = norm(measurementMethod);
-  }
-
-  public void setMeasurementRemarks(String measurementRemarks) {
-    this.measurementRemarks = norm(measurementRemarks);
-  }
-
-  public void setMeasurementType(String measurementType) {
-    this.measurementType = norm(measurementType);
-  }
-
-  public void setMeasurementUnit(String measurementUnit) {
-    this.measurementUnit = norm(measurementUnit);
-  }
-
-  public void setMeasurementValue(String measurementValue) {
-    this.measurementValue = norm(measurementValue);
   }
 
   public void setMinimumDepthInMeters(String minimumDepthInMeters) {
@@ -1038,36 +850,8 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.recordNumber = norm(recordNumber);
   }
 
-  public void setRelatedResourceID(String relatedResourceID) {
-    this.relatedResourceID = norm(relatedResourceID);
-  }
-
-  public void setRelationshipAccordingTo(String relationshipAccordingTo) {
-    this.relationshipAccordingTo = norm(relationshipAccordingTo);
-  }
-
-  public void setRelationshipEstablishedDate(String relationshipEstablishedDate) {
-    this.relationshipEstablishedDate = norm(relationshipEstablishedDate);
-  }
-
-  public void setRelationshipOfResource(String relationshipOfResource) {
-    this.relationshipOfResource = norm(relationshipOfResource);
-  }
-
-  public void setRelationshipRemarks(String relationshipRemarks) {
-    this.relationshipRemarks = norm(relationshipRemarks);
-  }
-
   public void setReproductiveCondition(String reproductiveCondition) {
     this.reproductiveCondition = norm(reproductiveCondition);
-  }
-
-  public void setResourceID(String resourceID) {
-    this.resourceID = norm(resourceID);
-  }
-
-  public void setResourceRelationshipID(String resourceRelationshipID) {
-    this.resourceRelationshipID = norm(resourceRelationshipID);
   }
 
   public void setSamplingProtocol(String samplingProtocol) {
