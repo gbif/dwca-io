@@ -39,6 +39,7 @@ public class ArchiveField {
   private Integer index;
   private Term term;
   private String defaultValue;
+  private String delimitedBy;
 
   private DataType type = DataType.string;
 
@@ -51,6 +52,14 @@ public class ArchiveField {
     this.term = term;
     this.defaultValue = defaultValue;
     this.type = type;
+  }
+
+  public ArchiveField(Integer index, Term term, String defaultValue, DataType type, String delimitedBy) {
+    this.index = index;
+    this.term = term;
+    this.defaultValue = defaultValue;
+    this.type = type;
+    this.delimitedBy = delimitedBy;
   }
 
   public String getDefaultValue() {
@@ -69,6 +78,10 @@ public class ArchiveField {
     return type;
   }
 
+  public String getDelimitedBy() {
+    return delimitedBy;
+  }
+
   public void setDefaultValue(String defaultValue) {
     this.defaultValue = defaultValue;
   }
@@ -83,6 +96,10 @@ public class ArchiveField {
 
   public void setType(DataType type) {
     this.type = type;
+  }
+
+  public void setDelimitedBy(String delimitedBy) {
+    this.delimitedBy = delimitedBy;
   }
 
 }
