@@ -1,5 +1,5 @@
 TaxonID	dc:source	ScientificName	HigherTaxonID	TaxonRank	NomenclaturalCode	TaxonAccordingTo	BasionymID	TaxonomicStatus	NomenclaturalStatus	AcceptedTaxonID	NamePublishedIn
-1559060		Globicephala melaena melaena Traill	105849	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 91"		valid			
+1559060		Globicephala melaena melaena Traill	105849	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 91"		valid	nom. illeg.;nomen nudum		
 105828		Cetacea	105958	Order	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 6"		valid			
 544186		Odontoceti	105828	Suborder	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 6"		valid			
 113648		Susuidae	544186	Family	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 6"		valid			

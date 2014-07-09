@@ -14,7 +14,7 @@
     <field index="6" term="http://rs.tdwg.org/dwc/terms/taxonAccordingTo"/>
     <field index="7" term="http://rs.tdwg.org/dwc/terms/originalNameID"/>
     <field index="8" term="http://rs.tdwg.org/dwc/terms/taxonomicStatus"/>
-    <field index="9" term="http://rs.tdwg.org/dwc/terms/nomenclaturalStatus"/>
+    <field index="9" term="http://rs.tdwg.org/dwc/terms/nomenclaturalStatus" delimitedBy=";" />
     <field index="10" term="http://rs.tdwg.org/dwc/terms/acceptedNameUsageID"/>
     <field index="11" term="http://rs.tdwg.org/dwc/terms/namePublishedIn"/>
 

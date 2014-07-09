@@ -5,19 +5,13 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.file.CSVReader;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import static org.junit.Assert.fail;
-
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ArchiveFactoryTest {
 
@@ -179,7 +173,28 @@ public class ArchiveFactoryTest {
     assertTrue(found);
   }
 
-  /**
+    @Test
+    public void testOpenArchiveAsTarGzip() throws UnsupportedArchiveException, IOException {
+        // test gziped tar file with 1 extension
+        File zip = FileUtils.getClasspathFile("archive-tax.tar.gz");
+        File tmpDir = FileUtils.createTempDir();
+        tmpDir.deleteOnExit();
+
+        // open compressed archive
+        Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
+        assertNotNull(arch.getCore().getId());
+        assertEquals(1, arch.getExtensions().size());
+
+        boolean found = false;
+        for (Record rec : arch.getCore()) {
+            if ("113775".equals(rec.id())) {
+                found = true;
+            }
+        }
+        assertTrue(found);
+    }
+
+    /**
    * Identifier not set properly when reading single csv file
    * the csv file attached is a utf16 little endian encoded file.
    * This encoding is known to cause problems and not supported.
@@ -396,9 +411,9 @@ public class ArchiveFactoryTest {
     assertEquals(3, count);
     assertTrue(found);
   }
-  
+
   /**
-   * Ensure that extensions are just skipped for archives that do not have the core id in the mapped extension. 
+   * Ensure that extensions are just skipped for archives that do not have the core id in the mapped extension.
    * https://code.google.com/p/darwincore/issues/detail?id=232
    */
   @Test
@@ -412,5 +427,5 @@ public class ArchiveFactoryTest {
     } catch (UnsupportedArchiveException e) {
       fail("Extensions with no core IDs should be ignored");
     }
-  }  
+  }
 }
