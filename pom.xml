@@ -18,7 +18,7 @@
   <properties>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>3.1</commons-lang.version>
-    <dwc-api.version>1.7</dwc-api.version>
+    <dwc-api.version>1.8</dwc-api.version>
     <freemarker.version>2.3.19</freemarker.version>
     <gbif-common.version>0.16</gbif-common.version>
     <gbif-metadata-profile.version>1.0.2.2</gbif-metadata-profile.version>
