@@ -1,4 +1,4 @@
-TaxonID	dc:source	ScientificName	HigherTaxonID	TaxonRank	NomenclaturalCode	TaxonAccordingTo	BasionymID	TaxonomicStatus	NomenclaturalStatus	AcceptedTaxonID	NamePublishedIn
+TaxonID	dc:references	ScientificName	HigherTaxonID	TaxonRank	NomenclaturalCode	TaxonAccordingTo	BasionymID	TaxonomicStatus	NomenclaturalStatus	AcceptedTaxonID	NamePublishedIn
 1559060		Globicephala melaena melaena Traill	105849	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 91"		valid	nom. illeg.;nomen nudum		
 105828		Cetacea	105958	Order	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 6"		valid			
 544186		Odontoceti	105828	Suborder	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 6"		valid			
@@ -111,11 +111,11 @@ TaxonID	dc:source	ScientificName	HigherTaxonID	TaxonRank	NomenclaturalCode	Taxon
 105915		Hyperoodon Lacépède	113649	Genus	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 142"	2190	valid			"Lacépède, 1804, Hist. Nat. Cétacées, pp. xliv, 319."
 105917		Hyperoodon planifrons Flower	105915	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 144"	2213	valid			"Flower, 1882, Proc. Zool. Soc. London, 1882: 392;"
 105916		Hyperoodon ampullatus Forster	105915	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 146"	2247	valid			"Forster, 1770, in Kalm, Travels into North America, 1: 18, ftn."
-544281		Mysteceti	105828	Suborder	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 149"		valid			
-1760445		Eschrichtidae	544281	Family	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 149"		valid			
+544281		Mysteceti	105828	Suborder	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 149"		valid
+1760445		Eschrichtidae	544281	Family	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 149"		valid
 105938		Eschrichtius Gray	1760445	Genus	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 149"	2288	valid			"Gray, 1864, Ann. Mag. Nat. Hist., (3), 14: 350"
 1559050		Eschrichtius gibbosus Erxleben	105938	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 149"	2296	valid			"Erxleben, 1777, Syst. Reg. Anim., p. 610."
-105940		Balaenopteridae	544281	Family	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 151"		valid			
+105940		Balaenopteridae	544281	Family	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 151"		valid
 105941		Balaenoptera Lacépède	105940	Genus	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 151"	2315	valid			"Lacépède, 1804, Nat. Hist. Cétacées, pp. xxxvi, 114"
 105942		Balaenoptera acutorostrata Lacépède	105941	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 153"	2361	valid			"Lacépède, 1804, Nat. Hist. Cétacées, pp. xxxvii, 134, pl. 4, fig. 2 (animal), pl. 8 (animal)."
 105944		Balaenoptera edeni Anderson	105941	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 158"	2433	valid			"Anderson, 1878, Anatomical and zoological research; comprising an account of zoological results of two expeditions to western Yunnan in 1868 and 1875, London, pp. 551-564, figs. 21-25 (vertebrae), fig. 26 (rib), fig. 27 (humerus), fig. 28 (hyoid), pl. 44 (skull, cervical vertebrae)]."
@@ -124,7 +124,7 @@ TaxonID	dc:source	ScientificName	HigherTaxonID	TaxonRank	NomenclaturalCode	Taxon
 105945		Balaenoptera musculus Linnaeus	105941	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 170"	2625	valid			"Linnæus, 1758, Syst. Nat., ed. 10, 1: 76."
 105947		Megaptera Gray	105940	Genus	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 176"	2716	valid			"Gray, 1846a, Ann. Mag. Nat. Hist., (1), 17: 83;"
 105948		Megaptera novaeangliae Borowski	105947	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 177"	2737	valid			"Borowski, 1781, Gemeinnüzzige Naturgeschichte des Thierreiches, Berlin, 2(1): 21"
-105949		Balaenidae	544281	Family	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 183"		valid			
+105949		Balaenidae	544281	Family	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 183"		valid
 105956		Caperea Gray	105949	Genus	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 183"	2828	valid			"Gray, 1864, Proc. Zool. Soc. London, 1864: 202"
 105957		Caperea marginata Gray	105956	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 184"	2835	valid			"Gray, 1846, Zoology of the voyage of H.M.S. Erebus and Terror, 1 (Mammalia): 48, pl. 1, fig. 1 (baleen);"
 105952		Eubalaena Gray	105949	Genus	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 185"	2868	valid			"Gray, 1864, Proc. Zool. Soc. London, 1864: 201."
@@ -133,47 +133,47 @@ TaxonID	dc:source	ScientificName	HigherTaxonID	TaxonRank	NomenclaturalCode	Taxon
 1559058		Eubalaena glacialis japonica Lacépède	105952	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 192"	2972	valid			"Lacépède, 1818, Mem. Mus. Hist. Nat., Paris, 4: 469, 473."
 1559055		Balaena Linnaeus	105949	Genus	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 193"	2995	valid			"Linnaeus, 1758, Syst. Nat., ed. 10, 1: 75"
 105951		Balaena mysticetus Linnaeus	1559055	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 194"	3002	valid			"Linnaeus, 1758, Syst. Nat., ed. 10, 1: 75."
-1760446		Incertae Sedis	105828	Incertae Sedis	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 194"					
+1760446		Incertae Sedis	105828	Incertae Sedis	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 194"
 1760447		Amphiptera pacifica Giglioli	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 194"	3014	valid			"Giglioli, 1870, Note intorno alla distribuzione della Fauna vertebrata nell' oceano prese un viaggio intorno al Globo, R. Magenta, 1865-68, p. 76"
 1559152		Anarnak Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 195"	3016	valid			"Lacépède, 1804, Hist. Nat. Cétacées, pp. xxxviii, 164"
 1760448		Balaena mangidach Chamisso	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 195"	3022	valid			"Chamisso, 1825, Nova Acta Acad. Cesarae Leopoldino-Carolinae Nat. Cur., 12(1): 257, pl. 18, fig. 4 (wooden carving of animal)"
 1760449		Balaenoptera andrejewi	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 195"	3024	valid			"author?, 1888, Admonitio Piscaturae, pp. 197-211"
 1760450		Balaenoptera caerulescens	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 195"	3025	valid			"Lacépède, 1818, Mem. Mus. Hist. Nat., Paris, 4: 473"
-1760451		Balaenoptera grimmi	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 195"		valid			
-1760452		Balaenoptera maculata Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid			
-1760453		Balaenoptera nigra Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid			
-1760454		Balaenoptera punctulata Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid			
+1760451		Balaenoptera grimmi	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 195"		valid
+1760452		Balaenoptera maculata Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid
+1760453		Balaenoptera nigra Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid
+1760454		Balaenoptera punctulata Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid
 1559044		Delphinapterus senedetta Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"	3032	valid			"Lacépède, 1804, Hist. Nat. Cétacées, pp. xli, 249"
-1760455		Delphinorhynchus Blainville	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid			
+1760455		Delphinorhynchus Blainville	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"		valid
 1559045		Delphinus bertini Desmarest	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 196"	3037	valid			"Desmarest, 1817, Nouv. Dict. Hist. Nat., 9: 163"
-1760456		Delphinus boryi Desmarest	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid			
-1760457		Delphinus chilensis Philippi	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid			
-1760458		Delphinus coronatus Fréminville	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid			
-1760459		Delphinus feres Bonnaterre	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid			
-1760460		Delphinus leucocephalus Lesson	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid			
-1760461		Delphinus lunatus Lesson	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid			
-1760462		Delphinus maculatus Lesson and Garnot	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid			
-1760463		Delphinus maculiventer Owen	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid			
-1760464		Delphinus minimus Lesson	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid			
-1760465		Delphinus niger Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid			
-1760466		Delphinus rhinoceros Quoy and Gaimard	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid			
-1760467		Delphinus siculus Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid			
-1760468		Delphinus tursio Fabricius	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid			
-1760469		Epiodon Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid			
-1760470		Epiodon urganantus Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid			
+1760456		Delphinus boryi Desmarest	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid
+1760457		Delphinus chilensis Philippi	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid
+1760458		Delphinus coronatus Fréminville	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid
+1760459		Delphinus feres Bonnaterre	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid
+1760460		Delphinus leucocephalus Lesson	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid
+1760461		Delphinus lunatus Lesson	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid
+1760462		Delphinus maculatus Lesson and Garnot	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 197"		valid
+1760463		Delphinus maculiventer Owen	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid
+1760464		Delphinus minimus Lesson	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid
+1760465		Delphinus niger Lacépède	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid
+1760466		Delphinus rhinoceros Quoy and Gaimard	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 198"		valid
+1760467		Delphinus siculus Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid
+1760468		Delphinus tursio Fabricius	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid
+1760469		Epiodon Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid
+1760470		Epiodon urganantus Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"		valid
 1760471		Monodon spurius Fabricius	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 199"	3075	valid			"Fabricius, 1780, Fauna Groenlandica, p. 31"
 1760472		Oxypterus Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 200"	3079	valid			"Rafinesque, 1814, Précis des ... somiologie, p. 13"
 1760473		Oxypterus mongitori Rafinesque	1760446	Species	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 200"	3081	valid			"Rafinesque, 1814, Précis des ... somiologie, p. 13"
-105958		Mammalia	0	Class	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 6"					
-1		Pontoporia			ICZN	"Gray, 1846, Zoology of the voyage of H.M.S. Erebus and Terror, 1 (Mammalia): 46;"		invalid		105837	
-2		Pontoporia			ICZN	"Gray, 1871, Proc. Zool. Soc. London, 1870: 772"		invalid		105837	
-3		Pontoporia			ICZN	"Gervais in Van Bénéden and Gervais, 1880, Ostéographie des cétacés, p. 476"		invalid		105837	
-4		Pontoporia			ICZN	"Beddard, 1900, Book of whales, p. 301"		invalid		105837	
-5		Pontoporia			ICZN	"Fraser in Norman and Fraser, 1938, Giant fishes, whales and dolphins, p. 342"		invalid		105837	
-6		Pontoporia			ICZN	"Winge, 1942, Interrelationships of the mammalian genera [English translation], 3: 245, 247"		invalid		105837	
-7		Pontoporia			ICZN	"Hershkovitz, 1961, Fieldiana, Zool., 39: 554"		invalid		105837	
-8		Stenodelphis			ICZN	"d'Orbigny and Gervais, 1847, Voyage Amérique Mérid., 4(Mamm.): 32 (in text)"		invalid		105837	
-9		Stenodelphis			ICZN	"Gervais, 1855, Hist. Nat. Mamm., 2: 322"		invalid		105837	
+105958		Mammalia	0	Class	ICZN	"Hershkovitz, P., Catalog of Living Whales, Smithsonian Institution, Bulletin 246, 1966, p. 6"
+1		Pontoporia			ICZN	"Gray, 1846, Zoology of the voyage of H.M.S. Erebus and Terror, 1 (Mammalia): 46;"		invalid		105837
+2		Pontoporia			ICZN	"Gray, 1871, Proc. Zool. Soc. London, 1870: 772"		invalid		105837
+3		Pontoporia			ICZN	"Gervais in Van Bénéden and Gervais, 1880, Ostéographie des cétacés, p. 476"		invalid		105837
+4		Pontoporia			ICZN	"Beddard, 1900, Book of whales, p. 301"		invalid		105837
+5		Pontoporia			ICZN	"Fraser in Norman and Fraser, 1938, Giant fishes, whales and dolphins, p. 342"		invalid		105837
+6		Pontoporia			ICZN	"Winge, 1942, Interrelationships of the mammalian genera [English translation], 3: 245, 247"		invalid		105837
+7		Pontoporia			ICZN	"Hershkovitz, 1961, Fieldiana, Zool., 39: 554"		invalid		105837
+8		Stenodelphis			ICZN	"d'Orbigny and Gervais, 1847, Voyage Amérique Mérid., 4(Mamm.): 32 (in text)"		invalid		105837
+9		Stenodelphis			ICZN	"Gervais, 1855, Hist. Nat. Mamm., 2: 322"		invalid		105837
 10		Stenodelphis			ICZN	"Ameghino, 1891, Rev. Argentina Hist. Nat., 1: 254"		invalid		105837
 11		Stenodelphis			ICZN	"Kellogg, 1928, Quart. Rev. Biol., 3: 33 et seq."		invalid		105837
 12		Stenodelphis			ICZN	"Carvalho, 1961, Rev. Brasil. Biol., 21(4): 443"		invalid		105837

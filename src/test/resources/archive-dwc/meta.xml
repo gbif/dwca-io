@@ -6,7 +6,7 @@
       <location>DarwinCore.txt</location>
     </files>
     <id index="0"/>
-    <field index="1" term="http://purl.org/dc/terms/source"/>
+    <field index="1" term="http://purl.org/dc/terms/references"/>
     <field index="2" term="http://rs.tdwg.org/dwc/terms/scientificName"/>
     <field index="3" term="http://rs.tdwg.org/dwc/terms/parentNameUsageID"/>
     <field index="4" term="http://rs.tdwg.org/dwc/terms/taxonRank"/>

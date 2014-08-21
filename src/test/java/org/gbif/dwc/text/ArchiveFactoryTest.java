@@ -1,17 +1,24 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.Record;
+import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.file.CSVReader;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ArchiveFactoryTest {
 
@@ -309,13 +316,12 @@ public class ArchiveFactoryTest {
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertFalse(arch.getCore().hasTerm(DwcTerm.occurrenceID));
-    //TODO: check why this fails - no idea whats going wrong here...
-    //    assertTrue(arch.getCore().hasTerm(DwcTerm.catalogNumber));
+    assertTrue(arch.getCore().hasTerm(DwcTerm.catalogNumber));
     assertTrue(arch.getCore().hasTerm(DwcTerm.institutionCode));
     assertTrue(arch.getCore().hasTerm(DwcTerm.basisOfRecord));
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertTrue(arch.getCore().hasTerm(DwcTerm.maximumElevationInMeters));
-    assertTrue(arch.getCore().hasTerm(DwcTerm.occurrenceDetails));
+    assertTrue(arch.getCore().hasTerm(DcTerm.references));
 
     int i = 0;
     for (Record rec : arch.getCore()) {

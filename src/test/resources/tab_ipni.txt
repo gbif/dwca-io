@@ -1,4 +1,4 @@
-taxonID		scientificName	taxonRank	family	nomenclaturalCode	nomenclaturalStatus	basionymID	dc:source	taxonRemarks
+taxonID		scientificName	taxonRank	family	nomenclaturalCode	nomenclaturalStatus	basionymID	dc:references	taxonRemarks
 urn:lsid:ipni.org:names:977594-1	http://www.ipni.org/ipni/idPlantNameSearch.do?&output_format=lsid-metadata&show_history=true&id=977594-1	Aegialitideae (Lincz.) T.H.Peng	trib.	Plumbaginaceae	ICBN		urn:lsid:ipni.org:names:50985156-1	http://www.ipni.org/ipni/idPlantNameSearch.do?&show_history=true&id=977594-1	trib. Aegialitideae (Lincz.) T.H.Peng
 urn:lsid:ipni.org:names:162-1	http://www.ipni.org/ipni/idPlantNameSearch.do?&output_format=lsid-metadata&show_history=true&id=162-1	Ammochloinae Tzvelev	subtrib.	Poaceae	ICBN			http://www.ipni.org/ipni/idPlantNameSearch.do?&show_history=true&id=162-1	subtrib. Ammochloinae Tzvelev
 urn:lsid:ipni.org:names:163-1	http://www.ipni.org/ipni/idPlantNameSearch.do?&output_format=lsid-metadata&show_history=true&id=163-1	Ampelodesmeae (Conert) Tutin	trib.	Poaceae	ICBN			http://www.ipni.org/ipni/idPlantNameSearch.do?&show_history=true&id=163-1	trib. Ampelodesmeae (Conert) Tutin

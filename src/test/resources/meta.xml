@@ -17,7 +17,7 @@
         <field term="http://rs.tdwg.org/dwc/terms/Kingdom" index="5"/>
         <field term="http://purl.org/dc/terms/modified" index="6"/>
     </core>
-    
+
     <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" rowType="http://rs.tdwg.org/invented/Links">
         <files>
             <location>links.txt</location>
@@ -25,11 +25,11 @@
         <!-- foreign key pointing to the id of the corresponding core record -->
         <coreid index="1"/>
         <!-- the link as a URL -->
-        <field term="http://purl.org/dc/terms/source" index="2"/>
+        <field term="http://purl.org/dc/terms/references" index="2"/>
         <!-- the MIME type or for xml the full namespace of the most important namespace, e.g. http://rs.tdwg.org/dwc/terms -->
         <field term="http://purl.org/dc/terms/format" index="3"/>
     </extension>
-    
+
     <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" rowType="http://rs.tdwg.org/invented/LexicalGroup">
         <files>
             <location>lexical_groups.txt</location>
@@ -41,5 +41,5 @@
         <!-- qualifier why this name belongs to this lexical group. e.g. orthographical variant -->
         <field term="http://globalnames.org/gni/qualifier" index="3"/>
     </extension>
-    
+
 </archive>

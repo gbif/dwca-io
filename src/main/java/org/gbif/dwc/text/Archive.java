@@ -84,9 +84,9 @@ public class Archive implements Iterable<StarRecord> {
     }
 
     public DarwinCoreRecord next() {
-      dwc.setSource(null);
+      dwc.setReferences(null);
       dwc.setModified(null);
-      dwc.setAccessrights(null);
+      dwc.setAccessRights(null);
       dwc.setRights(null);
       dwc.setRightsholder(null);
       dwc.setLanguage(null);

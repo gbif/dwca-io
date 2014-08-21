@@ -21,12 +21,14 @@ public class DarwinCoreTaxon {
   private String taxonConceptID;
   private String datasetID;
   private String datasetName;
-  private String source;
+  private String references;
   private String modified;
-  private String accessrights;
+  private String accessRights;
   private String rights;
   private String rightsholder;
   private String language;
+  private String type;
+  private String bibliographicCitation;
   private String higherClassification;
   private String kingdom;
   private String phylum;
@@ -35,7 +37,6 @@ public class DarwinCoreTaxon {
   private String family;
   private String genus;
   private String subgenus;
-  private String genericName;
   private String specificEpithet;
   private String infraspecificEpithet;
   private String scientificName;
@@ -43,7 +44,6 @@ public class DarwinCoreTaxon {
   private String vernacularName;
   private String taxonRank;
   private String verbatimTaxonRank;
-  private String infraspecificMarker;
   private String scientificNameAuthorship;
   private String nomenclaturalCode;
   private String namePublishedIn;
@@ -142,15 +142,18 @@ public class DarwinCoreTaxon {
   }
 
   public void clear() {
-    source = null;
+    references = null;
     modified = null;
-    accessrights = null;
+    accessRights = null;
     rights = null;
     rightsholder = null;
     language = null;
-    datasetID = null;
-    datasetName = null;
+    type = null;
+    bibliographicCitation = null;
     for (DwcTerm t : DwcTerm.TAXONOMIC_TERMS) {
+      setProperty(t, null);
+    }
+    for (DwcTerm t : DwcTerm.listByGroup(DwcTerm.GROUP_RECORD)) {
       setProperty(t, null);
     }
   }
@@ -163,8 +166,8 @@ public class DarwinCoreTaxon {
     return acceptedNameUsageID;
   }
 
-  public String getAccessrights() {
-    return accessrights;
+  public String getAccessRights() {
+    return accessRights;
   }
 
   public String getClasss() {
@@ -179,6 +182,15 @@ public class DarwinCoreTaxon {
     return family;
   }
 
+  /**
+   * The method tries to best assemble the most complete scientific name possible incl the name authorship.
+   * It first tries to use scientificName and scientificNameAuthorship if existing.
+   * Otherwise it uses the atomized name parts. Warning: this uses the genus property which might be wrong in case
+   * of synonym names, see https://code.google.com/p/darwincore/issues/detail?id=151
+   * Note also that the assembled name never includes a rank marker.
+   *
+   * @return the best guess of the full scientific name with authorship
+   */
   public String getFullScientificName() {
     if (scientificNameAuthorship != null && scientificName != null) {
       String normedSciName = NORM_AUTHORS.matcher(scientificName.toLowerCase()).replaceAll(" ");
@@ -189,14 +201,10 @@ public class DarwinCoreTaxon {
     }
     if (scientificName == null) {
       String sciname = null;
-      if (genericName != null || this.genus != null) {
-        String genus = genericName != null ? genericName : this.genus;
+      if (this.genus != null) {
         if (specificEpithet != null) {
           sciname = genus + " " + specificEpithet;
           if (infraspecificEpithet != null) {
-            if (infraspecificMarker != null) {
-              sciname += " " + infraspecificMarker;
-            }
             sciname += " " + infraspecificEpithet;
           }
           // potentially add authorship in this case
@@ -216,20 +224,12 @@ public class DarwinCoreTaxon {
     return genus;
   }
 
-  public String getGenericName() {
-    return genericName;
-  }
-
   public String getHigherClassification() {
     return higherClassification;
   }
 
   public String getInfraspecificEpithet() {
     return infraspecificEpithet;
-  }
-
-  public String getInfraspecificMarker() {
-    return infraspecificMarker;
   }
 
   public String getKingdom() {
@@ -315,6 +315,7 @@ public class DarwinCoreTaxon {
    * This method is only able to access official Darwin Core or Dublin Core terms, not any custom extensions.
    *
    * @param prop the concept term to lookup
+   *
    * @return the terms value, null or IllegalArgumentException for unsupported terms
    */
   public String getProperty(Term prop) {
@@ -409,8 +410,8 @@ public class DarwinCoreTaxon {
     return scientificNameID;
   }
 
-  public String getSource() {
-    return source;
+  public String getReferences() {
+    return references;
   }
 
   public String getSpecificEpithet() {
@@ -442,8 +443,11 @@ public class DarwinCoreTaxon {
       return taxonRank;
     }
     if (genus != null && specificEpithet != null && infraspecificEpithet != null) {
-      if (infraspecificMarker != null) {
-        return infraspecificMarker;
+      if (taxonRank != null) {
+        return taxonRank;
+      }
+      if (verbatimTaxonRank != null) {
+        return verbatimTaxonRank;
       }
       return "infraspecies";
     }
@@ -502,8 +506,8 @@ public class DarwinCoreTaxon {
     this.acceptedNameUsageID = acceptedNameUsageID;
   }
 
-  public void setAccessrights(String accessrights) {
-    this.accessrights = norm(accessrights);
+  public void setAccessRights(String accessRights) {
+    this.accessRights = norm(accessRights);
   }
 
   public void setClasss(String classs) {
@@ -522,20 +526,12 @@ public class DarwinCoreTaxon {
     this.genus = norm(genus);
   }
 
-  public void setGenericName(String genericName) {
-    this.genericName = genericName;
-  }
-
   public void setHigherClassification(String higherClassification) {
     this.higherClassification = higherClassification;
   }
 
   public void setInfraspecificEpithet(String infraspecificEpithet) {
     this.infraspecificEpithet = norm(infraspecificEpithet);
-  }
-
-  public void setInfraspecificMarker(String infraspecificMarker) {
-    this.infraspecificMarker = infraspecificMarker;
   }
 
   public void setKingdom(String kingdom) {
@@ -634,8 +630,8 @@ public class DarwinCoreTaxon {
     this.scientificNameID = scientificNameID;
   }
 
-  public void setSource(String source) {
-    this.source = norm(source);
+  public void setReferences(String references) {
+    this.references = norm(references);
   }
 
   public void setSpecificEpithet(String specificEpithet) {
@@ -684,7 +680,8 @@ public class DarwinCoreTaxon {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("taxonID", this.taxonID).append("scientificName", this.scientificName)
+    return new ToStringBuilder(this).append("taxonID", this.taxonID)
+      .append("scientificName", this.scientificName)
       .toString();
   }
 
@@ -702,5 +699,21 @@ public class DarwinCoreTaxon {
 
   public void setNamePublishedInYear(String namePublishedInYear) {
     this.namePublishedInYear = namePublishedInYear;
+  }
+
+  public String getBibliographicCitation() {
+    return bibliographicCitation;
+  }
+
+  public void setBibliographicCitation(String bibliographicCitation) {
+    this.bibliographicCitation = bibliographicCitation;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 }

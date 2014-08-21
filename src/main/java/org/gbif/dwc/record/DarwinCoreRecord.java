@@ -35,7 +35,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String earliestPeriodOrLowestSystem;
   private String endDayOfYear;
   private String establishmentMeans;
-  private String eventAttributes;
   private String eventDate;
   private String eventID;
   private String eventRemarks;
@@ -43,10 +42,12 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String fieldNotes;
   private String fieldNumber;
   private String footprintSpatialFit;
+  private String footprintSRS;
   private String footprintWKT;
   private String formation;
   private String geodeticDatum;
   private String geologicalContextID;
+  private String georeferencedDate;
   private String georeferenceProtocol;
   private String georeferenceRemarks;
   private String georeferenceSources;
@@ -57,11 +58,11 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String higherGeography;
   private String higherGeographyID;
   private String highestBiostratigraphicZone;
-  private String identificationAttributes;
   private String identificationID;
   private String identificationQualifier;
   private String identificationReferences;
   private String identificationRemarks;
+  private String identificationVerificationStatus;
   private String identifiedBy;
   private String individualCount;
   private String individualID;
@@ -75,7 +76,7 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String lifeStage;
   private String lithostratigraphicTerms;
   private String locality;
-  private String locationAttributes;
+  private String locationAccordingTo;
   private String locationID;
   private String locationRemarks;
   private String lowestBiostratigraphicZone;
@@ -88,10 +89,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String minimumDistanceAboveSurfaceInMeters;
   private String minimumElevationInMeters;
   private String month;
-  private String occurrenceAttributes;
-  private String occurrenceDetails;
+  private String municipality;
   private String occurrenceID;
   private String occurrenceRemarks;
+  private String occurrenceStatus;
   private String otherCatalogNumbers;
   private String pointRadiusSpatialFit;
   private String preparations;
@@ -99,12 +100,12 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String recordNumber;
   private String recordedBy;
   private String reproductiveCondition;
+  private String samplingEffort;
   private String samplingProtocol;
   private String sex;
   private String startDayOfYear;
   private String stateProvince;
   private String typeStatus;
-  private String typifiedName;
   private String verbatimCoordinateSystem;
   private String verbatimCoordinates;
   private String verbatimDepth;
@@ -113,17 +114,9 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String verbatimLatitude;
   private String verbatimLocality;
   private String verbatimLongitude;
+  private String verbatimSRS;
   private String waterBody;
   private String year;
-
-  private String footprintSRS;
-  private String georeferencedDate;
-  private String identificationVerificationStatus;
-  private String locationAccordingTo;
-  private String municipality;
-  private String occurrenceStatus;
-  private String samplingEffort;
-  private String verbatimSRS;
 
   public String getFootprintSRS() {
     return footprintSRS;
@@ -281,10 +274,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return establishmentMeans;
   }
 
-  public String getEventAttributes() {
-    return eventAttributes;
-  }
-
   public String getEventDate() {
     return eventDate;
   }
@@ -360,10 +349,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return id;
   }
 
-  public String getIdentificationAttributes() {
-    return identificationAttributes;
-  }
-
   public String getIdentificationID() {
     return identificationID;
   }
@@ -408,10 +393,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return locality;
   }
 
-  public String getLocationAttributes() {
-    return locationAttributes;
-  }
-
   public String getLocationID() {
     return locationID;
   }
@@ -446,14 +427,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getMonth() {
     return month;
-  }
-
-  public String getOccurrenceAttributes() {
-    return occurrenceAttributes;
-  }
-
-  public String getOccurrenceDetails() {
-    return occurrenceDetails;
   }
 
   public String getOccurrenceID() {
@@ -510,10 +483,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getTypeStatus() {
     return typeStatus;
-  }
-
-  public String getTypifiedName() {
-    return typifiedName;
   }
 
   public String getVerbatimCoordinates() {
@@ -643,10 +612,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.establishmentMeans = norm(establishmentMeans);
   }
 
-  public void setEventAttributes(String eventAttributes) {
-    this.eventAttributes = norm(eventAttributes);
-  }
-
   public void setEventDate(String eventDate) {
     this.eventDate = norm(eventDate);
   }
@@ -722,10 +687,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.id = id;
   }
 
-  public void setIdentificationAttributes(String identificationAttributes) {
-    this.identificationAttributes = norm(identificationAttributes);
-  }
-
   public void setIdentificationID(String identificationID) {
     this.identificationID = norm(identificationID);
   }
@@ -770,10 +731,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.locality = norm(locality);
   }
 
-  public void setLocationAttributes(String locationAttributes) {
-    this.locationAttributes = norm(locationAttributes);
-  }
-
   public void setLocationID(String locationID) {
     this.locationID = norm(locationID);
   }
@@ -808,14 +765,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setMonth(String month) {
     this.month = norm(month);
-  }
-
-  public void setOccurrenceAttributes(String occurrenceAttributes) {
-    this.occurrenceAttributes = norm(occurrenceAttributes);
-  }
-
-  public void setOccurrenceDetails(String occurrenceDetails) {
-    this.occurrenceDetails = norm(occurrenceDetails);
   }
 
   public void setOccurrenceID(String occurrenceID) {
@@ -872,10 +821,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setTypeStatus(String typeStatus) {
     this.typeStatus = norm(typeStatus);
-  }
-
-  public void setTypifiedName(String typifiedName) {
-    this.typifiedName = typifiedName;
   }
 
   public void setVerbatimCoordinates(String verbatimCoordinates) {

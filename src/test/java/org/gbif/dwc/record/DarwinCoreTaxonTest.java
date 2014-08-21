@@ -4,9 +4,12 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -74,8 +77,8 @@ public class DarwinCoreTaxonTest {
     assertEquals("Poa annua alpina L.", dwc.getFullScientificName());
     assertEquals(dwc.getFullScientificName(), dwc.getLowestScientificName());
 
-    dwc.setInfraspecificMarker("var.");
-    assertEquals("Poa annua var. alpina L.", dwc.getFullScientificName());
+    dwc.setVerbatimTaxonRank("var.");
+    assertEquals("Poa annua alpina L.", dwc.getFullScientificName());
     assertEquals(dwc.getFullScientificName(), dwc.getLowestScientificName());
 
     // test not identical authorships
@@ -86,10 +89,10 @@ public class DarwinCoreTaxonTest {
     dwc.setScientificNameAuthorship("Saether 2000");
     assertEquals(dwc.getScientificName(), dwc.getFullScientificName());
 
-    // test genericName
+    // test genus
     dwc = new DarwinCoreTaxon();
     dwc.setScientificName("Aagaardia protensa Saether, 2000");
-    dwc.setGenericName("Aagaardia");
+    dwc.setGenus("Aagaardia");
     dwc.setSpecificEpithet("protensa");
     dwc.setScientificNameAuthorship("Saether 2000");
     assertEquals(dwc.getScientificName(), dwc.getFullScientificName());
@@ -144,7 +147,7 @@ public class DarwinCoreTaxonTest {
     dwc.setTaxonRank(null);
     assertEquals("infraspecies", dwc.getTaxonRankInterpreted());
 
-    dwc.setInfraspecificMarker("var.");
+    dwc.setVerbatimTaxonRank("var.");
     assertEquals("var.", dwc.getTaxonRankInterpreted());
 
     dwc.setSpecificEpithet(null);
@@ -181,6 +184,24 @@ public class DarwinCoreTaxonTest {
         }
         //assertEquals(val, dwc.getProperty(t));
       }
+    }
+  }
+
+  @Test
+  public void testClear() throws Exception {
+    DarwinCoreTaxon dwc = new DarwinCoreTaxon();
+    List<String> properties = Lists.newArrayList(BeanUtils.describe(dwc).keySet());
+    properties.remove("class");
+    for (String prop : properties) {
+      BeanUtils.setProperty(dwc, prop, "something");
+    }
+    for (String prop : properties) {
+      assertEquals(prop + " not something", "something", BeanUtils.getProperty(dwc, prop));
+    }
+
+    dwc.clear();
+    for (String prop : properties) {
+      assertNull(prop + " not null", BeanUtils.getProperty(dwc, prop));
     }
   }
 
