@@ -3,6 +3,7 @@ package org.gbif.dwc.text;
 import com.google.common.base.Strings;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -14,6 +15,7 @@ import org.gbif.file.DownloadUtil;
 import org.gbif.metadata.handler.BasicMetadataSaxHandler;
 import org.gbif.utils.file.BomSafeInputStreamWrapper;
 import org.gbif.utils.file.CompressionUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -21,10 +23,14 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.commons.io.FileUtils;
+
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ArchiveFactory {
@@ -271,7 +277,21 @@ public class ArchiveFactory {
                 mf = unzippedFolderLocation;
             }
         } else {
-            mf = new File(unzippedFolderLocation, "meta.xml");
+          
+          // HACK: http://dev.gbif.org/issues/browse/POR-2396
+          // Accommodate archives coming from legacy IPTs which put a "\" before each filename
+          Iterator<File> iter = FileUtils.iterateFiles(unzippedFolderLocation, new String[]{"xml", "txt"}, false);
+          while (iter.hasNext()) {
+            File f = iter.next();
+            if (f.getName().startsWith("\\")) {
+              String orig = f.getName();
+              String replacement = f.getName().replaceFirst("\\\\", "");
+              LOG.info("Renaming file from {} to {}", orig, replacement);
+              f.renameTo(new File(unzippedFolderLocation, replacement));
+            }
+          }
+          
+          mf = new File(unzippedFolderLocation, "meta.xml");
         }
         // read metadata
         if (mf != null && mf.exists()) {
