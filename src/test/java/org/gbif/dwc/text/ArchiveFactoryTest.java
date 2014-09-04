@@ -216,7 +216,7 @@ public class ArchiveFactoryTest {
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("MOBOTDarwinCore.csv"));
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
-    assertFalse(arch.getCore().hasTerm(DwcTerm.occurrenceID));
+    assertTrue(arch.getCore().hasTerm(DwcTerm.occurrenceID));
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertEquals("UTF-8", arch.getCore().getEncoding());
 
@@ -272,10 +272,12 @@ public class ArchiveFactoryTest {
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
+    assertTrue(arch.getCore().hasTerm(DwcTerm.taxonID));
     assertEquals(0, arch.getExtensions().size());
     dwci = arch.iterator();
     star = dwci.next();
     assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));
+    assertEquals("1559060", star.core().value(DwcTerm.taxonID));
     assertEquals("DarwinCore.txt", arch.getCore().getLocation());
   }
 
@@ -315,7 +317,7 @@ public class ArchiveFactoryTest {
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("quoted_headers_MOBOTDarwinCore.csv"));
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
-    assertFalse(arch.getCore().hasTerm(DwcTerm.occurrenceID));
+    assertTrue(arch.getCore().hasTerm(DwcTerm.occurrenceID));
     assertTrue(arch.getCore().hasTerm(DwcTerm.catalogNumber));
     assertTrue(arch.getCore().hasTerm(DwcTerm.institutionCode));
     assertTrue(arch.getCore().hasTerm(DwcTerm.basisOfRecord));
@@ -434,4 +436,5 @@ public class ArchiveFactoryTest {
       fail("Extensions with no core IDs should be ignored");
     }
   }
+
 }

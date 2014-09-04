@@ -381,9 +381,8 @@ public class ArchiveFactory {
                     if (dwcFile.getId() == null &&
                         (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt.equals(DcTerm.identifier))) {
                         dwcFile.setId(field);
-                    } else {
-                        dwcFile.addField(field);
                     }
+                    dwcFile.addField(field);
                 } catch (IllegalArgumentException e) {
                     LOG.warn("Illegal term name >>{}<< found in header, ignore column {}", head, index);
                 }
