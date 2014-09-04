@@ -389,73 +389,72 @@
 <span class="sourceLineNo">381</span>                    if (dwcFile.getId() == null &amp;&amp;<a name="line.381"></a>
 <span class="sourceLineNo">382</span>                        (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt.equals(DcTerm.identifier))) {<a name="line.382"></a>
 <span class="sourceLineNo">383</span>                        dwcFile.setId(field);<a name="line.383"></a>
-<span class="sourceLineNo">384</span>                    } else {<a name="line.384"></a>
-<span class="sourceLineNo">385</span>                        dwcFile.addField(field);<a name="line.385"></a>
-<span class="sourceLineNo">386</span>                    }<a name="line.386"></a>
-<span class="sourceLineNo">387</span>                } catch (IllegalArgumentException e) {<a name="line.387"></a>
-<span class="sourceLineNo">388</span>                    LOG.warn("Illegal term name &gt;&gt;{}&lt;&lt; found in header, ignore column {}", head, index);<a name="line.388"></a>
-<span class="sourceLineNo">389</span>                }<a name="line.389"></a>
-<span class="sourceLineNo">390</span>            }<a name="line.390"></a>
-<span class="sourceLineNo">391</span>            index++;<a name="line.391"></a>
-<span class="sourceLineNo">392</span>        }<a name="line.392"></a>
-<span class="sourceLineNo">393</span><a name="line.393"></a>
-<span class="sourceLineNo">394</span>        return dwcFile;<a name="line.394"></a>
-<span class="sourceLineNo">395</span>    }<a name="line.395"></a>
-<span class="sourceLineNo">396</span><a name="line.396"></a>
-<span class="sourceLineNo">397</span>    private static void readMetaDescriptor(Archive archive, InputStream metaDescriptor, boolean normaliseTerms)<a name="line.397"></a>
-<span class="sourceLineNo">398</span>        throws UnsupportedArchiveException {<a name="line.398"></a>
-<span class="sourceLineNo">399</span><a name="line.399"></a>
-<span class="sourceLineNo">400</span>        try {<a name="line.400"></a>
-<span class="sourceLineNo">401</span>            SAXParser p = SAX_FACTORY.newSAXParser();<a name="line.401"></a>
-<span class="sourceLineNo">402</span>            MetaHandler mh = new MetaHandler(archive);<a name="line.402"></a>
-<span class="sourceLineNo">403</span>            LOG.debug("Reading archive metadata file");<a name="line.403"></a>
-<span class="sourceLineNo">404</span>//    p.parse(metaDescriptor, mh);<a name="line.404"></a>
-<span class="sourceLineNo">405</span>            p.parse(new BomSafeInputStreamWrapper(metaDescriptor), mh);<a name="line.405"></a>
-<span class="sourceLineNo">406</span>        } catch (Exception e1) {<a name="line.406"></a>
-<span class="sourceLineNo">407</span>            LOG.warn("Exception caught", e1);<a name="line.407"></a>
-<span class="sourceLineNo">408</span>            throw new UnsupportedArchiveException(e1);<a name="line.408"></a>
-<span class="sourceLineNo">409</span>        }<a name="line.409"></a>
-<span class="sourceLineNo">410</span>    }<a name="line.410"></a>
-<span class="sourceLineNo">411</span><a name="line.411"></a>
-<span class="sourceLineNo">412</span>    private static void validateArchive(Archive archive) throws UnsupportedArchiveException {<a name="line.412"></a>
-<span class="sourceLineNo">413</span>        validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());<a name="line.413"></a>
-<span class="sourceLineNo">414</span>        for (ArchiveFile af : archive.getExtensions()) {<a name="line.414"></a>
-<span class="sourceLineNo">415</span>            validateExtensionFile(af);<a name="line.415"></a>
-<span class="sourceLineNo">416</span>        }<a name="line.416"></a>
-<span class="sourceLineNo">417</span>    }<a name="line.417"></a>
-<span class="sourceLineNo">418</span><a name="line.418"></a>
-<span class="sourceLineNo">419</span>    private static void validateCoreFile(ArchiveFile f, boolean hasExtensions) throws UnsupportedArchiveException {<a name="line.419"></a>
-<span class="sourceLineNo">420</span>        if (hasExtensions) {<a name="line.420"></a>
-<span class="sourceLineNo">421</span>            if (f.getId() == null) {<a name="line.421"></a>
-<span class="sourceLineNo">422</span>                LOG.warn(<a name="line.422"></a>
-<span class="sourceLineNo">423</span>                    "DwC-A core data file " + f.getTitle() + " is lacking an id column. No extensions allowed in this case");<a name="line.423"></a>
-<span class="sourceLineNo">424</span>            }<a name="line.424"></a>
-<span class="sourceLineNo">425</span>        }<a name="line.425"></a>
-<span class="sourceLineNo">426</span>        validateFile(f);<a name="line.426"></a>
-<span class="sourceLineNo">427</span>    }<a name="line.427"></a>
-<span class="sourceLineNo">428</span><a name="line.428"></a>
-<span class="sourceLineNo">429</span>    private static void validateExtensionFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.429"></a>
-<span class="sourceLineNo">430</span>        if (f.getId() == null) {<a name="line.430"></a>
-<span class="sourceLineNo">431</span>            throw new UnsupportedArchiveException(<a name="line.431"></a>
-<span class="sourceLineNo">432</span>                "DwC-A data file " + f.getTitle() + " requires an id or foreign key to the core id");<a name="line.432"></a>
-<span class="sourceLineNo">433</span>        }<a name="line.433"></a>
-<span class="sourceLineNo">434</span>        validateFile(f);<a name="line.434"></a>
-<span class="sourceLineNo">435</span>    }<a name="line.435"></a>
-<span class="sourceLineNo">436</span><a name="line.436"></a>
-<span class="sourceLineNo">437</span>    private static void validateFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.437"></a>
-<span class="sourceLineNo">438</span>        if (f == null) {<a name="line.438"></a>
-<span class="sourceLineNo">439</span>            throw new UnsupportedArchiveException("DwC-A data file is NULL");<a name="line.439"></a>
-<span class="sourceLineNo">440</span>        }<a name="line.440"></a>
-<span class="sourceLineNo">441</span>        if (f.getLocationFile() == null) {<a name="line.441"></a>
-<span class="sourceLineNo">442</span>            throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a location");<a name="line.442"></a>
-<span class="sourceLineNo">443</span>        }<a name="line.443"></a>
-<span class="sourceLineNo">444</span>        if (f.getEncoding() == null) {<a name="line.444"></a>
-<span class="sourceLineNo">445</span>            throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a character encoding");<a name="line.445"></a>
-<span class="sourceLineNo">446</span>        }<a name="line.446"></a>
-<span class="sourceLineNo">447</span><a name="line.447"></a>
-<span class="sourceLineNo">448</span>    }<a name="line.448"></a>
-<span class="sourceLineNo">449</span><a name="line.449"></a>
-<span class="sourceLineNo">450</span>}<a name="line.450"></a>
+<span class="sourceLineNo">384</span>                    }<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                    dwcFile.addField(field);<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                } catch (IllegalArgumentException e) {<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                    LOG.warn("Illegal term name &gt;&gt;{}&lt;&lt; found in header, ignore column {}", head, index);<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                }<a name="line.388"></a>
+<span class="sourceLineNo">389</span>            }<a name="line.389"></a>
+<span class="sourceLineNo">390</span>            index++;<a name="line.390"></a>
+<span class="sourceLineNo">391</span>        }<a name="line.391"></a>
+<span class="sourceLineNo">392</span><a name="line.392"></a>
+<span class="sourceLineNo">393</span>        return dwcFile;<a name="line.393"></a>
+<span class="sourceLineNo">394</span>    }<a name="line.394"></a>
+<span class="sourceLineNo">395</span><a name="line.395"></a>
+<span class="sourceLineNo">396</span>    private static void readMetaDescriptor(Archive archive, InputStream metaDescriptor, boolean normaliseTerms)<a name="line.396"></a>
+<span class="sourceLineNo">397</span>        throws UnsupportedArchiveException {<a name="line.397"></a>
+<span class="sourceLineNo">398</span><a name="line.398"></a>
+<span class="sourceLineNo">399</span>        try {<a name="line.399"></a>
+<span class="sourceLineNo">400</span>            SAXParser p = SAX_FACTORY.newSAXParser();<a name="line.400"></a>
+<span class="sourceLineNo">401</span>            MetaHandler mh = new MetaHandler(archive);<a name="line.401"></a>
+<span class="sourceLineNo">402</span>            LOG.debug("Reading archive metadata file");<a name="line.402"></a>
+<span class="sourceLineNo">403</span>//    p.parse(metaDescriptor, mh);<a name="line.403"></a>
+<span class="sourceLineNo">404</span>            p.parse(new BomSafeInputStreamWrapper(metaDescriptor), mh);<a name="line.404"></a>
+<span class="sourceLineNo">405</span>        } catch (Exception e1) {<a name="line.405"></a>
+<span class="sourceLineNo">406</span>            LOG.warn("Exception caught", e1);<a name="line.406"></a>
+<span class="sourceLineNo">407</span>            throw new UnsupportedArchiveException(e1);<a name="line.407"></a>
+<span class="sourceLineNo">408</span>        }<a name="line.408"></a>
+<span class="sourceLineNo">409</span>    }<a name="line.409"></a>
+<span class="sourceLineNo">410</span><a name="line.410"></a>
+<span class="sourceLineNo">411</span>    private static void validateArchive(Archive archive) throws UnsupportedArchiveException {<a name="line.411"></a>
+<span class="sourceLineNo">412</span>        validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());<a name="line.412"></a>
+<span class="sourceLineNo">413</span>        for (ArchiveFile af : archive.getExtensions()) {<a name="line.413"></a>
+<span class="sourceLineNo">414</span>            validateExtensionFile(af);<a name="line.414"></a>
+<span class="sourceLineNo">415</span>        }<a name="line.415"></a>
+<span class="sourceLineNo">416</span>    }<a name="line.416"></a>
+<span class="sourceLineNo">417</span><a name="line.417"></a>
+<span class="sourceLineNo">418</span>    private static void validateCoreFile(ArchiveFile f, boolean hasExtensions) throws UnsupportedArchiveException {<a name="line.418"></a>
+<span class="sourceLineNo">419</span>        if (hasExtensions) {<a name="line.419"></a>
+<span class="sourceLineNo">420</span>            if (f.getId() == null) {<a name="line.420"></a>
+<span class="sourceLineNo">421</span>                LOG.warn(<a name="line.421"></a>
+<span class="sourceLineNo">422</span>                    "DwC-A core data file " + f.getTitle() + " is lacking an id column. No extensions allowed in this case");<a name="line.422"></a>
+<span class="sourceLineNo">423</span>            }<a name="line.423"></a>
+<span class="sourceLineNo">424</span>        }<a name="line.424"></a>
+<span class="sourceLineNo">425</span>        validateFile(f);<a name="line.425"></a>
+<span class="sourceLineNo">426</span>    }<a name="line.426"></a>
+<span class="sourceLineNo">427</span><a name="line.427"></a>
+<span class="sourceLineNo">428</span>    private static void validateExtensionFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.428"></a>
+<span class="sourceLineNo">429</span>        if (f.getId() == null) {<a name="line.429"></a>
+<span class="sourceLineNo">430</span>            throw new UnsupportedArchiveException(<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                "DwC-A data file " + f.getTitle() + " requires an id or foreign key to the core id");<a name="line.431"></a>
+<span class="sourceLineNo">432</span>        }<a name="line.432"></a>
+<span class="sourceLineNo">433</span>        validateFile(f);<a name="line.433"></a>
+<span class="sourceLineNo">434</span>    }<a name="line.434"></a>
+<span class="sourceLineNo">435</span><a name="line.435"></a>
+<span class="sourceLineNo">436</span>    private static void validateFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.436"></a>
+<span class="sourceLineNo">437</span>        if (f == null) {<a name="line.437"></a>
+<span class="sourceLineNo">438</span>            throw new UnsupportedArchiveException("DwC-A data file is NULL");<a name="line.438"></a>
+<span class="sourceLineNo">439</span>        }<a name="line.439"></a>
+<span class="sourceLineNo">440</span>        if (f.getLocationFile() == null) {<a name="line.440"></a>
+<span class="sourceLineNo">441</span>            throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a location");<a name="line.441"></a>
+<span class="sourceLineNo">442</span>        }<a name="line.442"></a>
+<span class="sourceLineNo">443</span>        if (f.getEncoding() == null) {<a name="line.443"></a>
+<span class="sourceLineNo">444</span>            throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a character encoding");<a name="line.444"></a>
+<span class="sourceLineNo">445</span>        }<a name="line.445"></a>
+<span class="sourceLineNo">446</span><a name="line.446"></a>
+<span class="sourceLineNo">447</span>    }<a name="line.447"></a>
+<span class="sourceLineNo">448</span><a name="line.448"></a>
+<span class="sourceLineNo">449</span>}<a name="line.449"></a>
 
 
 
