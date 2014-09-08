@@ -38,6 +38,14 @@ public class StarRecord implements Iterable<Record> {
     return core;
   }
 
+  public boolean hasExtension(Term rowType) {
+    return hasExtension(rowType.qualifiedName());
+  }
+
+  public boolean hasExtension(String rowType) {
+    return extensions.containsKey(rowType);
+  }
+
   /**
    * Retrieves all extension records of a specific extension.
    * If the requested extension is not mapped null will be returned.
