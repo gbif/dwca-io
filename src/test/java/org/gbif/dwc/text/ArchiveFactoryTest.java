@@ -4,17 +4,21 @@ import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.file.CSVReader;
+import org.gbif.file.CSVReaderFactory;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -159,6 +163,65 @@ public class ArchiveFactoryTest {
     assertTrue(found);
   }
 
+  /**
+   * The pensoft archive http://pensoft.net/dwc/bdj/checklist_980.zip
+   * contains empty extension files which caused NPE in the dwca reader.
+   */
+  @Test
+  public void testExtensionNPE() throws UnsupportedArchiveException, IOException {
+    File zip = FileUtils.getClasspathFile("checklist_980.zip");
+    File tmpDir = File.createTempFile("dwca-reader-test", ".tmp").getParentFile();
+    CompressionUtil.decompressFile(tmpDir, zip);
+    // read archive from this tmp dir
+    Archive arch = ArchiveFactory.openArchive(tmpDir);
+    assertNotNull(arch.getCore().getId());
+    assertEquals(3, arch.getExtensions().size());
+
+    boolean found = false;
+    for (StarRecord rec : arch) {
+      if ("980-sp10".equals(rec.core().id())) {
+        found = true;
+      }
+    }
+    assertTrue(found);
+  }
+
+  /**
+   * Test extension sorting verifying that all core records do have the right number of extension records attached
+   * when using the star record iterator.
+   */
+  @Test
+  @Ignore("currently fails with only 661 records coming through instead of 740")
+  public void testStarIteratorExtRecords() throws Exception {
+    File zip = FileUtils.getClasspathFile("checklist_980.zip");
+    File tmpDir = File.createTempFile("dwca-reader-test", ".tmp").getParentFile();
+    CompressionUtil.decompressFile(tmpDir, zip);
+    // read archive from this tmp dir
+    Archive arch = ArchiveFactory.openArchive(tmpDir);
+    int counter = 0;
+    int occCounter = 0;
+    Set<String> ids = Sets.newHashSet();
+    for (StarRecord rec : arch) {
+      counter++;
+      ids.add(rec.core().id());
+      List<Record> occs = rec.extension(DwcTerm.Occurrence);
+      occCounter += occs.size();
+    }
+    assertEquals("Core taxon file has 356 records", 356, counter);
+    assertEquals("Core taxon file has 356 unique ids", 356, ids.size());
+
+    // read extension file on its own and extract core ids to be cross checked with core id set
+    CSVReader occReader = CSVReaderFactory.build(arch.getExtension(DwcTerm.Occurrence));
+    int occCounter2=0;
+    for (String[] rec : occReader) {
+      String id = rec[1];
+      occCounter2++;
+      assertTrue("Occurrence coreid " + id + " not existing", ids.contains(id));
+    }
+    assertEquals("Occurrence extension file has 740 records", 740, occCounter2);
+    assertEquals("Occurrence start extensions should be 740 records", 740, occCounter);
+  }
+
   @Test
   public void testOpenArchiveAsZip() throws UnsupportedArchiveException, IOException {
     // test zip with 1 extension file
@@ -236,7 +299,7 @@ public class ArchiveFactoryTest {
     assertNotNull(arch.getCore().getId());
     assertNotNull(arch.getCore().getId());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
-    assertEquals(1, arch.getExtensions().size());
+    assertEquals(2, arch.getExtensions().size());
     assertEquals("DarwinCore.txt", arch.getCore().getLocation());
 
     // test meta.xml alone
@@ -246,7 +309,7 @@ public class ArchiveFactoryTest {
     assertNull(arch.getCore().getFieldsEnclosedBy());
     assertEquals("\t", arch.getCore().getFieldsTerminatedBy());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
-    assertEquals(1, arch.getExtensions().size());
+    assertEquals(2, arch.getExtensions().size());
     assertEquals("DarwinCore.txt", arch.getCore().getLocation());
 
     // test meta.xml with xml entities as attribute values

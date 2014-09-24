@@ -4,8 +4,8 @@ import org.gbif.dwc.record.DarwinCoreRecord;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.RecordImpl;
 import org.gbif.dwc.record.RecordIterator;
-import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.Term;
 import org.gbif.file.CSVReader;
 import org.gbif.metadata.BasicMetadata;
 import org.gbif.metadata.MetadataException;
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.google.common.collect.PeekingIterator;
@@ -206,6 +207,11 @@ public class Archive implements Iterable<StarRecord> {
           String rowType = ext.getKey();
           while (it.hasNext()) {
             String extId = it.peek().id();
+            // make sure we have an extid
+            if (Strings.isNullOrEmpty(extId)) {
+              it.next();
+              continue;
+            }
             if (id.equals(extId)) {
               // extension row belongs to this core record
               rec.addRecord(rowType, it.next());

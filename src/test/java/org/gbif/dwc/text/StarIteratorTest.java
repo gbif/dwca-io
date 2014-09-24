@@ -19,7 +19,7 @@ public class StarIteratorTest {
     // test proper archive
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
     assertNotNull(arch.getCore());
-    assertEquals(1, arch.getExtensions().size());
+    assertEquals(2, arch.getExtensions().size());
     int found = 0;
     int extensionRecords = 0;
     for (StarRecord rec : arch) {

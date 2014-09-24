@@ -2,11 +2,16 @@ package org.gbif.dwc.text;
 
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.utils.file.FileUtils;
-import org.junit.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class MetaDescriptorWriterTest {
 
@@ -19,7 +24,7 @@ public class MetaDescriptorWriterTest {
             assertNotNull(arch.getCore());
             assertTrue(arch.getCore().getId().getIndex() == 0);
             assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
-            assertEquals(1, arch.getExtensions().size());
+            assertEquals(2, arch.getExtensions().size());
             assertEquals("\t", arch.getCore().getFieldsTerminatedBy());
             assertNull(arch.getCore().getField(DwcTerm.scientificName).getDelimitedBy());
             assertEquals(";", arch.getCore().getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
@@ -46,7 +51,7 @@ public class MetaDescriptorWriterTest {
             }
 
             // extensions props
-            assertEquals(1, arch2.getExtensions().size());
+            assertEquals(2, arch2.getExtensions().size());
             ArchiveFile ext = arch2.getExtensions().iterator().next();
             assertEquals("VernacularName.txt", ext.getLocation());
             assertEquals(2, ext.getFields().size());

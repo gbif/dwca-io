@@ -28,4 +28,14 @@
     <field index="1" term="http://rs.tdwg.org/dwc/terms/vernacularName"/>
     <field index="2" term="http://purl.org/dc/terms/language"/>
   </extension>
+
+  <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy='' ignoreHeaderLines="1"
+             rowType="http://rs.gbif.org/ipt/terms/1.0/Multimedia">
+    <files>
+      <location>media.txt</location>
+    </files>
+    <coreid index="0"/>
+    <field index="1" term="http://purl.org/dc/terms/identifier"/>
+    <field default="StillImage" term="http://purl.org/dc/terms/type"/>
+  </extension>
 </archive>

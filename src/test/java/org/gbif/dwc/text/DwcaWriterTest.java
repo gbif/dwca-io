@@ -151,7 +151,7 @@ public class DwcaWriterTest {
 
       // read taxon archive
       Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
-      assertEquals(1, arch.getExtensions().size());
+      assertEquals(2, arch.getExtensions().size());
       int coreRecords = 0;
       int allRecords = 0;
 
