@@ -164,7 +164,7 @@
 <span class="sourceLineNo">156</span>      if ("113775".equals(rec.id())) {<a name="line.156"></a>
 <span class="sourceLineNo">157</span>        found = true;<a name="line.157"></a>
 <span class="sourceLineNo">158</span>        assertEquals(<a name="line.158"></a>
-<span class="sourceLineNo">159</span>          "Ehrenberg, 1832, in Hemprich and Ehrenberg, Symbol? Phisic? Mammalia, 2: ftn. 1 (last page of fascicle headed \"Herpestes leucurus H. E.\").",<a name="line.159"></a>
+<span class="sourceLineNo">159</span>          "Ehrenberg, 1832, in Hemprich and Ehrenberg, Symbolæ Phisicæ Mammalia, 2: ftn. 1 (last page of fascicle headed \"Herpestes leucurus H. E.\").",<a name="line.159"></a>
 <span class="sourceLineNo">160</span>          rec.value(DwcTerm.originalNameUsageID));<a name="line.160"></a>
 <span class="sourceLineNo">161</span>      }<a name="line.161"></a>
 <span class="sourceLineNo">162</span>    }<a name="line.162"></a>
@@ -440,7 +440,7 @@
 <span class="sourceLineNo">432</span>    for (Record rec : arch.getCore()) {<a name="line.432"></a>
 <span class="sourceLineNo">433</span>      count++;<a name="line.433"></a>
 <span class="sourceLineNo">434</span>      if (count == 1) {<a name="line.434"></a>
-<span class="sourceLineNo">435</span>        //1 Borza:Corophiidae:1 Borza Borza:Corophiidae Corophiidae 1   Animalia  Arthropoda  Malacostraca  Amphipoda Corophiidae Chelicorophium    sowinskyi   Chelicorophium sowinskyi  "(Martynov, 1924)"  species   P?ter Borza   Europe  Danube  Hungary     47.788111 18.960944           Preserved Specimen  1917-07-17  1917  7 17      Unger E<a name="line.435"></a>
+<span class="sourceLineNo">435</span>        //1 Borza:Corophiidae:1 Borza Borza:Corophiidae Corophiidae 1   Animalia  Arthropoda  Malacostraca  Amphipoda Corophiidae Chelicorophium    sowinskyi   Chelicorophium sowinskyi  "(Martynov, 1924)"  species   Péter Borza   Europe  Danube  Hungary     47.788111 18.960944           Preserved Specimen  1917-07-17  1917  7 17      Unger E<a name="line.435"></a>
 <span class="sourceLineNo">436</span>        assertEquals("1", rec.id());<a name="line.436"></a>
 <span class="sourceLineNo">437</span>        assertEquals("Chelicorophium sowinskyi", rec.value(DwcTerm.scientificName));<a name="line.437"></a>
 <span class="sourceLineNo">438</span>        // we do detect optional quotation in tab files...<a name="line.438"></a>
@@ -472,7 +472,7 @@
 <span class="sourceLineNo">464</span>    for (Record rec : arch.getCore()) {<a name="line.464"></a>
 <span class="sourceLineNo">465</span>      count++;<a name="line.465"></a>
 <span class="sourceLineNo">466</span>      if (count == 1) {<a name="line.466"></a>
-<span class="sourceLineNo">467</span>        //1 Borza:Corophiidae:1 Borza Borza:Corophiidae Corophiidae 1   Animalia  Arthropoda  Malacostraca  Amphipoda Corophiidae Chelicorophium    sowinskyi   Chelicorophium sowinskyi  "(Martynov, 1924)"  species   P?ter Borza   Europe  Danube  Hungary     47.788111 18.960944           Preserved Specimen  1917-07-17  1917  7 17      Unger E<a name="line.467"></a>
+<span class="sourceLineNo">467</span>        //1 Borza:Corophiidae:1 Borza Borza:Corophiidae Corophiidae 1   Animalia  Arthropoda  Malacostraca  Amphipoda Corophiidae Chelicorophium    sowinskyi   Chelicorophium sowinskyi  "(Martynov, 1924)"  species   Péter Borza   Europe  Danube  Hungary     47.788111 18.960944           Preserved Specimen  1917-07-17  1917  7 17      Unger E<a name="line.467"></a>
 <span class="sourceLineNo">468</span>        assertEquals("1", rec.id());<a name="line.468"></a>
 <span class="sourceLineNo">469</span>        assertEquals("gadus morhua", rec.value(DwcTerm.scientificName));<a name="line.469"></a>
 <span class="sourceLineNo">470</span>        assertEquals("gadidae", rec.value(DwcTerm.family));<a name="line.470"></a>
