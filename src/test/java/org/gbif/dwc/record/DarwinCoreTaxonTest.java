@@ -164,9 +164,9 @@ public class DarwinCoreTaxonTest {
     dwc.setPhylum("Magnoliophyta");
     dwc.setFamily("Poaceae");
     dwc.setGenus("Festuca");
-    assertEquals("Plantae;Magnoliophyta;Poaceae;Festuca", dwc.buildHigherClassification(null));
-    assertEquals("Plantae;Magnoliophyta;Poaceae", dwc.buildHigherClassification('f'));
-    assertEquals("Plantae;Magnoliophyta", dwc.buildHigherClassification('o'));
+    assertEquals("Plantae | Magnoliophyta | Poaceae | Festuca", dwc.buildHigherClassification(null));
+    assertEquals("Plantae | Magnoliophyta | Poaceae", dwc.buildHigherClassification('f'));
+    assertEquals("Plantae | Magnoliophyta", dwc.buildHigherClassification('o'));
   }
 
   @Test
