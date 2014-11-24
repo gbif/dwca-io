@@ -1,7 +1,5 @@
 package org.gbif.dwc.record;
 
-import org.gbif.dwc.terms.DwcTerm;
-
 /**
  * A bean representing a simple Darwin Core record with a property for each dwc term apart from terms of group
  * MeasurementOrFact or ResourceRelationship.
@@ -121,18 +119,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String verbatimSRS;
   private String waterBody;
   private String year;
-
-  /**
-   * Resets all properties to NULL.
-   */
-  @Override
-  public void clear() {
-    super.clear();
-    id = null;
-    for (DwcTerm t : DwcTerm.values()) {
-      setProperty(t, null);
-    }
-  }
 
   /**
    * @return the identifier for this record

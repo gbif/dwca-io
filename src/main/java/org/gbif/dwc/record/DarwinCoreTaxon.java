@@ -1,7 +1,6 @@
 package org.gbif.dwc.record;
 
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwc.terms.DwcTerm;
 
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
@@ -20,7 +19,7 @@ public class DarwinCoreTaxon {
   private String modified;
   private String language;
   private String license;
-  private String rightsholder;
+  private String rightsHolder;
   private String accessRights;
   private String bibliographicCitation;
   private String references;
@@ -120,27 +119,10 @@ public class DarwinCoreTaxon {
       }
     }
 
-    if (buf.length() > 1) {
-      buf.deleteCharAt(buf.length() - 1);
+    if (buf.length() > CLASSIFICATION_DELIMITER.length()) {
+      buf.delete(buf.length() - CLASSIFICATION_DELIMITER.length(), buf.length());
     }
     return buf.toString();
-  }
-
-  public void clear() {
-    type = null;
-    modified = null;
-    language = null;
-    license = null;
-    rightsholder = null;
-    accessRights = null;
-    bibliographicCitation = null;
-    references = null;
-    for (DwcTerm t : DwcTerm.TAXONOMIC_TERMS) {
-      setProperty(t, null);
-    }
-    for (DwcTerm t : DwcTerm.listByGroup(DwcTerm.GROUP_RECORD)) {
-      setProperty(t, null);
-    }
   }
 
   public String getFullScientificName() {
@@ -454,8 +436,8 @@ public class DarwinCoreTaxon {
     return references;
   }
 
-  public String getRightsholder() {
-    return rightsholder;
+  public String getRightsHolder() {
+    return rightsHolder;
   }
 
   public String getScientificName() {
@@ -662,8 +644,8 @@ public class DarwinCoreTaxon {
     this.references = norm(references);
   }
 
-  public void setRightsholder(String rightsholder) {
-    this.rightsholder = norm(rightsholder);
+  public void setRightsHolder(String rightsHolder) {
+    this.rightsHolder = norm(rightsHolder);
   }
 
   public void setScientificName(String scientificName) {

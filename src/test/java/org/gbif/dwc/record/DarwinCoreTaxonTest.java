@@ -4,12 +4,9 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -179,29 +176,11 @@ public class DarwinCoreTaxonTest {
         dwc.setProperty(t, val);
         try {
           dwc.getProperty(t);
+          assertEquals(val, dwc.getProperty(t));
         } catch (Exception e) {
           System.err.println(e.getMessage());
         }
-        //assertEquals(val, dwc.getProperty(t));
       }
-    }
-  }
-
-  @Test
-  public void testClear() throws Exception {
-    DarwinCoreTaxon dwc = new DarwinCoreTaxon();
-    List<String> properties = Lists.newArrayList(BeanUtils.describe(dwc).keySet());
-    properties.remove("class");
-    for (String prop : properties) {
-      BeanUtils.setProperty(dwc, prop, "something");
-    }
-    for (String prop : properties) {
-      assertEquals(prop + " not something", "something", BeanUtils.getProperty(dwc, prop));
-    }
-
-    dwc.clear();
-    for (String prop : properties) {
-      assertNull(prop + " not null", BeanUtils.getProperty(dwc, prop));
     }
   }
 

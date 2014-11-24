@@ -16,14 +16,15 @@
 
 package org.gbif.dwc.record;
 
-import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.text.ArchiveField;
 
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,22 +33,79 @@ import static org.junit.Assert.assertNull;
 
 public class RecordImplTest {
 
+
+  private String setRows(String val, RecordImpl ... recs) {
+    for (RecordImpl r : recs) {
+      r.setRow(new String[]{val});
+    }
+    return val;
+  }
+
+  /**
+   * Test record implementations value method and make sure literal nulls are replaced if requested.
+   */
   @Test
   public void testReplaceNull() {
-    RecordImpl r = new RecordImpl(null, (Map<Term, ArchiveField>) null, null, true);
-    assertNull(r.replaceNull(null));
-    assertNull(r.replaceNull(""));
-    assertNull(r.replaceNull(" "));
-    assertNull(r.replaceNull("    "));
-    assertNull(r.replaceNull("null"));
-    assertNull(r.replaceNull("NULL"));
-    assertNull(r.replaceNull("\\N"));
-    assertNull(r.replaceNull(" Null  "));
-    assertEquals("n", r.replaceNull("n"));
-    assertEquals("n ", r.replaceNull("n "));
-    assertEquals(" - ", r.replaceNull(" - "));
-    assertEquals("nulle", r.replaceNull("nulle"));
-    assertEquals("n ull", r.replaceNull("n ull"));
+    final Term t = DwcTerm.scientificName;
+    ArchiveField af = new ArchiveField();
+    af.setTerm(t);
+    af.setIndex(0);
+    af.setType(ArchiveField.DataType.string);
+    List<ArchiveField> fields = Lists.newArrayList(af);
+    final RecordImpl r = new RecordImpl(null, fields, null, true);
+    final RecordImpl r2 = new RecordImpl(null, fields, null, false);
+
+    String val = setRows(null, r, r2);
+    assertNull(r.value(t));
+    assertNull(r2.value(t));
+
+    val = setRows("", r, r2);
+    assertNull(r.value(t));
+    assertNull(r2.value(t));
+
+    val = setRows(" ", r, r2);
+    assertNull(r.value(t));
+    assertNull(r2.value(t));
+
+    val = setRows("    ", r, r2);
+    assertNull(r.value(t));
+    assertNull(r2.value(t));
+
+    val = setRows("null", r, r2);
+    assertNull(r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows("NULL", r, r2);
+    assertNull(r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows("\\N", r, r2);
+    assertNull(r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows(" Null  ", r, r2);
+    assertNull(r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows("n", r, r2);
+    assertEquals(val, r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows("n ", r, r2);
+    assertEquals(val, r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows(" - ", r, r2);
+    assertEquals(val, r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows("nulle", r, r2);
+    assertEquals(val, r.value(t));
+    assertEquals(val, r2.value(t));
+
+    val = setRows("n ull", r, r2);
+    assertEquals(val, r.value(t));
+    assertEquals(val, r2.value(t));
   }
 
   @Test

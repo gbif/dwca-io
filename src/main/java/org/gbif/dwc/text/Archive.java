@@ -52,7 +52,6 @@ public class Archive implements Iterable<StarRecord> {
     private final RecordImpl record;
     private boolean hasNext = true;
     private final Set<DwcTerm> mappedTerms = new HashSet<DwcTerm>();
-    private final DarwinCoreRecord dwc = new DarwinCoreRecord();
 
     ArchiveDwcIterator(Archive archive) {
       record = new RecordImpl(archive.getCore(), true);
@@ -85,12 +84,7 @@ public class Archive implements Iterable<StarRecord> {
     }
 
     public DarwinCoreRecord next() {
-      dwc.setReferences(null);
-      dwc.setModified(null);
-      dwc.setAccessRights(null);
-      dwc.setRights(null);
-      dwc.setRightsholder(null);
-      dwc.setLanguage(null);
+      DarwinCoreRecord dwc = new DarwinCoreRecord();
       lineCount++;
       try {
         for (DwcTerm term : mappedTerms) {
