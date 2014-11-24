@@ -14,21 +14,43 @@ import org.slf4j.LoggerFactory;
 public class DarwinCoreTaxon {
 
   private static final Logger LOG = LoggerFactory.getLogger(DarwinCoreTaxon.class);
-  private static final String CLASSIFICATION_DELIMITER = ";";
+  private static final String CLASSIFICATION_DELIMITER = " | ";
   private static final Pattern NORM_AUTHORS = Pattern.compile("[^a-z0-9]+");
-  private String basisOfRecord;
-  private String taxonID;
-  private String taxonConceptID;
-  private String datasetID;
-  private String datasetName;
-  private String references;
-  private String modified;
-  private String accessRights;
-  private String rights;
-  private String rightsholder;
-  private String language;
   private String type;
+  private String modified;
+  private String language;
+  private String license;
+  private String rightsholder;
+  private String accessRights;
   private String bibliographicCitation;
+  private String references;
+
+  private String institutionID;
+  private String collectionID;
+  private String datasetID;
+  private String institutionCode;
+  private String collectionCode;
+  private String datasetName;
+  private String ownerInstitutionCode;
+  private String basisOfRecord;
+  private String informationWithheld;
+  private String dataGeneralizations;
+  private String dynamicProperties;
+  private String taxonID;
+  private String scientificNameID;
+  private String acceptedNameUsageID;
+  private String parentNameUsageID;
+  private String originalNameUsageID;
+  private String nameAccordingToID;
+  private String namePublishedInID;
+  private String taxonConceptID;
+  private String scientificName;
+  private String acceptedNameUsage;
+  private String parentNameUsage;
+  private String originalNameUsage;
+  private String nameAccordingTo;
+  private String namePublishedIn;
+  private String namePublishedInYear;
   private String higherClassification;
   private String kingdom;
   private String phylum;
@@ -39,35 +61,14 @@ public class DarwinCoreTaxon {
   private String subgenus;
   private String specificEpithet;
   private String infraspecificEpithet;
-  private String scientificName;
-  private String scientificNameID;
-  private String vernacularName;
   private String taxonRank;
   private String verbatimTaxonRank;
   private String scientificNameAuthorship;
+  private String vernacularName;
   private String nomenclaturalCode;
-  private String namePublishedIn;
-  private String namePublishedInID;
   private String taxonomicStatus;
   private String nomenclaturalStatus;
-  private String nameAccordingTo;
-  private String nameAccordingToID;
-  private String parentNameUsageID;
-  private String parentNameUsage;
-  private String originalNameUsageID;
-  private String originalNameUsage;
-  private String acceptedNameUsageID;
-  private String acceptedNameUsage;
   private String taxonRemarks;
-  private String dynamicProperties;
-  private String namePublishedInYear;
-  private String collectionCode;
-  private String collectionID;
-  private String dataGeneralizations;
-  private String informationWithheld;
-  private String institutionCode;
-  private String institutionID;
-  private String ownerInstitutionCode;
 
   public DarwinCoreTaxon() {
   }
@@ -125,31 +126,15 @@ public class DarwinCoreTaxon {
     return buf.toString();
   }
 
-  public String getInstitutionID() {
-    return institutionID;
-  }
-
-  public void setInstitutionID(String institutionID) {
-    this.institutionID = institutionID;
-  }
-
-  public String getOwnerInstitutionCode() {
-    return ownerInstitutionCode;
-  }
-
-  public void setOwnerInstitutionCode(String ownerInstitutionCode) {
-    this.ownerInstitutionCode = ownerInstitutionCode;
-  }
-
   public void clear() {
-    references = null;
-    modified = null;
-    accessRights = null;
-    rights = null;
-    rightsholder = null;
-    language = null;
     type = null;
+    modified = null;
+    language = null;
+    license = null;
+    rightsholder = null;
+    accessRights = null;
     bibliographicCitation = null;
+    references = null;
     for (DwcTerm t : DwcTerm.TAXONOMIC_TERMS) {
       setProperty(t, null);
     }
@@ -158,39 +143,6 @@ public class DarwinCoreTaxon {
     }
   }
 
-  public String getAcceptedNameUsage() {
-    return acceptedNameUsage;
-  }
-
-  public String getAcceptedNameUsageID() {
-    return acceptedNameUsageID;
-  }
-
-  public String getAccessRights() {
-    return accessRights;
-  }
-
-  public String getClasss() {
-    return classs;
-  }
-
-  public String getDatasetID() {
-    return datasetID;
-  }
-
-  public String getFamily() {
-    return family;
-  }
-
-  /**
-   * The method tries to best assemble the most complete scientific name possible incl the name authorship.
-   * It first tries to use scientificName and scientificNameAuthorship if existing.
-   * Otherwise it uses the atomized name parts. Warning: this uses the genus property which might be wrong in case
-   * of synonym names, see https://code.google.com/p/darwincore/issues/detail?id=151
-   * Note also that the assembled name never includes a rank marker.
-   *
-   * @return the best guess of the full scientific name with authorship
-   */
   public String getFullScientificName() {
     if (scientificNameAuthorship != null && scientificName != null) {
       String normedSciName = NORM_AUTHORS.matcher(scientificName.toLowerCase()).replaceAll(" ");
@@ -220,26 +172,6 @@ public class DarwinCoreTaxon {
     return scientificName;
   }
 
-  public String getGenus() {
-    return genus;
-  }
-
-  public String getHigherClassification() {
-    return higherClassification;
-  }
-
-  public String getInfraspecificEpithet() {
-    return infraspecificEpithet;
-  }
-
-  public String getKingdom() {
-    return kingdom;
-  }
-
-  public String getLanguage() {
-    return language;
-  }
-
   public String getLowestScientificName() {
     String sciname = getFullScientificName();
     if (sciname == null) {
@@ -256,58 +188,6 @@ public class DarwinCoreTaxon {
       }
     }
     return sciname;
-  }
-
-  public String getModified() {
-    return modified;
-  }
-
-  public String getNameAccordingTo() {
-    return nameAccordingTo;
-  }
-
-  public String getNameAccordingToID() {
-    return nameAccordingToID;
-  }
-
-  public String getNamePublishedIn() {
-    return namePublishedIn;
-  }
-
-  public String getNamePublishedInID() {
-    return namePublishedInID;
-  }
-
-  public String getNomenclaturalCode() {
-    return nomenclaturalCode;
-  }
-
-  public String getNomenclaturalStatus() {
-    return nomenclaturalStatus;
-  }
-
-  public String getOrder() {
-    return order;
-  }
-
-  public String getOriginalNameUsage() {
-    return originalNameUsage;
-  }
-
-  public String getOriginalNameUsageID() {
-    return originalNameUsageID;
-  }
-
-  public String getParentNameUsage() {
-    return parentNameUsage;
-  }
-
-  public String getParentNameUsageID() {
-    return parentNameUsageID;
-  }
-
-  public String getPhylum() {
-    return phylum;
   }
 
   /**
@@ -334,108 +214,12 @@ public class DarwinCoreTaxon {
     }
   }
 
-  public String getBasisOfRecord() {
-    return basisOfRecord;
-  }
-
-  public void setBasisOfRecord(String basisOfRecord) {
-    this.basisOfRecord = norm(basisOfRecord);
-  }
-
-  public String getCollectionCode() {
-    return collectionCode;
-  }
-
-  public String getCollectionID() {
-    return collectionID;
-  }
-
-  public String getDataGeneralizations() {
-    return dataGeneralizations;
-  }
-
-  public String getInformationWithheld() {
-    return informationWithheld;
-  }
-
-  public String getInstitutionCode() {
-    return institutionCode;
-  }
-
-  public void setCollectionCode(String collectionCode) {
-    this.collectionCode = norm(collectionCode);
-  }
-
-  public void setCollectionID(String collectionID) {
-    this.collectionID = norm(collectionID);
-  }
-
-  public void setDataGeneralizations(String dataGeneralizations) {
-    this.dataGeneralizations = norm(dataGeneralizations);
-  }
-
-  public void setInformationWithheld(String informationWithheld) {
-    this.informationWithheld = norm(informationWithheld);
-  }
-
-  public void setInstitutionCode(String institutionCode) {
-    this.institutionCode = norm(institutionCode);
-  }
-
   private String getPropertyName(Term prop) {
     String propName = StringUtils.capitalize(prop.simpleName());
     if (propName.equalsIgnoreCase("Class")) {
       propName = "Classs";
     }
     return propName;
-  }
-
-  public String getRights() {
-    return rights;
-  }
-
-  public String getRightsholder() {
-    return rightsholder;
-  }
-
-  public String getScientificName() {
-    return scientificName;
-  }
-
-  public String getScientificNameAuthorship() {
-    return scientificNameAuthorship;
-  }
-
-  public String getScientificNameID() {
-    return scientificNameID;
-  }
-
-  public String getReferences() {
-    return references;
-  }
-
-  public String getSpecificEpithet() {
-    return specificEpithet;
-  }
-
-  public String getSubgenus() {
-    return subgenus;
-  }
-
-  public String getTaxonConceptID() {
-    return taxonConceptID;
-  }
-
-  public String getTaxonID() {
-    return taxonID;
-  }
-
-  public String getTaxonomicStatus() {
-    return taxonomicStatus;
-  }
-
-  public String getTaxonRank() {
-    return taxonRank;
   }
 
   public String getTaxonRankInterpreted() {
@@ -478,8 +262,244 @@ public class DarwinCoreTaxon {
     return null;
   }
 
+  /**
+   * The method tries to best assemble the most complete scientific name possible incl the name authorship.
+   * It first tries to use scientificName and scientificNameAuthorship if existing.
+   * Otherwise it uses the atomized name parts. Warning: this uses the genus property which might be wrong in case
+   * of synonym names, see https://code.google.com/p/darwincore/issues/detail?id=151
+   * Note also that the assembled name never includes a rank marker.
+   *
+   * @return the best guess of the full scientific name with authorship
+   */
+  protected String norm(String x) {
+    x = StringUtils.trimToNull(x);
+    if (x != null && (x.equalsIgnoreCase("\\N") || x.equalsIgnoreCase("NULL"))) {
+      x = null;
+    }
+    return x;
+  }
+
+  public boolean setProperty(Term prop, String value) {
+    if (prop == null) {
+      return false;
+    }
+    String setterName = null;
+    try {
+      setterName = String.format("set%s", getPropertyName(prop));
+      Method m = getClass().getMethod(setterName, String.class);
+      m.invoke(this, value);
+    } catch (Exception e) {
+      LOG.warn("Trying to access bad dwc property setter: " + setterName + " for property " + prop);
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this).append("taxonID", this.taxonID)
+      .append("scientificName", this.scientificName)
+      .toString();
+  }
+
+  public String getAcceptedNameUsage() {
+    return acceptedNameUsage;
+  }
+
+  public String getAcceptedNameUsageID() {
+    return acceptedNameUsageID;
+  }
+
+  public String getAccessRights() {
+    return accessRights;
+  }
+
+  public String getBasisOfRecord() {
+    return basisOfRecord;
+  }
+
+  public String getBibliographicCitation() {
+    return bibliographicCitation;
+  }
+
+  public String getClasss() {
+    return classs;
+  }
+
+  public String getCollectionCode() {
+    return collectionCode;
+  }
+
+  public String getCollectionID() {
+    return collectionID;
+  }
+
+  public String getDataGeneralizations() {
+    return dataGeneralizations;
+  }
+
+  public String getDatasetID() {
+    return datasetID;
+  }
+
+  public String getDatasetName() {
+    return datasetName;
+  }
+
+  public String getDynamicProperties() {
+    return dynamicProperties;
+  }
+
+  public String getFamily() {
+    return family;
+  }
+
+  public String getGenus() {
+    return genus;
+  }
+
+  public String getHigherClassification() {
+    return higherClassification;
+  }
+
+  public String getInformationWithheld() {
+    return informationWithheld;
+  }
+
+  public String getInfraspecificEpithet() {
+    return infraspecificEpithet;
+  }
+
+  public String getInstitutionCode() {
+    return institutionCode;
+  }
+
+  public String getInstitutionID() {
+    return institutionID;
+  }
+
+  public String getKingdom() {
+    return kingdom;
+  }
+
+  public String getLanguage() {
+    return language;
+  }
+
+  public String getLicense() {
+    return license;
+  }
+
+  public String getModified() {
+    return modified;
+  }
+
+  public String getNameAccordingTo() {
+    return nameAccordingTo;
+  }
+
+  public String getNameAccordingToID() {
+    return nameAccordingToID;
+  }
+
+  public String getNamePublishedIn() {
+    return namePublishedIn;
+  }
+
+  public String getNamePublishedInID() {
+    return namePublishedInID;
+  }
+
+  public String getNamePublishedInYear() {
+    return namePublishedInYear;
+  }
+
+  public String getNomenclaturalCode() {
+    return nomenclaturalCode;
+  }
+
+  public String getNomenclaturalStatus() {
+    return nomenclaturalStatus;
+  }
+
+  public String getOrder() {
+    return order;
+  }
+
+  public String getOriginalNameUsage() {
+    return originalNameUsage;
+  }
+
+  public String getOriginalNameUsageID() {
+    return originalNameUsageID;
+  }
+
+  public String getOwnerInstitutionCode() {
+    return ownerInstitutionCode;
+  }
+
+  public String getParentNameUsage() {
+    return parentNameUsage;
+  }
+
+  public String getParentNameUsageID() {
+    return parentNameUsageID;
+  }
+
+  public String getPhylum() {
+    return phylum;
+  }
+
+  public String getReferences() {
+    return references;
+  }
+
+  public String getRightsholder() {
+    return rightsholder;
+  }
+
+  public String getScientificName() {
+    return scientificName;
+  }
+
+  public String getScientificNameAuthorship() {
+    return scientificNameAuthorship;
+  }
+
+  public String getScientificNameID() {
+    return scientificNameID;
+  }
+
+  public String getSpecificEpithet() {
+    return specificEpithet;
+  }
+
+  public String getSubgenus() {
+    return subgenus;
+  }
+
+  public String getTaxonConceptID() {
+    return taxonConceptID;
+  }
+
+  public String getTaxonID() {
+    return taxonID;
+  }
+
+  public String getTaxonomicStatus() {
+    return taxonomicStatus;
+  }
+
+  public String getTaxonRank() {
+    return taxonRank;
+  }
+
   public String getTaxonRemarks() {
     return taxonRemarks;
+  }
+
+  public String getType() {
+    return type;
   }
 
   public String getVerbatimTaxonRank() {
@@ -488,14 +508,6 @@ public class DarwinCoreTaxon {
 
   public String getVernacularName() {
     return vernacularName;
-  }
-
-  protected String norm(String x) {
-    x = StringUtils.trimToNull(x);
-    if (x != null && (x.equalsIgnoreCase("\\N") || x.equalsIgnoreCase("NULL"))) {
-      x = null;
-    }
-    return x;
   }
 
   public void setAcceptedNameUsage(String acceptedNameUsage) {
@@ -510,12 +522,40 @@ public class DarwinCoreTaxon {
     this.accessRights = norm(accessRights);
   }
 
+  public void setBasisOfRecord(String basisOfRecord) {
+    this.basisOfRecord = norm(basisOfRecord);
+  }
+
+  public void setBibliographicCitation(String bibliographicCitation) {
+    this.bibliographicCitation = bibliographicCitation;
+  }
+
   public void setClasss(String classs) {
     this.classs = norm(classs);
   }
 
+  public void setCollectionCode(String collectionCode) {
+    this.collectionCode = norm(collectionCode);
+  }
+
+  public void setCollectionID(String collectionID) {
+    this.collectionID = norm(collectionID);
+  }
+
+  public void setDataGeneralizations(String dataGeneralizations) {
+    this.dataGeneralizations = norm(dataGeneralizations);
+  }
+
   public void setDatasetID(String datasetID) {
     this.datasetID = norm(datasetID);
+  }
+
+  public void setDatasetName(String datasetName) {
+    this.datasetName = datasetName;
+  }
+
+  public void setDynamicProperties(String dynamicProperties) {
+    this.dynamicProperties = dynamicProperties;
   }
 
   public void setFamily(String family) {
@@ -530,8 +570,20 @@ public class DarwinCoreTaxon {
     this.higherClassification = higherClassification;
   }
 
+  public void setInformationWithheld(String informationWithheld) {
+    this.informationWithheld = norm(informationWithheld);
+  }
+
   public void setInfraspecificEpithet(String infraspecificEpithet) {
     this.infraspecificEpithet = norm(infraspecificEpithet);
+  }
+
+  public void setInstitutionCode(String institutionCode) {
+    this.institutionCode = norm(institutionCode);
+  }
+
+  public void setInstitutionID(String institutionID) {
+    this.institutionID = institutionID;
   }
 
   public void setKingdom(String kingdom) {
@@ -540,6 +592,10 @@ public class DarwinCoreTaxon {
 
   public void setLanguage(String language) {
     this.language = norm(language);
+  }
+
+  public void setLicense(String license) {
+    this.license = norm(license);
   }
 
   public void setModified(String modified) {
@@ -562,6 +618,10 @@ public class DarwinCoreTaxon {
     this.namePublishedInID = namePublishedInID;
   }
 
+  public void setNamePublishedInYear(String namePublishedInYear) {
+    this.namePublishedInYear = namePublishedInYear;
+  }
+
   public void setNomenclaturalCode(String nomenclaturalCode) {
     this.nomenclaturalCode = norm(nomenclaturalCode);
   }
@@ -582,6 +642,10 @@ public class DarwinCoreTaxon {
     this.originalNameUsageID = originalNameUsageID;
   }
 
+  public void setOwnerInstitutionCode(String ownerInstitutionCode) {
+    this.ownerInstitutionCode = ownerInstitutionCode;
+  }
+
   public void setParentNameUsage(String parentNameUsage) {
     this.parentNameUsage = parentNameUsage;
   }
@@ -594,24 +658,8 @@ public class DarwinCoreTaxon {
     this.phylum = norm(phylum);
   }
 
-  public boolean setProperty(Term prop, String value) {
-    if (prop == null) {
-      return false;
-    }
-    String setterName = null;
-    try {
-      setterName = String.format("set%s", getPropertyName(prop));
-      Method m = getClass().getMethod(setterName, String.class);
-      m.invoke(this, value);
-    } catch (Exception e) {
-      LOG.warn("Trying to access bad dwc property setter: " + setterName + " for property " + prop);
-      return false;
-    }
-    return true;
-  }
-
-  public void setRights(String rights) {
-    this.rights = norm(rights);
+  public void setReferences(String references) {
+    this.references = norm(references);
   }
 
   public void setRightsholder(String rightsholder) {
@@ -628,10 +676,6 @@ public class DarwinCoreTaxon {
 
   public void setScientificNameID(String scientificNameID) {
     this.scientificNameID = scientificNameID;
-  }
-
-  public void setReferences(String references) {
-    this.references = norm(references);
   }
 
   public void setSpecificEpithet(String specificEpithet) {
@@ -662,6 +706,10 @@ public class DarwinCoreTaxon {
     this.taxonRemarks = norm(taxonRemarks);
   }
 
+  public void setType(String type) {
+    this.type = type;
+  }
+
   public void setVerbatimTaxonRank(String verbatimTaxonRank) {
     this.verbatimTaxonRank = verbatimTaxonRank;
   }
@@ -670,50 +718,4 @@ public class DarwinCoreTaxon {
     this.vernacularName = vernacularName;
   }
 
-  public String getDatasetName() {
-    return datasetName;
-  }
-
-  public void setDatasetName(String datasetName) {
-    this.datasetName = datasetName;
-  }
-
-  @Override
-  public String toString() {
-    return new ToStringBuilder(this).append("taxonID", this.taxonID)
-      .append("scientificName", this.scientificName)
-      .toString();
-  }
-
-  public String getDynamicProperties() {
-    return dynamicProperties;
-  }
-
-  public void setDynamicProperties(String dynamicProperties) {
-    this.dynamicProperties = dynamicProperties;
-  }
-
-  public String getNamePublishedInYear() {
-    return namePublishedInYear;
-  }
-
-  public void setNamePublishedInYear(String namePublishedInYear) {
-    this.namePublishedInYear = namePublishedInYear;
-  }
-
-  public String getBibliographicCitation() {
-    return bibliographicCitation;
-  }
-
-  public void setBibliographicCitation(String bibliographicCitation) {
-    this.bibliographicCitation = bibliographicCitation;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
 }

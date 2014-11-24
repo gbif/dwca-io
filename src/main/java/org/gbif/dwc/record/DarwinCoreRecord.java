@@ -11,6 +11,7 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String id;
   private String associatedMedia;
   private String associatedOccurrences;
+  private String associatedOrganisms;
   private String associatedReferences;
   private String associatedSequences;
   private String associatedTaxa;
@@ -47,12 +48,12 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String formation;
   private String geodeticDatum;
   private String geologicalContextID;
+  private String georeferencedBy;
   private String georeferencedDate;
   private String georeferenceProtocol;
   private String georeferenceRemarks;
   private String georeferenceSources;
   private String georeferenceVerificationStatus;
-  private String georeferencedBy;
   private String group;
   private String habitat;
   private String higherGeography;
@@ -65,7 +66,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String identificationVerificationStatus;
   private String identifiedBy;
   private String individualCount;
-  private String individualID;
   private String island;
   private String islandGroup;
   private String latestAgeOrHighestStage;
@@ -93,12 +93,16 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String occurrenceID;
   private String occurrenceRemarks;
   private String occurrenceStatus;
+  private String organismID;
+  private String organismName;
+  private String organismRemarks;
+  private String organismScope;
   private String otherCatalogNumbers;
   private String pointRadiusSpatialFit;
   private String preparations;
   private String previousIdentifications;
-  private String recordNumber;
   private String recordedBy;
+  private String recordNumber;
   private String reproductiveCondition;
   private String samplingEffort;
   private String samplingProtocol;
@@ -106,8 +110,8 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String startDayOfYear;
   private String stateProvince;
   private String typeStatus;
-  private String verbatimCoordinateSystem;
   private String verbatimCoordinates;
+  private String verbatimCoordinateSystem;
   private String verbatimDepth;
   private String verbatimElevation;
   private String verbatimEventDate;
@@ -117,70 +121,6 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String verbatimSRS;
   private String waterBody;
   private String year;
-
-  public String getFootprintSRS() {
-    return footprintSRS;
-  }
-
-  public void setFootprintSRS(String footprintSRS) {
-    this.footprintSRS = footprintSRS;
-  }
-
-  public String getGeoreferencedDate() {
-    return georeferencedDate;
-  }
-
-  public void setGeoreferencedDate(String georeferencedDate) {
-    this.georeferencedDate = georeferencedDate;
-  }
-
-  public String getIdentificationVerificationStatus() {
-    return identificationVerificationStatus;
-  }
-
-  public void setIdentificationVerificationStatus(String identificationVerificationStatus) {
-    this.identificationVerificationStatus = identificationVerificationStatus;
-  }
-
-  public String getLocationAccordingTo() {
-    return locationAccordingTo;
-  }
-
-  public void setLocationAccordingTo(String locationAccordingTo) {
-    this.locationAccordingTo = locationAccordingTo;
-  }
-
-  public String getMunicipality() {
-    return municipality;
-  }
-
-  public void setMunicipality(String municipality) {
-    this.municipality = municipality;
-  }
-
-  public String getOccurrenceStatus() {
-    return occurrenceStatus;
-  }
-
-  public void setOccurrenceStatus(String occurrenceStatus) {
-    this.occurrenceStatus = occurrenceStatus;
-  }
-
-  public String getSamplingEffort() {
-    return samplingEffort;
-  }
-
-  public void setSamplingEffort(String samplingEffort) {
-    this.samplingEffort = samplingEffort;
-  }
-
-  public String getVerbatimSRS() {
-    return verbatimSRS;
-  }
-
-  public void setVerbatimSRS(String verbatimSRS) {
-    this.verbatimSRS = verbatimSRS;
-  }
 
   /**
    * Resets all properties to NULL.
@@ -194,12 +134,37 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     }
   }
 
+  /**
+   * @return the identifier for this record
+   */
+  public String id() {
+    return id;
+  }
+
+  /**
+   * @return the identifier for this record
+   */
+  public String getId() {
+    return id;
+  }
+
+  /**
+   * sets the identifier for this record
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
+
   public String getAssociatedMedia() {
     return associatedMedia;
   }
 
   public String getAssociatedOccurrences() {
     return associatedOccurrences;
+  }
+
+  public String getAssociatedOrganisms() {
+    return associatedOrganisms;
   }
 
   public String getAssociatedReferences() {
@@ -212,6 +177,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getAssociatedTaxa() {
     return associatedTaxa;
+  }
+
+  public String getBed() {
+    return bed;
   }
 
   public String getBehavior() {
@@ -266,6 +235,26 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return disposition;
   }
 
+  public String getEarliestAgeOrLowestStage() {
+    return earliestAgeOrLowestStage;
+  }
+
+  public String getEarliestEonOrLowestEonothem() {
+    return earliestEonOrLowestEonothem;
+  }
+
+  public String getEarliestEpochOrLowestSeries() {
+    return earliestEpochOrLowestSeries;
+  }
+
+  public String getEarliestEraOrLowestErathem() {
+    return earliestEraOrLowestErathem;
+  }
+
+  public String getEarliestPeriodOrLowestSystem() {
+    return earliestPeriodOrLowestSystem;
+  }
+
   public String getEndDayOfYear() {
     return endDayOfYear;
   }
@@ -302,16 +291,32 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return footprintSpatialFit;
   }
 
+  public String getFootprintSRS() {
+    return footprintSRS;
+  }
+
   public String getFootprintWKT() {
     return footprintWKT;
+  }
+
+  public String getFormation() {
+    return formation;
   }
 
   public String getGeodeticDatum() {
     return geodeticDatum;
   }
 
+  public String getGeologicalContextID() {
+    return geologicalContextID;
+  }
+
   public String getGeoreferencedBy() {
     return georeferencedBy;
+  }
+
+  public String getGeoreferencedDate() {
+    return georeferencedDate;
   }
 
   public String getGeoreferenceProtocol() {
@@ -330,6 +335,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return georeferenceVerificationStatus;
   }
 
+  public String getGroup() {
+    return group;
+  }
+
   public String getHabitat() {
     return habitat;
   }
@@ -342,11 +351,8 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return higherGeographyID;
   }
 
-  /**
-   * @return the identifier for this record
-   */
-  public String getId() {
-    return id;
+  public String getHighestBiostratigraphicZone() {
+    return highestBiostratigraphicZone;
   }
 
   public String getIdentificationID() {
@@ -365,16 +371,16 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return identificationRemarks;
   }
 
+  public String getIdentificationVerificationStatus() {
+    return identificationVerificationStatus;
+  }
+
   public String getIdentifiedBy() {
     return identifiedBy;
   }
 
   public String getIndividualCount() {
     return individualCount;
-  }
-
-  public String getIndividualID() {
-    return individualID;
   }
 
   public String getIsland() {
@@ -385,12 +391,40 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return islandGroup;
   }
 
+  public String getLatestAgeOrHighestStage() {
+    return latestAgeOrHighestStage;
+  }
+
+  public String getLatestEonOrHighestEonothem() {
+    return latestEonOrHighestEonothem;
+  }
+
+  public String getLatestEpochOrHighestSeries() {
+    return latestEpochOrHighestSeries;
+  }
+
+  public String getLatestEraOrHighestErathem() {
+    return latestEraOrHighestErathem;
+  }
+
+  public String getLatestPeriodOrHighestSystem() {
+    return latestPeriodOrHighestSystem;
+  }
+
   public String getLifeStage() {
     return lifeStage;
   }
 
+  public String getLithostratigraphicTerms() {
+    return lithostratigraphicTerms;
+  }
+
   public String getLocality() {
     return locality;
+  }
+
+  public String getLocationAccordingTo() {
+    return locationAccordingTo;
   }
 
   public String getLocationID() {
@@ -399,6 +433,14 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getLocationRemarks() {
     return locationRemarks;
+  }
+
+  public String getLowestBiostratigraphicZone() {
+    return lowestBiostratigraphicZone;
+  }
+
+  public String getMaterialSampleID() {
+    return materialSampleID;
   }
 
   public String getMaximumDepthInMeters() {
@@ -411,6 +453,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getMaximumElevationInMeters() {
     return maximumElevationInMeters;
+  }
+
+  public String getMember() {
+    return member;
   }
 
   public String getMinimumDepthInMeters() {
@@ -429,12 +475,36 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return month;
   }
 
+  public String getMunicipality() {
+    return municipality;
+  }
+
   public String getOccurrenceID() {
     return occurrenceID;
   }
 
   public String getOccurrenceRemarks() {
     return occurrenceRemarks;
+  }
+
+  public String getOccurrenceStatus() {
+    return occurrenceStatus;
+  }
+
+  public String getOrganismID() {
+    return organismID;
+  }
+
+  public String getOrganismName() {
+    return organismName;
+  }
+
+  public String getOrganismRemarks() {
+    return organismRemarks;
+  }
+
+  public String getOrganismScope() {
+    return organismScope;
   }
 
   public String getOtherCatalogNumbers() {
@@ -463,6 +533,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getReproductiveCondition() {
     return reproductiveCondition;
+  }
+
+  public String getSamplingEffort() {
+    return samplingEffort;
   }
 
   public String getSamplingProtocol() {
@@ -517,6 +591,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return verbatimLongitude;
   }
 
+  public String getVerbatimSRS() {
+    return verbatimSRS;
+  }
+
   public String getWaterBody() {
     return waterBody;
   }
@@ -525,19 +603,16 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return year;
   }
 
-  /**
-   * @return the identifier for this record
-   */
-  public String id() {
-    return id;
-  }
-
   public void setAssociatedMedia(String associatedMedia) {
     this.associatedMedia = norm(associatedMedia);
   }
 
   public void setAssociatedOccurrences(String associatedOccurrences) {
     this.associatedOccurrences = norm(associatedOccurrences);
+  }
+
+  public void setAssociatedOrganisms(String associatedOrganisms) {
+    this.associatedOrganisms = norm(associatedOrganisms);
   }
 
   public void setAssociatedReferences(String associatedReferences) {
@@ -550,6 +625,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setAssociatedTaxa(String associatedTaxa) {
     this.associatedTaxa = norm(associatedTaxa);
+  }
+
+  public void setBed(String bed) {
+    this.bed = bed;
   }
 
   public void setBehavior(String behavior) {
@@ -604,6 +683,26 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.disposition = norm(disposition);
   }
 
+  public void setEarliestAgeOrLowestStage(String earliestAgeOrLowestStage) {
+    this.earliestAgeOrLowestStage = earliestAgeOrLowestStage;
+  }
+
+  public void setEarliestEonOrLowestEonothem(String earliestEonOrLowestEonothem) {
+    this.earliestEonOrLowestEonothem = earliestEonOrLowestEonothem;
+  }
+
+  public void setEarliestEpochOrLowestSeries(String earliestEpochOrLowestSeries) {
+    this.earliestEpochOrLowestSeries = earliestEpochOrLowestSeries;
+  }
+
+  public void setEarliestEraOrLowestErathem(String earliestEraOrLowestErathem) {
+    this.earliestEraOrLowestErathem = earliestEraOrLowestErathem;
+  }
+
+  public void setEarliestPeriodOrLowestSystem(String earliestPeriodOrLowestSystem) {
+    this.earliestPeriodOrLowestSystem = earliestPeriodOrLowestSystem;
+  }
+
   public void setEndDayOfYear(String endDayOfYear) {
     this.endDayOfYear = norm(endDayOfYear);
   }
@@ -640,16 +739,32 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.footprintSpatialFit = norm(footprintSpatialFit);
   }
 
+  public void setFootprintSRS(String footprintSRS) {
+    this.footprintSRS = footprintSRS;
+  }
+
   public void setFootprintWKT(String footprintWKT) {
     this.footprintWKT = norm(footprintWKT);
+  }
+
+  public void setFormation(String formation) {
+    this.formation = formation;
   }
 
   public void setGeodeticDatum(String geodeticDatum) {
     this.geodeticDatum = norm(geodeticDatum);
   }
 
+  public void setGeologicalContextID(String geologicalContextID) {
+    this.geologicalContextID = geologicalContextID;
+  }
+
   public void setGeoreferencedBy(String georeferencedBy) {
     this.georeferencedBy = norm(georeferencedBy);
+  }
+
+  public void setGeoreferencedDate(String georeferencedDate) {
+    this.georeferencedDate = georeferencedDate;
   }
 
   public void setGeoreferenceProtocol(String georeferenceProtocol) {
@@ -668,6 +783,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.georeferenceVerificationStatus = norm(georeferenceVerificationStatus);
   }
 
+  public void setGroup(String group) {
+    this.group = group;
+  }
+
   public void setHabitat(String habitat) {
     this.habitat = norm(habitat);
   }
@@ -680,11 +799,8 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.higherGeographyID = norm(higherGeographyID);
   }
 
-  /**
-   * sets the identifier for this record
-   */
-  public void setId(String id) {
-    this.id = id;
+  public void setHighestBiostratigraphicZone(String highestBiostratigraphicZone) {
+    this.highestBiostratigraphicZone = highestBiostratigraphicZone;
   }
 
   public void setIdentificationID(String identificationID) {
@@ -703,16 +819,16 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.identificationRemarks = norm(identificationRemarks);
   }
 
+  public void setIdentificationVerificationStatus(String identificationVerificationStatus) {
+    this.identificationVerificationStatus = identificationVerificationStatus;
+  }
+
   public void setIdentifiedBy(String identifiedBy) {
     this.identifiedBy = norm(identifiedBy);
   }
 
   public void setIndividualCount(String individualCount) {
     this.individualCount = norm(individualCount);
-  }
-
-  public void setIndividualID(String individualID) {
-    this.individualID = norm(individualID);
   }
 
   public void setIsland(String island) {
@@ -723,12 +839,40 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.islandGroup = norm(islandGroup);
   }
 
+  public void setLatestAgeOrHighestStage(String latestAgeOrHighestStage) {
+    this.latestAgeOrHighestStage = latestAgeOrHighestStage;
+  }
+
+  public void setLatestEonOrHighestEonothem(String latestEonOrHighestEonothem) {
+    this.latestEonOrHighestEonothem = latestEonOrHighestEonothem;
+  }
+
+  public void setLatestEpochOrHighestSeries(String latestEpochOrHighestSeries) {
+    this.latestEpochOrHighestSeries = latestEpochOrHighestSeries;
+  }
+
+  public void setLatestEraOrHighestErathem(String latestEraOrHighestErathem) {
+    this.latestEraOrHighestErathem = latestEraOrHighestErathem;
+  }
+
+  public void setLatestPeriodOrHighestSystem(String latestPeriodOrHighestSystem) {
+    this.latestPeriodOrHighestSystem = latestPeriodOrHighestSystem;
+  }
+
   public void setLifeStage(String lifeStage) {
     this.lifeStage = norm(lifeStage);
   }
 
+  public void setLithostratigraphicTerms(String lithostratigraphicTerms) {
+    this.lithostratigraphicTerms = lithostratigraphicTerms;
+  }
+
   public void setLocality(String locality) {
     this.locality = norm(locality);
+  }
+
+  public void setLocationAccordingTo(String locationAccordingTo) {
+    this.locationAccordingTo = locationAccordingTo;
   }
 
   public void setLocationID(String locationID) {
@@ -737,6 +881,14 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setLocationRemarks(String locationRemarks) {
     this.locationRemarks = norm(locationRemarks);
+  }
+
+  public void setLowestBiostratigraphicZone(String lowestBiostratigraphicZone) {
+    this.lowestBiostratigraphicZone = lowestBiostratigraphicZone;
+  }
+
+  public void setMaterialSampleID(String materialSampleID) {
+    this.materialSampleID = materialSampleID;
   }
 
   public void setMaximumDepthInMeters(String maximumDepthInMeters) {
@@ -751,6 +903,9 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.maximumElevationInMeters = norm(maximumElevationInMeters);
   }
 
+  public void setMember(String member) {
+    this.member = member;
+  }
   public void setMinimumDepthInMeters(String minimumDepthInMeters) {
     this.minimumDepthInMeters = norm(minimumDepthInMeters);
   }
@@ -767,12 +922,36 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.month = norm(month);
   }
 
+  public void setMunicipality(String municipality) {
+    this.municipality = municipality;
+  }
+
   public void setOccurrenceID(String occurrenceID) {
     this.occurrenceID = norm(occurrenceID);
   }
 
   public void setOccurrenceRemarks(String occurrenceRemarks) {
     this.occurrenceRemarks = norm(occurrenceRemarks);
+  }
+
+  public void setOccurrenceStatus(String occurrenceStatus) {
+    this.occurrenceStatus = occurrenceStatus;
+  }
+
+  public void setOrganismID(String organismID) {
+    this.organismID = norm(organismID);
+  }
+
+  public void setOrganismName(String organismName) {
+    this.organismName = norm(organismName);
+  }
+
+  public void setOrganismRemarks(String organismRemarks) {
+    this.organismRemarks = norm(organismRemarks);
+  }
+
+  public void setOrganismScope(String organismScope) {
+    this.organismScope = norm(organismScope);
   }
 
   public void setOtherCatalogNumbers(String otherCatalogNumbers) {
@@ -801,6 +980,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setReproductiveCondition(String reproductiveCondition) {
     this.reproductiveCondition = norm(reproductiveCondition);
+  }
+
+  public void setSamplingEffort(String samplingEffort) {
+    this.samplingEffort = samplingEffort;
   }
 
   public void setSamplingProtocol(String samplingProtocol) {
@@ -855,6 +1038,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.verbatimLongitude = norm(verbatimLongitude);
   }
 
+  public void setVerbatimSRS(String verbatimSRS) {
+    this.verbatimSRS = verbatimSRS;
+  }
+
   public void setWaterBody(String waterBody) {
     this.waterBody = norm(waterBody);
   }
@@ -863,155 +1050,4 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.year = norm(year);
   }
 
-  public String getBed() {
-    return bed;
-  }
-
-  public void setBed(String bed) {
-    this.bed = bed;
-  }
-
-  public String getEarliestAgeOrLowestStage() {
-    return earliestAgeOrLowestStage;
-  }
-
-  public void setEarliestAgeOrLowestStage(String earliestAgeOrLowestStage) {
-    this.earliestAgeOrLowestStage = earliestAgeOrLowestStage;
-  }
-
-  public String getEarliestEonOrLowestEonothem() {
-    return earliestEonOrLowestEonothem;
-  }
-
-  public void setEarliestEonOrLowestEonothem(String earliestEonOrLowestEonothem) {
-    this.earliestEonOrLowestEonothem = earliestEonOrLowestEonothem;
-  }
-
-  public String getEarliestEpochOrLowestSeries() {
-    return earliestEpochOrLowestSeries;
-  }
-
-  public void setEarliestEpochOrLowestSeries(String earliestEpochOrLowestSeries) {
-    this.earliestEpochOrLowestSeries = earliestEpochOrLowestSeries;
-  }
-
-  public String getEarliestEraOrLowestErathem() {
-    return earliestEraOrLowestErathem;
-  }
-
-  public void setEarliestEraOrLowestErathem(String earliestEraOrLowestErathem) {
-    this.earliestEraOrLowestErathem = earliestEraOrLowestErathem;
-  }
-
-  public String getEarliestPeriodOrLowestSystem() {
-    return earliestPeriodOrLowestSystem;
-  }
-
-  public void setEarliestPeriodOrLowestSystem(String earliestPeriodOrLowestSystem) {
-    this.earliestPeriodOrLowestSystem = earliestPeriodOrLowestSystem;
-  }
-
-  public String getFormation() {
-    return formation;
-  }
-
-  public void setFormation(String formation) {
-    this.formation = formation;
-  }
-
-  public String getGeologicalContextID() {
-    return geologicalContextID;
-  }
-
-  public void setGeologicalContextID(String geologicalContextID) {
-    this.geologicalContextID = geologicalContextID;
-  }
-
-  public String getGroup() {
-    return group;
-  }
-
-  public void setGroup(String group) {
-    this.group = group;
-  }
-
-  public String getHighestBiostratigraphicZone() {
-    return highestBiostratigraphicZone;
-  }
-
-  public void setHighestBiostratigraphicZone(String highestBiostratigraphicZone) {
-    this.highestBiostratigraphicZone = highestBiostratigraphicZone;
-  }
-
-  public String getLatestAgeOrHighestStage() {
-    return latestAgeOrHighestStage;
-  }
-
-  public void setLatestAgeOrHighestStage(String latestAgeOrHighestStage) {
-    this.latestAgeOrHighestStage = latestAgeOrHighestStage;
-  }
-
-  public String getLatestEonOrHighestEonothem() {
-    return latestEonOrHighestEonothem;
-  }
-
-  public void setLatestEonOrHighestEonothem(String latestEonOrHighestEonothem) {
-    this.latestEonOrHighestEonothem = latestEonOrHighestEonothem;
-  }
-
-  public String getLatestEpochOrHighestSeries() {
-    return latestEpochOrHighestSeries;
-  }
-
-  public void setLatestEpochOrHighestSeries(String latestEpochOrHighestSeries) {
-    this.latestEpochOrHighestSeries = latestEpochOrHighestSeries;
-  }
-
-  public String getLatestEraOrHighestErathem() {
-    return latestEraOrHighestErathem;
-  }
-
-  public void setLatestEraOrHighestErathem(String latestEraOrHighestErathem) {
-    this.latestEraOrHighestErathem = latestEraOrHighestErathem;
-  }
-
-  public String getLatestPeriodOrHighestSystem() {
-    return latestPeriodOrHighestSystem;
-  }
-
-  public void setLatestPeriodOrHighestSystem(String latestPeriodOrHighestSystem) {
-    this.latestPeriodOrHighestSystem = latestPeriodOrHighestSystem;
-  }
-
-  public String getLithostratigraphicTerms() {
-    return lithostratigraphicTerms;
-  }
-
-  public void setLithostratigraphicTerms(String lithostratigraphicTerms) {
-    this.lithostratigraphicTerms = lithostratigraphicTerms;
-  }
-
-  public String getLowestBiostratigraphicZone() {
-    return lowestBiostratigraphicZone;
-  }
-
-  public void setLowestBiostratigraphicZone(String lowestBiostratigraphicZone) {
-    this.lowestBiostratigraphicZone = lowestBiostratigraphicZone;
-  }
-
-  public String getMaterialSampleID() {
-    return materialSampleID;
-  }
-
-  public void setMaterialSampleID(String materialSampleID) {
-    this.materialSampleID = materialSampleID;
-  }
-
-  public String getMember() {
-    return member;
-  }
-
-  public void setMember(String member) {
-    this.member = member;
-  }
 }
