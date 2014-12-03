@@ -4,6 +4,7 @@ import org.gbif.dwc.record.DarwinCoreRecord;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.RecordImpl;
 import org.gbif.dwc.record.RecordIterator;
+import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.file.CSVReader;
@@ -51,13 +52,18 @@ public class Archive implements Iterable<StarRecord> {
     private int lineCount = 0;
     private final RecordImpl record;
     private boolean hasNext = true;
-    private final Set<DwcTerm> mappedTerms = new HashSet<DwcTerm>();
+    private final Set<Term> mappedTerms = new HashSet<Term>();
 
     ArchiveDwcIterator(Archive archive) {
       record = new RecordImpl(archive.getCore(), true);
       core = archive.getCore();
-      // remember used dwc terms
+      // remember used DwC and DC terms
       for (DwcTerm term : DwcTerm.values()) {
+        if (core.hasTerm(term)) {
+          mappedTerms.add(term);
+        }
+      }
+      for (DcTerm term : DcTerm.values()) {
         if (core.hasTerm(term)) {
           mappedTerms.add(term);
         }
@@ -87,7 +93,7 @@ public class Archive implements Iterable<StarRecord> {
       DarwinCoreRecord dwc = new DarwinCoreRecord();
       lineCount++;
       try {
-        for (DwcTerm term : mappedTerms) {
+        for (Term term : mappedTerms) {
           dwc.setProperty(term, record.value(term));
         }
         dwc.setId(record.id());

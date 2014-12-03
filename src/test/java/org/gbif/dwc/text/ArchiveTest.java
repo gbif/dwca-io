@@ -1,8 +1,9 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.DarwinCoreRecord;
-import org.gbif.dwc.terms.Term;
+import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.Term;
 import org.gbif.file.CSVReader;
 import org.gbif.utils.file.FileUtils;
 
@@ -29,6 +30,7 @@ public class ArchiveTest {
     Archive arch = new Archive();
     ArchiveField id = new ArchiveField(0, null, null, null);
     ArchiveField taxStatus = new ArchiveField(1, DwcTerm.taxonomicStatus, "a", null);
+    ArchiveField dcmodified = new ArchiveField(6, DcTerm.modified, "mod", null);
 
     ArchiveFile core = mock(ArchiveFile.class);
     when(core.getCSVReader()).thenReturn(reader);
@@ -37,14 +39,17 @@ public class ArchiveTest {
     when(core.getField(Matchers.<Term>any())).thenReturn(taxStatus);
     Map<Term, ArchiveField> fields = new HashMap<Term, ArchiveField>();
     fields.put(DwcTerm.taxonomicStatus, taxStatus);
+    fields.put(DcTerm.modified, dcmodified);
     when(core.getFields()).thenReturn(fields);
     when(core.hasTerm(eq(DwcTerm.taxonomicStatus))).thenReturn(true);
+    when(core.hasTerm(eq(DcTerm.modified))).thenReturn(true);
     arch.setCore(core);
 
     Iterator<DarwinCoreRecord> iter = arch.iteratorDwc();
     while (iter.hasNext()) {
       DarwinCoreRecord rec = iter.next();
       assertEquals("a", rec.getTaxonomicStatus());
+      assertEquals("mod", rec.getModified());
     }
   }
 
