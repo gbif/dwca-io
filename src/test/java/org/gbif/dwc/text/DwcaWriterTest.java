@@ -10,6 +10,7 @@ import org.gbif.utils.file.FileUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.base.Joiner;
@@ -24,7 +25,15 @@ import static org.junit.Assert.fail;
 public class DwcaWriterTest {
   private static Logger LOG = LoggerFactory.getLogger(DwcaWriterTest.class);
 
-
+  @Test(expected = IllegalStateException.class)
+  public void testAddingCoreIdTermTwice() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
+    writer.newRecord("dummy1");
+    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
+  }
+  
   @Test
   public void testHeaders1() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
@@ -200,5 +209,26 @@ public class DwcaWriterTest {
       e.printStackTrace();
       fail();
     }
+  }
+  
+  @Test
+  public void testWriterUsingCoreIdTerm() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    LOG.info("Test archive writer in {}", dwcaDir.getAbsolutePath());
+
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
+
+    writer.newRecord("dummy1");
+    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    writer.close();
+
+    Archive arch = ArchiveFactory.openArchive(dwcaDir);
+    // assertEquals(DwcTerm.taxonID, arch.getCore().getId().getTerm());
+    Iterator<Record> recIt = arch.getCore().iterator();
+    Record firstRecord = recIt.next();
+    assertEquals("dummy1", firstRecord.id());
+    assertEquals("dummy1", firstRecord.value(DwcTerm.taxonID));
   }
 }

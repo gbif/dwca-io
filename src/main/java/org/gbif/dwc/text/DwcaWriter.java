@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Simple writer class to create valid dwc archives using tab data files.
- * The meta.xml descriptor is generated automatically and an optinal EML metadata document can be added.
+ * The meta.xml descriptor is generated automatically and an optional EML metadata document can be added.
  * The archive is NOT compressed but the final product is a directory with all the necessary files.
  * For usage of this class please @see DwcaWriterTest.
  */
@@ -54,6 +54,7 @@ public class DwcaWriter {
   private String coreId;
   private Map<Term, String> coreRow;
   private final Term coreRowType;
+  private final Term coreIdTerm;
   private final Map<Term, TabWriter> writers = Maps.newHashMap();
   private final Set<Term> headersOut = Sets.newHashSet();
   private final Map<Term, String> dataFileNames = Maps.newHashMap();
@@ -80,8 +81,22 @@ public class DwcaWriter {
    * @param useHeaders if true the first row in every data file will include headers
    */
   public DwcaWriter(Term coreRowType, File dir, boolean useHeaders) throws IOException {
+    this(coreRowType, null, dir, useHeaders);
+  }
+  
+  /**
+   * If headers are used the first record must include all terms ever used for that file.
+   * If in subsequent rows additional terms are introduced an IllegalArgumentException is thrown.
+   * 
+   * @param coreRowType the core row type
+   * @param coreIdTerm the term of the id column
+   * @param dir the directory to create the archive in
+   * @param useHeaders if true the first row in every data file will include headers
+   */
+  public DwcaWriter(Term coreRowType, Term coreIdTerm, File dir, boolean useHeaders) throws IOException {
     this.dir = dir;
     this.coreRowType = coreRowType;
+    this.coreIdTerm = coreIdTerm;
     this.useHeaders = useHeaders;
     addRowType(coreRowType);
   }
@@ -193,6 +208,10 @@ public class DwcaWriter {
    * @param value
    */
   public void addCoreColumn(Term term, String value) {
+    if (coreIdTerm != null && coreIdTerm.equals(term)) {
+      throw new IllegalStateException("You cannot add a term that was specified as coreId term");
+    }
+    
     List<Term> coreTerms = terms.get(coreRowType);
     if (!coreTerms.contains(term)) {
       if (useHeaders && recordNum>1){
@@ -284,10 +303,10 @@ public class DwcaWriter {
     if (eml != null) {
       arch.setMetadataLocation("eml.xml");
     }
-    arch.setCore(buildArchiveFile(arch, coreRowType));
+    arch.setCore(buildArchiveFile(arch, coreRowType, coreIdTerm));
     for (Term rowType : this.terms.keySet()) {
       if (!coreRowType.equals(rowType)) {
-        arch.addExtension(buildArchiveFile(arch, rowType));
+        arch.addExtension(buildArchiveFile(arch, rowType, null));
       }
     }
     try {
@@ -297,7 +316,7 @@ public class DwcaWriter {
     }
   }
 
-  private ArchiveFile buildArchiveFile(Archive archive, Term rowType) {
+  private ArchiveFile buildArchiveFile(Archive archive, Term rowType, Term idTerm) {
     ArchiveFile af = ArchiveFile.buildTabFile();
     af.setArchive(archive);
     af.addLocation(dataFileNames.get(rowType));
@@ -309,7 +328,14 @@ public class DwcaWriter {
     ArchiveField id = new ArchiveField();
     id.setIndex(0);
     af.setId(id);
-
+    // id an idTerm is provided, always use the index 0
+    if (idTerm != null) {
+      ArchiveField field = new ArchiveField();
+      field.setIndex(0);
+      field.setTerm(idTerm);
+      af.addField(field);
+    }
+    
     int idx = 0;
     for (Term c : terms.get(rowType)) {
       idx++;
