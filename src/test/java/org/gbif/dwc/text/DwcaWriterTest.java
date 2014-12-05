@@ -10,11 +10,13 @@ import org.gbif.utils.file.FileUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,72 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
     writer.newRecord("dummy1");
     writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
+  }
+  
+  /**
+   * Add a core column before adding a default value for this column.
+   * @throws Exception
+   */
+  @Test(expected = IllegalStateException.class)
+  public void testDefaultValueDefinedTwice() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
+    writer.newRecord("dummy1");
+    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
+    writer.addDefaultValue(DwcTerm.Taxon, DwcTerm.taxonID, "dummy");
+  }
+  
+  /**
+   * Add a core column after added a default value for this column.
+   * @throws Exception
+   */
+  @Test(expected = IllegalStateException.class)
+  public void testDefaultValueDefinedTwice2() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
+    writer.addDefaultValue(DwcTerm.Taxon, DwcTerm.taxonID, "dummy");
+    
+    writer.newRecord("dummy1");
+    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
+  }
+  
+  @Test(expected = IllegalStateException.class)
+  public void testDefaultValueDefinedTwiceExtension() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
+    writer.newRecord("dummy1");
+    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
+    
+    // add a extension record
+    Map<Term, String> values = new HashMap<Term, String>();
+    values.put(DwcTerm.resourceID, "11");
+    writer.addExtensionRecord(DwcTerm.ResourceRelationship, values);
+    
+    // try to set a default value on that same term
+    writer.addDefaultValue(DwcTerm.ResourceRelationship, DwcTerm.resourceID, "dummy");
+  }
+  
+  @Test(expected = IllegalStateException.class)
+  public void testDefaultValueDefinedTwiceExtension2() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
+    writer.newRecord("dummy1");
+    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
+    
+    // try to set a default value on that same term
+    writer.addDefaultValue(DwcTerm.ResourceRelationship, DwcTerm.resourceID, "dummy");
+    System.out.println("after");
+    // add a extension record
+    Map<Term, String> values = new HashMap<Term, String>();
+    values.put(DwcTerm.resourceID, "11");
+    writer.addExtensionRecord(DwcTerm.ResourceRelationship, values);
+   
   }
   
   @Test
@@ -225,10 +293,33 @@ public class DwcaWriterTest {
     writer.close();
 
     Archive arch = ArchiveFactory.openArchive(dwcaDir);
-    // assertEquals(DwcTerm.taxonID, arch.getCore().getId().getTerm());
     Iterator<Record> recIt = arch.getCore().iterator();
     Record firstRecord = recIt.next();
     assertEquals("dummy1", firstRecord.id());
     assertEquals("dummy1", firstRecord.value(DwcTerm.taxonID));
+  }
+  
+  @Test
+  public void testWriterUsingDefaultTermValues() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    LOG.info("Test archive writer in {}", dwcaDir.getAbsolutePath());
+
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
+
+    writer.newRecord("dummy1");
+    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    
+    writer.addDefaultValue(DwcTerm.Taxon, DwcTerm.collectionCode, "A2Z");
+    writer.close();
+
+    Archive arch = ArchiveFactory.openArchive(dwcaDir);
+    Iterator<Record> recIt = arch.getCore().iterator();
+    Record firstRecord = recIt.next();
+    assertEquals("dummy1", firstRecord.id());
+    assertEquals("dummy1", firstRecord.value(DwcTerm.taxonID));
+    assertEquals("A2Z", firstRecord.value(DwcTerm.collectionCode));
+    assertEquals("A2Z", arch.getCore().getField(DwcTerm.collectionCode).getDefaultValue());
   }
 }
