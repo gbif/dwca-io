@@ -94,12 +94,11 @@ public class DwcaWriterTest {
     
     // try to set a default value on that same term
     writer.addDefaultValue(DwcTerm.ResourceRelationship, DwcTerm.resourceID, "dummy");
-    System.out.println("after");
+    
     // add a extension record
     Map<Term, String> values = new HashMap<Term, String>();
     values.put(DwcTerm.resourceID, "11");
     writer.addExtensionRecord(DwcTerm.ResourceRelationship, values);
-   
   }
   
   @Test
@@ -311,7 +310,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
     writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
     
-    writer.addDefaultValue(DwcTerm.Taxon, DwcTerm.collectionCode, "A2Z");
+    writer.addCoreDefaultValue(DwcTerm.collectionCode, "A2Z");
     writer.close();
 
     Archive arch = ArchiveFactory.openArchive(dwcaDir);

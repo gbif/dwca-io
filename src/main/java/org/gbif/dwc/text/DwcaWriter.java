@@ -209,6 +209,7 @@ public class DwcaWriter {
    * @param value
    */
   public void addCoreColumn(Term term, String value) {
+    // ensure we do not overwrite the coreIdTerm if one is defined
     if (coreIdTerm != null && coreIdTerm.equals(term)) {
       throw new IllegalStateException("You cannot add a term that was specified as coreId term");
     }
@@ -287,8 +288,8 @@ public class DwcaWriter {
     if(termDefaultValueMap !=null){
       Set<Term> diff = Sets.intersection(termDefaultValueMap.keySet(), row.keySet());
       if(!diff.isEmpty()){
-        throw new IllegalStateException("A default value is already defined for term(s) ["+
-          diff.toString() + "] in rowType " + rowType);
+        throw new IllegalStateException("A default value is already defined for term(s) "+
+          diff.toString() + " in rowType " + rowType);
       }
     }
     
