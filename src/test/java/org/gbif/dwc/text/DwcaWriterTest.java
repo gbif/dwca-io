@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 
 public class DwcaWriterTest {
   private static Logger LOG = LoggerFactory.getLogger(DwcaWriterTest.class);
-
+  
   @Test(expected = IllegalStateException.class)
   public void testAddingCoreIdTermTwice() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
@@ -65,6 +65,10 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
   }
   
+  /**
+   * Add extension value before adding a default value for the same column.
+   * @throws Exception
+   */
   @Test(expected = IllegalStateException.class)
   public void testDefaultValueDefinedTwiceExtension() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
@@ -83,6 +87,10 @@ public class DwcaWriterTest {
     writer.addDefaultValue(DwcTerm.ResourceRelationship, DwcTerm.resourceID, "dummy");
   }
   
+  /**
+   * Add extension value after added a default value for the same column.
+   * @throws Exception
+   */
   @Test(expected = IllegalStateException.class)
   public void testDefaultValueDefinedTwiceExtension2() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
@@ -92,10 +100,9 @@ public class DwcaWriterTest {
     writer.newRecord("dummy1");
     writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
     
-    // try to set a default value on that same term
     writer.addDefaultValue(DwcTerm.ResourceRelationship, DwcTerm.resourceID, "dummy");
     
-    // add a extension record
+    // try to add a record with that same term
     Map<Term, String> values = new HashMap<Term, String>();
     values.put(DwcTerm.resourceID, "11");
     writer.addExtensionRecord(DwcTerm.ResourceRelationship, values);
