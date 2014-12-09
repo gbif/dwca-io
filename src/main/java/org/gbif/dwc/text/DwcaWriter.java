@@ -411,8 +411,9 @@ public class DwcaWriter {
     // check if default values are provided for this rowType
     Map<Term,String> termDefaultValueMap = defaultValues.get(rowType);
     if(termDefaultValueMap != null){
-      ArchiveField field = new ArchiveField();
+      ArchiveField field = null;
       for (Term t : termDefaultValueMap.keySet()) {
+        field = new ArchiveField();
         field.setTerm(t);
         field.setDefaultValue(termDefaultValueMap.get(t));
         af.addField(field);

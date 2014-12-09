@@ -318,6 +318,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
     
     writer.addCoreDefaultValue(DwcTerm.collectionCode, "A2Z");
+    writer.addCoreDefaultValue(DwcTerm.countryCode, "CA");
     writer.close();
 
     Archive arch = ArchiveFactory.openArchive(dwcaDir);
@@ -327,5 +328,6 @@ public class DwcaWriterTest {
     assertEquals("dummy1", firstRecord.value(DwcTerm.taxonID));
     assertEquals("A2Z", firstRecord.value(DwcTerm.collectionCode));
     assertEquals("A2Z", arch.getCore().getField(DwcTerm.collectionCode).getDefaultValue());
+    assertEquals("CA", arch.getCore().getField(DwcTerm.countryCode).getDefaultValue());
   }
 }
