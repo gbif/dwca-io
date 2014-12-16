@@ -35,7 +35,9 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import freemarker.template.TemplateException;
+
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,9 +62,10 @@ public class DwcaWriter {
   private final Map<Term, String> dataFileNames = Maps.newHashMap();
   // key=rowType, value=columns
   private final Map<Term, List<Term>> terms = Maps.newHashMap();
+  // key=rowType, value=default values per column
+  private final Map<Term, Map<Term, String>> defaultValues = Maps.newHashMap();
   private Eml eml;
-
-
+  
   /**
    * Creates a new writer without header rows.
    * @param coreRowType the core row type.
@@ -208,8 +211,15 @@ public class DwcaWriter {
    * @param value
    */
   public void addCoreColumn(Term term, String value) {
+    // ensure we do not overwrite the coreIdTerm if one is defined
     if (coreIdTerm != null && coreIdTerm.equals(term)) {
       throw new IllegalStateException("You cannot add a term that was specified as coreId term");
+    }
+    
+    // ensure no default value is already associated with this term 
+    Map<Term,String> coreDefaultValues = defaultValues.get(coreRowType);
+    if(coreDefaultValues !=null && coreDefaultValues.containsKey(term)){
+      throw new IllegalStateException("A default value for term "+ term + " is already defined");
     }
     
     List<Term> coreTerms = terms.get(coreRowType);
@@ -226,6 +236,41 @@ public class DwcaWriter {
       throw new IllegalStateException("No core record has been created yet. Call newRecord() at least once");
     }
   }
+  
+  /**
+   * Add a default value to a term of the core.
+   * 
+   * @param term
+   * @param defaultValue
+   */
+  public void addCoreDefaultValue(Term term, String defaultValue){
+    addDefaultValue(coreRowType, term, defaultValue);
+  }
+  
+  /**
+   * Add a default value to a term of the provided rowType.
+   * 
+   * @param rowType
+   * @param term
+   * @param defaultValue
+   */
+  public void addDefaultValue(Term rowType, Term term, String defaultValue){
+    List<Term> knownTerms = terms.get(rowType);
+    
+    // avoid overwriting a term that was already defined
+    if(knownTerms !=null && knownTerms.contains(term)){
+      throw new IllegalStateException("The term "+ term + " is already defined for rowType " + rowType );
+    }
+    
+    if(!defaultValues.containsKey(rowType)){
+      defaultValues.put(rowType, new HashMap<Term, String>());
+    }
+    Map<Term,String> currentDefaultValues= defaultValues.get(rowType);
+    if(currentDefaultValues.containsKey(term)){
+      throw new IllegalStateException("The default value of term "+ term + " is already defined");
+    }
+    currentDefaultValues.put(term, defaultValue);
+  }
 
   /**
    * @return new map of all current data file names by their rowTypes.
@@ -234,11 +279,29 @@ public class DwcaWriter {
     return Maps.newHashMap(dataFileNames);
   }
 
+  /**
+   * Add an extension record associated with the current core record.
+   * 
+   * @param rowType
+   * @param row
+   * @throws IOException
+   */
   public void addExtensionRecord(Term rowType, Map<Term, String> row) throws IOException {
     // make sure we know the extension rowtype
     if (!terms.containsKey(rowType)) {
       addRowType(rowType);
     }
+    
+    // make sure no default value is already associated with one of the provided terms
+    Map<Term,String> extDefaultValues = defaultValues.get(rowType);
+    if(extDefaultValues !=null){
+      Set<Term> diff = Sets.intersection(extDefaultValues.keySet(), row.keySet());
+      if(!diff.isEmpty()){
+        throw new IllegalStateException("A default value is already defined for term(s) "+
+          diff.toString() + " in rowType " + rowType);
+      }
+    }
+    
     // make sure we know all terms
     List<Term> knownTerms = terms.get(rowType);
     final boolean isFirst = knownTerms.isEmpty();
@@ -343,6 +406,18 @@ public class DwcaWriter {
       field.setIndex(idx);
       field.setTerm(c);
       af.addField(field);
+    }
+    
+    // check if default values are provided for this rowType
+    Map<Term,String> termDefaultValueMap = defaultValues.get(rowType);
+    if(termDefaultValueMap != null){
+      ArchiveField field = null;
+      for (Term t : termDefaultValueMap.keySet()) {
+        field = new ArchiveField();
+        field.setTerm(t);
+        field.setDefaultValue(termDefaultValueMap.get(t));
+        af.addField(field);
+      }
     }
 
     return af;
