@@ -226,213 +226,197 @@
 <a class="jxr_linenumber" name="216" href="#216">216</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"You cannot add a term that was specified as coreId term"</span>);
 <a class="jxr_linenumber" name="217" href="#217">217</a>     }
 <a class="jxr_linenumber" name="218" href="#218">218</a>     
-<a class="jxr_linenumber" name="219" href="#219">219</a>     <em class="jxr_comment">// ensure no default value is already associated with this term </em>
-<a class="jxr_linenumber" name="220" href="#220">220</a>     Map&lt;Term,String&gt; coreDefaultValues = defaultValues.get(coreRowType);
-<a class="jxr_linenumber" name="221" href="#221">221</a>     <strong class="jxr_keyword">if</strong>(coreDefaultValues !=<strong class="jxr_keyword">null</strong> &amp;&amp; coreDefaultValues.containsKey(term)){
-<a class="jxr_linenumber" name="222" href="#222">222</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"A default value for term "</span>+ term + <span class="jxr_string">" is already defined"</span>);
-<a class="jxr_linenumber" name="223" href="#223">223</a>     }
-<a class="jxr_linenumber" name="224" href="#224">224</a>     
-<a class="jxr_linenumber" name="225" href="#225">225</a>     List&lt;Term&gt; coreTerms = terms.get(coreRowType);
-<a class="jxr_linenumber" name="226" href="#226">226</a>     <strong class="jxr_keyword">if</strong> (!coreTerms.contains(term)) {
-<a class="jxr_linenumber" name="227" href="#227">227</a>       <strong class="jxr_keyword">if</strong> (useHeaders &amp;&amp; recordNum&gt;1){
-<a class="jxr_linenumber" name="228" href="#228">228</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"You cannot add new terms after the first row when headers are enabled"</span>);
-<a class="jxr_linenumber" name="229" href="#229">229</a>       }
-<a class="jxr_linenumber" name="230" href="#230">230</a>       coreTerms.add(term);
+<a class="jxr_linenumber" name="219" href="#219">219</a>     List&lt;Term&gt; coreTerms = terms.get(coreRowType);
+<a class="jxr_linenumber" name="220" href="#220">220</a>     <strong class="jxr_keyword">if</strong> (!coreTerms.contains(term)) {
+<a class="jxr_linenumber" name="221" href="#221">221</a>       <strong class="jxr_keyword">if</strong> (useHeaders &amp;&amp; recordNum&gt;1){
+<a class="jxr_linenumber" name="222" href="#222">222</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"You cannot add new terms after the first row when headers are enabled"</span>);
+<a class="jxr_linenumber" name="223" href="#223">223</a>       }
+<a class="jxr_linenumber" name="224" href="#224">224</a>       coreTerms.add(term);
+<a class="jxr_linenumber" name="225" href="#225">225</a>     }
+<a class="jxr_linenumber" name="226" href="#226">226</a>     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="227" href="#227">227</a>       coreRow.put(term, value);
+<a class="jxr_linenumber" name="228" href="#228">228</a>     } <strong class="jxr_keyword">catch</strong> (NullPointerException e) {
+<a class="jxr_linenumber" name="229" href="#229">229</a>       <em class="jxr_comment">// no core record has been started yet</em>
+<a class="jxr_linenumber" name="230" href="#230">230</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"No core record has been created yet. Call newRecord() at least once"</span>);
 <a class="jxr_linenumber" name="231" href="#231">231</a>     }
-<a class="jxr_linenumber" name="232" href="#232">232</a>     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="233" href="#233">233</a>       coreRow.put(term, value);
-<a class="jxr_linenumber" name="234" href="#234">234</a>     } <strong class="jxr_keyword">catch</strong> (NullPointerException e) {
-<a class="jxr_linenumber" name="235" href="#235">235</a>       <em class="jxr_comment">// no core record has been started yet</em>
-<a class="jxr_linenumber" name="236" href="#236">236</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"No core record has been created yet. Call newRecord() at least once"</span>);
-<a class="jxr_linenumber" name="237" href="#237">237</a>     }
-<a class="jxr_linenumber" name="238" href="#238">238</a>   }
-<a class="jxr_linenumber" name="239" href="#239">239</a>   
-<a class="jxr_linenumber" name="240" href="#240">240</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="241" href="#241">241</a> <em class="jxr_javadoccomment">   * Add a default value to a term of the core.</em>
-<a class="jxr_linenumber" name="242" href="#242">242</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="243" href="#243">243</a> <em class="jxr_javadoccomment">   * @param term</em>
-<a class="jxr_linenumber" name="244" href="#244">244</a> <em class="jxr_javadoccomment">   * @param defaultValue</em>
-<a class="jxr_linenumber" name="245" href="#245">245</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="246" href="#246">246</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addCoreDefaultValue(Term term, String defaultValue){
-<a class="jxr_linenumber" name="247" href="#247">247</a>     addDefaultValue(coreRowType, term, defaultValue);
-<a class="jxr_linenumber" name="248" href="#248">248</a>   }
-<a class="jxr_linenumber" name="249" href="#249">249</a>   
-<a class="jxr_linenumber" name="250" href="#250">250</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="251" href="#251">251</a> <em class="jxr_javadoccomment">   * Add a default value to a term of the provided rowType.</em>
-<a class="jxr_linenumber" name="252" href="#252">252</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="253" href="#253">253</a> <em class="jxr_javadoccomment">   * @param rowType</em>
-<a class="jxr_linenumber" name="254" href="#254">254</a> <em class="jxr_javadoccomment">   * @param term</em>
-<a class="jxr_linenumber" name="255" href="#255">255</a> <em class="jxr_javadoccomment">   * @param defaultValue</em>
-<a class="jxr_linenumber" name="256" href="#256">256</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="257" href="#257">257</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addDefaultValue(Term rowType, Term term, String defaultValue){
-<a class="jxr_linenumber" name="258" href="#258">258</a>     List&lt;Term&gt; knownTerms = terms.get(rowType);
-<a class="jxr_linenumber" name="259" href="#259">259</a>     
-<a class="jxr_linenumber" name="260" href="#260">260</a>     <em class="jxr_comment">// avoid overwriting a term that was already defined</em>
-<a class="jxr_linenumber" name="261" href="#261">261</a>     <strong class="jxr_keyword">if</strong>(knownTerms !=<strong class="jxr_keyword">null</strong> &amp;&amp; knownTerms.contains(term)){
-<a class="jxr_linenumber" name="262" href="#262">262</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The term "</span>+ term + <span class="jxr_string">" is already defined for rowType "</span> + rowType );
-<a class="jxr_linenumber" name="263" href="#263">263</a>     }
-<a class="jxr_linenumber" name="264" href="#264">264</a>     
-<a class="jxr_linenumber" name="265" href="#265">265</a>     <strong class="jxr_keyword">if</strong>(!defaultValues.containsKey(rowType)){
-<a class="jxr_linenumber" name="266" href="#266">266</a>       defaultValues.put(rowType, <strong class="jxr_keyword">new</strong> HashMap&lt;Term, String&gt;());
-<a class="jxr_linenumber" name="267" href="#267">267</a>     }
-<a class="jxr_linenumber" name="268" href="#268">268</a>     Map&lt;Term,String&gt; currentDefaultValues= defaultValues.get(rowType);
-<a class="jxr_linenumber" name="269" href="#269">269</a>     <strong class="jxr_keyword">if</strong>(currentDefaultValues.containsKey(term)){
-<a class="jxr_linenumber" name="270" href="#270">270</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The default value of term "</span>+ term + <span class="jxr_string">" is already defined"</span>);
-<a class="jxr_linenumber" name="271" href="#271">271</a>     }
-<a class="jxr_linenumber" name="272" href="#272">272</a>     currentDefaultValues.put(term, defaultValue);
-<a class="jxr_linenumber" name="273" href="#273">273</a>   }
-<a class="jxr_linenumber" name="274" href="#274">274</a> 
-<a class="jxr_linenumber" name="275" href="#275">275</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="276" href="#276">276</a> <em class="jxr_javadoccomment">   * @return new map of all current data file names by their rowTypes.</em>
-<a class="jxr_linenumber" name="277" href="#277">277</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="278" href="#278">278</a>   <strong class="jxr_keyword">public</strong> Map&lt;Term, String&gt; getDataFiles() {
-<a class="jxr_linenumber" name="279" href="#279">279</a>     <strong class="jxr_keyword">return</strong> Maps.newHashMap(dataFileNames);
-<a class="jxr_linenumber" name="280" href="#280">280</a>   }
-<a class="jxr_linenumber" name="281" href="#281">281</a> 
-<a class="jxr_linenumber" name="282" href="#282">282</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="283" href="#283">283</a> <em class="jxr_javadoccomment">   * Add an extension record associated with the current core record.</em>
-<a class="jxr_linenumber" name="284" href="#284">284</a> <em class="jxr_javadoccomment">   * </em>
-<a class="jxr_linenumber" name="285" href="#285">285</a> <em class="jxr_javadoccomment">   * @param rowType</em>
-<a class="jxr_linenumber" name="286" href="#286">286</a> <em class="jxr_javadoccomment">   * @param row</em>
-<a class="jxr_linenumber" name="287" href="#287">287</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
-<a class="jxr_linenumber" name="288" href="#288">288</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="289" href="#289">289</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addExtensionRecord(Term rowType, Map&lt;Term, String&gt; row) <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="290" href="#290">290</a>     <em class="jxr_comment">// make sure we know the extension rowtype</em>
-<a class="jxr_linenumber" name="291" href="#291">291</a>     <strong class="jxr_keyword">if</strong> (!terms.containsKey(rowType)) {
-<a class="jxr_linenumber" name="292" href="#292">292</a>       addRowType(rowType);
+<a class="jxr_linenumber" name="232" href="#232">232</a>   }
+<a class="jxr_linenumber" name="233" href="#233">233</a>   
+<a class="jxr_linenumber" name="234" href="#234">234</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="235" href="#235">235</a> <em class="jxr_javadoccomment">   * Add a default value to a term of the core.</em>
+<a class="jxr_linenumber" name="236" href="#236">236</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="237" href="#237">237</a> <em class="jxr_javadoccomment">   * @param term</em>
+<a class="jxr_linenumber" name="238" href="#238">238</a> <em class="jxr_javadoccomment">   * @param defaultValue</em>
+<a class="jxr_linenumber" name="239" href="#239">239</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="240" href="#240">240</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addCoreDefaultValue(Term term, String defaultValue){
+<a class="jxr_linenumber" name="241" href="#241">241</a>     addDefaultValue(coreRowType, term, defaultValue);
+<a class="jxr_linenumber" name="242" href="#242">242</a>   }
+<a class="jxr_linenumber" name="243" href="#243">243</a>   
+<a class="jxr_linenumber" name="244" href="#244">244</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="245" href="#245">245</a> <em class="jxr_javadoccomment">   * Add a default value to a term of the provided rowType.</em>
+<a class="jxr_linenumber" name="246" href="#246">246</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="247" href="#247">247</a> <em class="jxr_javadoccomment">   * @param rowType</em>
+<a class="jxr_linenumber" name="248" href="#248">248</a> <em class="jxr_javadoccomment">   * @param term</em>
+<a class="jxr_linenumber" name="249" href="#249">249</a> <em class="jxr_javadoccomment">   * @param defaultValue</em>
+<a class="jxr_linenumber" name="250" href="#250">250</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="251" href="#251">251</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addDefaultValue(Term rowType, Term term, String defaultValue){
+<a class="jxr_linenumber" name="252" href="#252">252</a>     
+<a class="jxr_linenumber" name="253" href="#253">253</a>     <strong class="jxr_keyword">if</strong>(!defaultValues.containsKey(rowType)){
+<a class="jxr_linenumber" name="254" href="#254">254</a>       defaultValues.put(rowType, <strong class="jxr_keyword">new</strong> HashMap&lt;Term, String&gt;());
+<a class="jxr_linenumber" name="255" href="#255">255</a>     }
+<a class="jxr_linenumber" name="256" href="#256">256</a>     Map&lt;Term,String&gt; currentDefaultValues= defaultValues.get(rowType);
+<a class="jxr_linenumber" name="257" href="#257">257</a>     <strong class="jxr_keyword">if</strong>(currentDefaultValues.containsKey(term)){
+<a class="jxr_linenumber" name="258" href="#258">258</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"The default value of term "</span>+ term + <span class="jxr_string">" is already defined"</span>);
+<a class="jxr_linenumber" name="259" href="#259">259</a>     }
+<a class="jxr_linenumber" name="260" href="#260">260</a>     currentDefaultValues.put(term, defaultValue);
+<a class="jxr_linenumber" name="261" href="#261">261</a>   }
+<a class="jxr_linenumber" name="262" href="#262">262</a> 
+<a class="jxr_linenumber" name="263" href="#263">263</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="264" href="#264">264</a> <em class="jxr_javadoccomment">   * @return new map of all current data file names by their rowTypes.</em>
+<a class="jxr_linenumber" name="265" href="#265">265</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="266" href="#266">266</a>   <strong class="jxr_keyword">public</strong> Map&lt;Term, String&gt; getDataFiles() {
+<a class="jxr_linenumber" name="267" href="#267">267</a>     <strong class="jxr_keyword">return</strong> Maps.newHashMap(dataFileNames);
+<a class="jxr_linenumber" name="268" href="#268">268</a>   }
+<a class="jxr_linenumber" name="269" href="#269">269</a> 
+<a class="jxr_linenumber" name="270" href="#270">270</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="271" href="#271">271</a> <em class="jxr_javadoccomment">   * Add an extension record associated with the current core record.</em>
+<a class="jxr_linenumber" name="272" href="#272">272</a> <em class="jxr_javadoccomment">   * </em>
+<a class="jxr_linenumber" name="273" href="#273">273</a> <em class="jxr_javadoccomment">   * @param rowType</em>
+<a class="jxr_linenumber" name="274" href="#274">274</a> <em class="jxr_javadoccomment">   * @param row</em>
+<a class="jxr_linenumber" name="275" href="#275">275</a> <em class="jxr_javadoccomment">   * @throws IOException</em>
+<a class="jxr_linenumber" name="276" href="#276">276</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="277" href="#277">277</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> addExtensionRecord(Term rowType, Map&lt;Term, String&gt; row) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="278" href="#278">278</a>     <em class="jxr_comment">// make sure we know the extension rowtype</em>
+<a class="jxr_linenumber" name="279" href="#279">279</a>     <strong class="jxr_keyword">if</strong> (!terms.containsKey(rowType)) {
+<a class="jxr_linenumber" name="280" href="#280">280</a>       addRowType(rowType);
+<a class="jxr_linenumber" name="281" href="#281">281</a>     }
+<a class="jxr_linenumber" name="282" href="#282">282</a>     
+<a class="jxr_linenumber" name="283" href="#283">283</a>     <em class="jxr_comment">// make sure we know all terms</em>
+<a class="jxr_linenumber" name="284" href="#284">284</a>     List&lt;Term&gt; knownTerms = terms.get(rowType);
+<a class="jxr_linenumber" name="285" href="#285">285</a>     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isFirst = knownTerms.isEmpty();
+<a class="jxr_linenumber" name="286" href="#286">286</a>     <strong class="jxr_keyword">for</strong> (Term term : row.keySet()) {
+<a class="jxr_linenumber" name="287" href="#287">287</a>       <strong class="jxr_keyword">if</strong> (!knownTerms.contains(term)) {
+<a class="jxr_linenumber" name="288" href="#288">288</a>         <strong class="jxr_keyword">if</strong> (useHeaders &amp;&amp; !isFirst){
+<a class="jxr_linenumber" name="289" href="#289">289</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"You cannot add new terms after the first row when headers are enabled"</span>);
+<a class="jxr_linenumber" name="290" href="#290">290</a>         }
+<a class="jxr_linenumber" name="291" href="#291">291</a>         knownTerms.add(term);
+<a class="jxr_linenumber" name="292" href="#292">292</a>       }
 <a class="jxr_linenumber" name="293" href="#293">293</a>     }
-<a class="jxr_linenumber" name="294" href="#294">294</a>     
-<a class="jxr_linenumber" name="295" href="#295">295</a>     <em class="jxr_comment">// make sure no default value is already associated with one of the provided terms</em>
-<a class="jxr_linenumber" name="296" href="#296">296</a>     Map&lt;Term,String&gt; extDefaultValues = defaultValues.get(rowType);
-<a class="jxr_linenumber" name="297" href="#297">297</a>     <strong class="jxr_keyword">if</strong>(extDefaultValues !=<strong class="jxr_keyword">null</strong>){
-<a class="jxr_linenumber" name="298" href="#298">298</a>       Set&lt;Term&gt; diff = Sets.intersection(extDefaultValues.keySet(), row.keySet());
-<a class="jxr_linenumber" name="299" href="#299">299</a>       <strong class="jxr_keyword">if</strong>(!diff.isEmpty()){
-<a class="jxr_linenumber" name="300" href="#300">300</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"A default value is already defined for term(s) "</span>+
-<a class="jxr_linenumber" name="301" href="#301">301</a>           diff.toString() + <span class="jxr_string">" in rowType "</span> + rowType);
-<a class="jxr_linenumber" name="302" href="#302">302</a>       }
-<a class="jxr_linenumber" name="303" href="#303">303</a>     }
-<a class="jxr_linenumber" name="304" href="#304">304</a>     
-<a class="jxr_linenumber" name="305" href="#305">305</a>     <em class="jxr_comment">// make sure we know all terms</em>
-<a class="jxr_linenumber" name="306" href="#306">306</a>     List&lt;Term&gt; knownTerms = terms.get(rowType);
-<a class="jxr_linenumber" name="307" href="#307">307</a>     <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isFirst = knownTerms.isEmpty();
-<a class="jxr_linenumber" name="308" href="#308">308</a>     <strong class="jxr_keyword">for</strong> (Term term : row.keySet()) {
-<a class="jxr_linenumber" name="309" href="#309">309</a>       <strong class="jxr_keyword">if</strong> (!knownTerms.contains(term)) {
-<a class="jxr_linenumber" name="310" href="#310">310</a>         <strong class="jxr_keyword">if</strong> (useHeaders &amp;&amp; !isFirst){
-<a class="jxr_linenumber" name="311" href="#311">311</a>           <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"You cannot add new terms after the first row when headers are enabled"</span>);
-<a class="jxr_linenumber" name="312" href="#312">312</a>         }
-<a class="jxr_linenumber" name="313" href="#313">313</a>         knownTerms.add(term);
-<a class="jxr_linenumber" name="314" href="#314">314</a>       }
-<a class="jxr_linenumber" name="315" href="#315">315</a>     }
-<a class="jxr_linenumber" name="316" href="#316">316</a> 
-<a class="jxr_linenumber" name="317" href="#317">317</a>     <em class="jxr_comment">// write extension record</em>
-<a class="jxr_linenumber" name="318" href="#318">318</a>     writeRow(row, rowType);
-<a class="jxr_linenumber" name="319" href="#319">319</a>   }
-<a class="jxr_linenumber" name="320" href="#320">320</a> 
-<a class="jxr_linenumber" name="321" href="#321">321</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setEml(Eml eml) {
-<a class="jxr_linenumber" name="322" href="#322">322</a>     <strong class="jxr_keyword">this</strong>.eml = eml;
-<a class="jxr_linenumber" name="323" href="#323">323</a>   }
-<a class="jxr_linenumber" name="324" href="#324">324</a> 
-<a class="jxr_linenumber" name="325" href="#325">325</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="326" href="#326">326</a> <em class="jxr_javadoccomment">   * Writes meta.xml and eml.xml to the archive and closes tab writers.</em>
-<a class="jxr_linenumber" name="327" href="#327">327</a> <em class="jxr_javadoccomment">   *</em>
-<a class="jxr_linenumber" name="328" href="#328">328</a> <em class="jxr_javadoccomment">   * @deprecated Use {@link #close()} instead. This method will be removed in version 1.12.</em>
-<a class="jxr_linenumber" name="329" href="#329">329</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="330" href="#330">330</a>   @Deprecated
-<a class="jxr_linenumber" name="331" href="#331">331</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> finalize() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="332" href="#332">332</a>     close();
-<a class="jxr_linenumber" name="333" href="#333">333</a>   }
-<a class="jxr_linenumber" name="334" href="#334">334</a> 
-<a class="jxr_linenumber" name="335" href="#335">335</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="336" href="#336">336</a> <em class="jxr_javadoccomment">   * Writes meta.xml and eml.xml to the archive and closes tab writers.</em>
-<a class="jxr_linenumber" name="337" href="#337">337</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="338" href="#338">338</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> close() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="339" href="#339">339</a>     addEml();
-<a class="jxr_linenumber" name="340" href="#340">340</a>     addMeta();
-<a class="jxr_linenumber" name="341" href="#341">341</a>     <em class="jxr_comment">// flush last record</em>
-<a class="jxr_linenumber" name="342" href="#342">342</a>     flushLastCoreRecord();
-<a class="jxr_linenumber" name="343" href="#343">343</a>     <em class="jxr_comment">// TODO: add missing columns in second iteration of data files</em>
-<a class="jxr_linenumber" name="344" href="#344">344</a> 
-<a class="jxr_linenumber" name="345" href="#345">345</a>     <em class="jxr_comment">// close writers</em>
-<a class="jxr_linenumber" name="346" href="#346">346</a>     <strong class="jxr_keyword">for</strong> (TabWriter w : writers.values()) {
-<a class="jxr_linenumber" name="347" href="#347">347</a>       w.close();
-<a class="jxr_linenumber" name="348" href="#348">348</a>     }
-<a class="jxr_linenumber" name="349" href="#349">349</a>   }
-<a class="jxr_linenumber" name="350" href="#350">350</a> 
-<a class="jxr_linenumber" name="351" href="#351">351</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addEml() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="352" href="#352">352</a>     <strong class="jxr_keyword">if</strong> (eml != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="353" href="#353">353</a>       File emlFile = <strong class="jxr_keyword">new</strong> File(dir, <span class="jxr_string">"eml.xml"</span>);
-<a class="jxr_linenumber" name="354" href="#354">354</a>       <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="355" href="#355">355</a>         EmlWriter.writeEmlFile(emlFile, eml);
-<a class="jxr_linenumber" name="356" href="#356">356</a>       } <strong class="jxr_keyword">catch</strong> (TemplateException e) {
-<a class="jxr_linenumber" name="357" href="#357">357</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(<span class="jxr_string">"EML template exception: "</span> + e.getMessage());
-<a class="jxr_linenumber" name="358" href="#358">358</a>       }
-<a class="jxr_linenumber" name="359" href="#359">359</a>     }
-<a class="jxr_linenumber" name="360" href="#360">360</a>   }
-<a class="jxr_linenumber" name="361" href="#361">361</a> 
-<a class="jxr_linenumber" name="362" href="#362">362</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addMeta() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="363" href="#363">363</a>     File metaFile = <strong class="jxr_keyword">new</strong> File(dir, <span class="jxr_string">"meta.xml"</span>);
+<a class="jxr_linenumber" name="294" href="#294">294</a> 
+<a class="jxr_linenumber" name="295" href="#295">295</a>     <em class="jxr_comment">// write extension record</em>
+<a class="jxr_linenumber" name="296" href="#296">296</a>     writeRow(row, rowType);
+<a class="jxr_linenumber" name="297" href="#297">297</a>   }
+<a class="jxr_linenumber" name="298" href="#298">298</a> 
+<a class="jxr_linenumber" name="299" href="#299">299</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setEml(Eml eml) {
+<a class="jxr_linenumber" name="300" href="#300">300</a>     <strong class="jxr_keyword">this</strong>.eml = eml;
+<a class="jxr_linenumber" name="301" href="#301">301</a>   }
+<a class="jxr_linenumber" name="302" href="#302">302</a> 
+<a class="jxr_linenumber" name="303" href="#303">303</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="304" href="#304">304</a> <em class="jxr_javadoccomment">   * Writes meta.xml and eml.xml to the archive and closes tab writers.</em>
+<a class="jxr_linenumber" name="305" href="#305">305</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="306" href="#306">306</a> <em class="jxr_javadoccomment">   * @deprecated Use {@link #close()} instead. This method will be removed in version 1.12.</em>
+<a class="jxr_linenumber" name="307" href="#307">307</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="308" href="#308">308</a>   @Deprecated
+<a class="jxr_linenumber" name="309" href="#309">309</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> finalize() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="310" href="#310">310</a>     close();
+<a class="jxr_linenumber" name="311" href="#311">311</a>   }
+<a class="jxr_linenumber" name="312" href="#312">312</a> 
+<a class="jxr_linenumber" name="313" href="#313">313</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="314" href="#314">314</a> <em class="jxr_javadoccomment">   * Writes meta.xml and eml.xml to the archive and closes tab writers.</em>
+<a class="jxr_linenumber" name="315" href="#315">315</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="316" href="#316">316</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> close() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="317" href="#317">317</a>     addEml();
+<a class="jxr_linenumber" name="318" href="#318">318</a>     addMeta();
+<a class="jxr_linenumber" name="319" href="#319">319</a>     <em class="jxr_comment">// flush last record</em>
+<a class="jxr_linenumber" name="320" href="#320">320</a>     flushLastCoreRecord();
+<a class="jxr_linenumber" name="321" href="#321">321</a>     <em class="jxr_comment">// TODO: add missing columns in second iteration of data files</em>
+<a class="jxr_linenumber" name="322" href="#322">322</a> 
+<a class="jxr_linenumber" name="323" href="#323">323</a>     <em class="jxr_comment">// close writers</em>
+<a class="jxr_linenumber" name="324" href="#324">324</a>     <strong class="jxr_keyword">for</strong> (TabWriter w : writers.values()) {
+<a class="jxr_linenumber" name="325" href="#325">325</a>       w.close();
+<a class="jxr_linenumber" name="326" href="#326">326</a>     }
+<a class="jxr_linenumber" name="327" href="#327">327</a>   }
+<a class="jxr_linenumber" name="328" href="#328">328</a> 
+<a class="jxr_linenumber" name="329" href="#329">329</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addEml() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="330" href="#330">330</a>     <strong class="jxr_keyword">if</strong> (eml != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="331" href="#331">331</a>       File emlFile = <strong class="jxr_keyword">new</strong> File(dir, <span class="jxr_string">"eml.xml"</span>);
+<a class="jxr_linenumber" name="332" href="#332">332</a>       <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="333" href="#333">333</a>         EmlWriter.writeEmlFile(emlFile, eml);
+<a class="jxr_linenumber" name="334" href="#334">334</a>       } <strong class="jxr_keyword">catch</strong> (TemplateException e) {
+<a class="jxr_linenumber" name="335" href="#335">335</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(<span class="jxr_string">"EML template exception: "</span> + e.getMessage());
+<a class="jxr_linenumber" name="336" href="#336">336</a>       }
+<a class="jxr_linenumber" name="337" href="#337">337</a>     }
+<a class="jxr_linenumber" name="338" href="#338">338</a>   }
+<a class="jxr_linenumber" name="339" href="#339">339</a> 
+<a class="jxr_linenumber" name="340" href="#340">340</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addMeta() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="341" href="#341">341</a>     File metaFile = <strong class="jxr_keyword">new</strong> File(dir, <span class="jxr_string">"meta.xml"</span>);
+<a class="jxr_linenumber" name="342" href="#342">342</a> 
+<a class="jxr_linenumber" name="343" href="#343">343</a>     <a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a> arch = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a>();
+<a class="jxr_linenumber" name="344" href="#344">344</a>     <strong class="jxr_keyword">if</strong> (eml != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="345" href="#345">345</a>       arch.setMetadataLocation(<span class="jxr_string">"eml.xml"</span>);
+<a class="jxr_linenumber" name="346" href="#346">346</a>     }
+<a class="jxr_linenumber" name="347" href="#347">347</a>     arch.setCore(buildArchiveFile(arch, coreRowType, coreIdTerm));
+<a class="jxr_linenumber" name="348" href="#348">348</a>     <strong class="jxr_keyword">for</strong> (Term rowType : <strong class="jxr_keyword">this</strong>.terms.keySet()) {
+<a class="jxr_linenumber" name="349" href="#349">349</a>       <strong class="jxr_keyword">if</strong> (!coreRowType.equals(rowType)) {
+<a class="jxr_linenumber" name="350" href="#350">350</a>         arch.addExtension(buildArchiveFile(arch, rowType, <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="351" href="#351">351</a>       }
+<a class="jxr_linenumber" name="352" href="#352">352</a>     }
+<a class="jxr_linenumber" name="353" href="#353">353</a>     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="354" href="#354">354</a>       MetaDescriptorWriter.writeMetaFile(metaFile, arch);
+<a class="jxr_linenumber" name="355" href="#355">355</a>     } <strong class="jxr_keyword">catch</strong> (TemplateException e) {
+<a class="jxr_linenumber" name="356" href="#356">356</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(<span class="jxr_string">"Meta.xml template exception: "</span> + e.getMessage());
+<a class="jxr_linenumber" name="357" href="#357">357</a>     }
+<a class="jxr_linenumber" name="358" href="#358">358</a>   }
+<a class="jxr_linenumber" name="359" href="#359">359</a> 
+<a class="jxr_linenumber" name="360" href="#360">360</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwc/text/ArchiveFile.html">ArchiveFile</a> buildArchiveFile(<a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a> archive, Term rowType, Term idTerm) {
+<a class="jxr_linenumber" name="361" href="#361">361</a>     <a href="../../../../org/gbif/dwc/text/ArchiveFile.html">ArchiveFile</a> af = ArchiveFile.buildTabFile();
+<a class="jxr_linenumber" name="362" href="#362">362</a>     af.setArchive(archive);
+<a class="jxr_linenumber" name="363" href="#363">363</a>     af.addLocation(dataFileNames.get(rowType));
 <a class="jxr_linenumber" name="364" href="#364">364</a> 
-<a class="jxr_linenumber" name="365" href="#365">365</a>     <a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a> arch = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a>();
-<a class="jxr_linenumber" name="366" href="#366">366</a>     <strong class="jxr_keyword">if</strong> (eml != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="367" href="#367">367</a>       arch.setMetadataLocation(<span class="jxr_string">"eml.xml"</span>);
-<a class="jxr_linenumber" name="368" href="#368">368</a>     }
-<a class="jxr_linenumber" name="369" href="#369">369</a>     arch.setCore(buildArchiveFile(arch, coreRowType, coreIdTerm));
-<a class="jxr_linenumber" name="370" href="#370">370</a>     <strong class="jxr_keyword">for</strong> (Term rowType : <strong class="jxr_keyword">this</strong>.terms.keySet()) {
-<a class="jxr_linenumber" name="371" href="#371">371</a>       <strong class="jxr_keyword">if</strong> (!coreRowType.equals(rowType)) {
-<a class="jxr_linenumber" name="372" href="#372">372</a>         arch.addExtension(buildArchiveFile(arch, rowType, <strong class="jxr_keyword">null</strong>));
-<a class="jxr_linenumber" name="373" href="#373">373</a>       }
-<a class="jxr_linenumber" name="374" href="#374">374</a>     }
-<a class="jxr_linenumber" name="375" href="#375">375</a>     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="376" href="#376">376</a>       MetaDescriptorWriter.writeMetaFile(metaFile, arch);
-<a class="jxr_linenumber" name="377" href="#377">377</a>     } <strong class="jxr_keyword">catch</strong> (TemplateException e) {
-<a class="jxr_linenumber" name="378" href="#378">378</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(<span class="jxr_string">"Meta.xml template exception: "</span> + e.getMessage());
-<a class="jxr_linenumber" name="379" href="#379">379</a>     }
-<a class="jxr_linenumber" name="380" href="#380">380</a>   }
-<a class="jxr_linenumber" name="381" href="#381">381</a> 
-<a class="jxr_linenumber" name="382" href="#382">382</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwc/text/ArchiveFile.html">ArchiveFile</a> buildArchiveFile(<a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a> archive, Term rowType, Term idTerm) {
-<a class="jxr_linenumber" name="383" href="#383">383</a>     <a href="../../../../org/gbif/dwc/text/ArchiveFile.html">ArchiveFile</a> af = ArchiveFile.buildTabFile();
-<a class="jxr_linenumber" name="384" href="#384">384</a>     af.setArchive(archive);
-<a class="jxr_linenumber" name="385" href="#385">385</a>     af.addLocation(dataFileNames.get(rowType));
-<a class="jxr_linenumber" name="386" href="#386">386</a> 
-<a class="jxr_linenumber" name="387" href="#387">387</a>     af.setEncoding(<span class="jxr_string">"utf-8"</span>);
-<a class="jxr_linenumber" name="388" href="#388">388</a>     af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
-<a class="jxr_linenumber" name="389" href="#389">389</a>     af.setRowType(rowType.qualifiedName());
-<a class="jxr_linenumber" name="390" href="#390">390</a> 
-<a class="jxr_linenumber" name="391" href="#391">391</a>     <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
-<a class="jxr_linenumber" name="392" href="#392">392</a>     id.setIndex(0);
-<a class="jxr_linenumber" name="393" href="#393">393</a>     af.setId(id);
-<a class="jxr_linenumber" name="394" href="#394">394</a>     <em class="jxr_comment">// id an idTerm is provided, always use the index 0</em>
-<a class="jxr_linenumber" name="395" href="#395">395</a>     <strong class="jxr_keyword">if</strong> (idTerm != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="396" href="#396">396</a>       <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
-<a class="jxr_linenumber" name="397" href="#397">397</a>       field.setIndex(0);
-<a class="jxr_linenumber" name="398" href="#398">398</a>       field.setTerm(idTerm);
-<a class="jxr_linenumber" name="399" href="#399">399</a>       af.addField(field);
-<a class="jxr_linenumber" name="400" href="#400">400</a>     }
-<a class="jxr_linenumber" name="401" href="#401">401</a>     
-<a class="jxr_linenumber" name="402" href="#402">402</a>     <strong class="jxr_keyword">int</strong> idx = 0;
-<a class="jxr_linenumber" name="403" href="#403">403</a>     <strong class="jxr_keyword">for</strong> (Term c : terms.get(rowType)) {
-<a class="jxr_linenumber" name="404" href="#404">404</a>       idx++;
-<a class="jxr_linenumber" name="405" href="#405">405</a>       <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
-<a class="jxr_linenumber" name="406" href="#406">406</a>       field.setIndex(idx);
-<a class="jxr_linenumber" name="407" href="#407">407</a>       field.setTerm(c);
-<a class="jxr_linenumber" name="408" href="#408">408</a>       af.addField(field);
-<a class="jxr_linenumber" name="409" href="#409">409</a>     }
-<a class="jxr_linenumber" name="410" href="#410">410</a>     
-<a class="jxr_linenumber" name="411" href="#411">411</a>     <em class="jxr_comment">// check if default values are provided for this rowType</em>
-<a class="jxr_linenumber" name="412" href="#412">412</a>     Map&lt;Term,String&gt; termDefaultValueMap = defaultValues.get(rowType);
-<a class="jxr_linenumber" name="413" href="#413">413</a>     <strong class="jxr_keyword">if</strong>(termDefaultValueMap != <strong class="jxr_keyword">null</strong>){
-<a class="jxr_linenumber" name="414" href="#414">414</a>       <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="415" href="#415">415</a>       <strong class="jxr_keyword">for</strong> (Term t : termDefaultValueMap.keySet()) {
-<a class="jxr_linenumber" name="416" href="#416">416</a>         field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
-<a class="jxr_linenumber" name="417" href="#417">417</a>         field.setTerm(t);
-<a class="jxr_linenumber" name="418" href="#418">418</a>         field.setDefaultValue(termDefaultValueMap.get(t));
-<a class="jxr_linenumber" name="419" href="#419">419</a>         af.addField(field);
-<a class="jxr_linenumber" name="420" href="#420">420</a>       }
-<a class="jxr_linenumber" name="421" href="#421">421</a>     }
-<a class="jxr_linenumber" name="422" href="#422">422</a> 
-<a class="jxr_linenumber" name="423" href="#423">423</a>     <strong class="jxr_keyword">return</strong> af;
-<a class="jxr_linenumber" name="424" href="#424">424</a>   }
-<a class="jxr_linenumber" name="425" href="#425">425</a> }
+<a class="jxr_linenumber" name="365" href="#365">365</a>     af.setEncoding(<span class="jxr_string">"utf-8"</span>);
+<a class="jxr_linenumber" name="366" href="#366">366</a>     af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
+<a class="jxr_linenumber" name="367" href="#367">367</a>     af.setRowType(rowType.qualifiedName());
+<a class="jxr_linenumber" name="368" href="#368">368</a> 
+<a class="jxr_linenumber" name="369" href="#369">369</a>     <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
+<a class="jxr_linenumber" name="370" href="#370">370</a>     id.setIndex(0);
+<a class="jxr_linenumber" name="371" href="#371">371</a>     af.setId(id);
+<a class="jxr_linenumber" name="372" href="#372">372</a>     <em class="jxr_comment">// id an idTerm is provided, always use the index 0</em>
+<a class="jxr_linenumber" name="373" href="#373">373</a>     <strong class="jxr_keyword">if</strong> (idTerm != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="374" href="#374">374</a>       <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
+<a class="jxr_linenumber" name="375" href="#375">375</a>       field.setIndex(0);
+<a class="jxr_linenumber" name="376" href="#376">376</a>       field.setTerm(idTerm);
+<a class="jxr_linenumber" name="377" href="#377">377</a>       af.addField(field);
+<a class="jxr_linenumber" name="378" href="#378">378</a>     }
+<a class="jxr_linenumber" name="379" href="#379">379</a>     
+<a class="jxr_linenumber" name="380" href="#380">380</a>     Map&lt;Term,String&gt; termDefaultValueMap = defaultValues.get(rowType);
+<a class="jxr_linenumber" name="381" href="#381">381</a>     List&lt;Term&gt; rowTypeTerms = terms.get(rowType);
+<a class="jxr_linenumber" name="382" href="#382">382</a>     <strong class="jxr_keyword">int</strong> idx = 0;
+<a class="jxr_linenumber" name="383" href="#383">383</a>     <strong class="jxr_keyword">for</strong> (Term c : rowTypeTerms) {
+<a class="jxr_linenumber" name="384" href="#384">384</a>       idx++;
+<a class="jxr_linenumber" name="385" href="#385">385</a>       <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
+<a class="jxr_linenumber" name="386" href="#386">386</a>       field.setIndex(idx);
+<a class="jxr_linenumber" name="387" href="#387">387</a>       field.setTerm(c);
+<a class="jxr_linenumber" name="388" href="#388">388</a>       <strong class="jxr_keyword">if</strong>(termDefaultValueMap !=<strong class="jxr_keyword">null</strong> &amp;&amp; termDefaultValueMap.containsKey(c)){
+<a class="jxr_linenumber" name="389" href="#389">389</a>         field.setDefaultValue(termDefaultValueMap.get(c));
+<a class="jxr_linenumber" name="390" href="#390">390</a>       }
+<a class="jxr_linenumber" name="391" href="#391">391</a>       af.addField(field);
+<a class="jxr_linenumber" name="392" href="#392">392</a>     }
+<a class="jxr_linenumber" name="393" href="#393">393</a>     
+<a class="jxr_linenumber" name="394" href="#394">394</a>     <em class="jxr_comment">// check if default values are provided for this rowType</em>
+<a class="jxr_linenumber" name="395" href="#395">395</a>     <strong class="jxr_keyword">if</strong>(termDefaultValueMap != <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="396" href="#396">396</a>       <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="397" href="#397">397</a>       <strong class="jxr_keyword">for</strong> (Term t : termDefaultValueMap.keySet()) {
+<a class="jxr_linenumber" name="398" href="#398">398</a>         <strong class="jxr_keyword">if</strong>(!rowTypeTerms.contains(t)){
+<a class="jxr_linenumber" name="399" href="#399">399</a>           field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a>();
+<a class="jxr_linenumber" name="400" href="#400">400</a>           field.setTerm(t);
+<a class="jxr_linenumber" name="401" href="#401">401</a>           field.setDefaultValue(termDefaultValueMap.get(t));
+<a class="jxr_linenumber" name="402" href="#402">402</a>           af.addField(field);
+<a class="jxr_linenumber" name="403" href="#403">403</a>         }
+<a class="jxr_linenumber" name="404" href="#404">404</a>       }
+<a class="jxr_linenumber" name="405" href="#405">405</a>     }
+<a class="jxr_linenumber" name="406" href="#406">406</a> 
+<a class="jxr_linenumber" name="407" href="#407">407</a>     <strong class="jxr_keyword">return</strong> af;
+<a class="jxr_linenumber" name="408" href="#408">408</a>   }
+<a class="jxr_linenumber" name="409" href="#409">409</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>
