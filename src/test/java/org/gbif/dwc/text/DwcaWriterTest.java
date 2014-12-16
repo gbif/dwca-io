@@ -1,6 +1,7 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.Record;
+import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
@@ -34,78 +35,6 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
     writer.newRecord("dummy1");
     writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
-  }
-  
-  /**
-   * Add a core column before adding a default value for this column.
-   * @throws Exception
-   */
-  @Test(expected = IllegalStateException.class)
-  public void testDefaultValueDefinedTwice() throws Exception {
-    File dwcaDir = FileUtils.createTempDir();
-    dwcaDir.deleteOnExit();
-    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
-    writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
-    writer.addDefaultValue(DwcTerm.Taxon, DwcTerm.taxonID, "dummy");
-  }
-  
-  /**
-   * Add a core column after added a default value for this column.
-   * @throws Exception
-   */
-  @Test(expected = IllegalStateException.class)
-  public void testDefaultValueDefinedTwice2() throws Exception {
-    File dwcaDir = FileUtils.createTempDir();
-    dwcaDir.deleteOnExit();
-    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
-    writer.addDefaultValue(DwcTerm.Taxon, DwcTerm.taxonID, "dummy");
-    
-    writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
-  }
-  
-  /**
-   * Add extension value before adding a default value for the same column.
-   * @throws Exception
-   */
-  @Test(expected = IllegalStateException.class)
-  public void testDefaultValueDefinedTwiceExtension() throws Exception {
-    File dwcaDir = FileUtils.createTempDir();
-    dwcaDir.deleteOnExit();
-    
-    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
-    writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
-    
-    // add a extension record
-    Map<Term, String> values = new HashMap<Term, String>();
-    values.put(DwcTerm.resourceID, "11");
-    writer.addExtensionRecord(DwcTerm.ResourceRelationship, values);
-    
-    // try to set a default value on that same term
-    writer.addDefaultValue(DwcTerm.ResourceRelationship, DwcTerm.resourceID, "dummy");
-  }
-  
-  /**
-   * Add extension value after added a default value for the same column.
-   * @throws Exception
-   */
-  @Test(expected = IllegalStateException.class)
-  public void testDefaultValueDefinedTwiceExtension2() throws Exception {
-    File dwcaDir = FileUtils.createTempDir();
-    dwcaDir.deleteOnExit();
-    
-    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
-    writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
-    
-    writer.addDefaultValue(DwcTerm.ResourceRelationship, DwcTerm.resourceID, "dummy");
-    
-    // try to add a record with that same term
-    Map<Term, String> values = new HashMap<Term, String>();
-    values.put(DwcTerm.resourceID, "11");
-    writer.addExtensionRecord(DwcTerm.ResourceRelationship, values);
   }
   
   @Test
@@ -305,8 +234,13 @@ public class DwcaWriterTest {
     assertEquals("dummy1", firstRecord.value(DwcTerm.taxonID));
   }
   
+  /**
+   * Test the writing of an archive that includes some default values in the core and in one extension.
+   * 
+   * @throws Exception
+   */
   @Test
-  public void testWriterUsingDefaultTermValues() throws Exception {
+  public void testWriterUsingDefaultValues() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
     dwcaDir.deleteOnExit();
     LOG.info("Test archive writer in {}", dwcaDir.getAbsolutePath());
@@ -314,20 +248,60 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
 
     writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.parentNameUsageID, "1");
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, "2");
+    writer.addCoreColumn(DwcTerm.countryCode, null);
+    
+    // add a VernacularName extension record
+    Map<Term,String> extensionRecord = new HashMap<Term, String>();
+    extensionRecord.put(DwcTerm.vernacularName, "Komodo Dragon");
+    extensionRecord.put(DcTerm.language, null);
+    writer.addExtensionRecord(GbifTerm.VernacularName, extensionRecord);
     
     writer.addCoreDefaultValue(DwcTerm.collectionCode, "A2Z");
     writer.addCoreDefaultValue(DwcTerm.countryCode, "CA");
+    writer.addDefaultValue(GbifTerm.VernacularName, DcTerm.language, "en");
+    
+    // add a second records and overwrite the default value
+    writer.newRecord("dummy2");
+    writer.addCoreColumn(DwcTerm.parentNameUsageID, "1");
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, "2");
+    writer.addCoreColumn(DwcTerm.countryCode, "ID");
+    
+    // add a VernacularName extension record
+    extensionRecord = new HashMap<Term, String>();
+    extensionRecord.put(DwcTerm.vernacularName, "Varano De Komodo");
+    extensionRecord.put(DcTerm.language, "es");
+    writer.addExtensionRecord(GbifTerm.VernacularName, extensionRecord);
+    
     writer.close();
 
+    // validate core content
     Archive arch = ArchiveFactory.openArchive(dwcaDir);
     Iterator<Record> recIt = arch.getCore().iterator();
     Record firstRecord = recIt.next();
     assertEquals("dummy1", firstRecord.id());
     assertEquals("dummy1", firstRecord.value(DwcTerm.taxonID));
     assertEquals("A2Z", firstRecord.value(DwcTerm.collectionCode));
+    assertEquals("CA", firstRecord.value(DwcTerm.countryCode));
     assertEquals("A2Z", arch.getCore().getField(DwcTerm.collectionCode).getDefaultValue());
     assertEquals("CA", arch.getCore().getField(DwcTerm.countryCode).getDefaultValue());
+    
+    Record secondRecord = recIt.next();
+    assertEquals("dummy2", secondRecord.id());
+    assertEquals("dummy2", secondRecord.value(DwcTerm.taxonID));
+    assertEquals("A2Z", secondRecord.value(DwcTerm.collectionCode));
+    assertEquals("ID", secondRecord.value(DwcTerm.countryCode));
+    
+    // validate extension content
+    Iterator<Record> extRecIt = arch.getExtension(GbifTerm.VernacularName).iterator();
+    assertEquals("en", arch.getExtension(GbifTerm.VernacularName).getField(DcTerm.language).getDefaultValue());
+    firstRecord = extRecIt.next();
+    assertEquals("dummy1", firstRecord.id());
+    assertEquals("en", firstRecord.value(DcTerm.language));
+    
+    secondRecord = extRecIt.next();
+    assertEquals("dummy2", secondRecord.id());
+    assertEquals("es", secondRecord.value(DcTerm.language));
   }
 }

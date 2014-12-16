@@ -216,12 +216,6 @@ public class DwcaWriter {
       throw new IllegalStateException("You cannot add a term that was specified as coreId term");
     }
     
-    // ensure no default value is already associated with this term 
-    Map<Term,String> coreDefaultValues = defaultValues.get(coreRowType);
-    if(coreDefaultValues !=null && coreDefaultValues.containsKey(term)){
-      throw new IllegalStateException("A default value for term "+ term + " is already defined");
-    }
-    
     List<Term> coreTerms = terms.get(coreRowType);
     if (!coreTerms.contains(term)) {
       if (useHeaders && recordNum>1){
@@ -255,12 +249,6 @@ public class DwcaWriter {
    * @param defaultValue
    */
   public void addDefaultValue(Term rowType, Term term, String defaultValue){
-    List<Term> knownTerms = terms.get(rowType);
-    
-    // avoid overwriting a term that was already defined
-    if(knownTerms !=null && knownTerms.contains(term)){
-      throw new IllegalStateException("The term "+ term + " is already defined for rowType " + rowType );
-    }
     
     if(!defaultValues.containsKey(rowType)){
       defaultValues.put(rowType, new HashMap<Term, String>());
@@ -290,16 +278,6 @@ public class DwcaWriter {
     // make sure we know the extension rowtype
     if (!terms.containsKey(rowType)) {
       addRowType(rowType);
-    }
-    
-    // make sure no default value is already associated with one of the provided terms
-    Map<Term,String> extDefaultValues = defaultValues.get(rowType);
-    if(extDefaultValues !=null){
-      Set<Term> diff = Sets.intersection(extDefaultValues.keySet(), row.keySet());
-      if(!diff.isEmpty()){
-        throw new IllegalStateException("A default value is already defined for term(s) "+
-          diff.toString() + " in rowType " + rowType);
-      }
     }
     
     // make sure we know all terms
@@ -399,24 +377,30 @@ public class DwcaWriter {
       af.addField(field);
     }
     
+    Map<Term,String> termDefaultValueMap = defaultValues.get(rowType);
+    List<Term> rowTypeTerms = terms.get(rowType);
     int idx = 0;
-    for (Term c : terms.get(rowType)) {
+    for (Term c : rowTypeTerms) {
       idx++;
       ArchiveField field = new ArchiveField();
       field.setIndex(idx);
       field.setTerm(c);
+      if(termDefaultValueMap !=null && termDefaultValueMap.containsKey(c)){
+        field.setDefaultValue(termDefaultValueMap.get(c));
+      }
       af.addField(field);
     }
     
     // check if default values are provided for this rowType
-    Map<Term,String> termDefaultValueMap = defaultValues.get(rowType);
     if(termDefaultValueMap != null){
       ArchiveField field = null;
       for (Term t : termDefaultValueMap.keySet()) {
-        field = new ArchiveField();
-        field.setTerm(t);
-        field.setDefaultValue(termDefaultValueMap.get(t));
-        af.addField(field);
+        if(!rowTypeTerms.contains(t)){
+          field = new ArchiveField();
+          field.setTerm(t);
+          field.setDefaultValue(termDefaultValueMap.get(t));
+          af.addField(field);
+        }
       }
     }
 
