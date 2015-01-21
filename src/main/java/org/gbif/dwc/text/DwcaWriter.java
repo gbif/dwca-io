@@ -15,18 +15,20 @@ package org.gbif.dwc.text;
  * limitations under the License.
  */
 
+import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.record.Record;
-import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.Term;
 import org.gbif.file.TabWriter;
-import org.gbif.metadata.eml.Eml;
-import org.gbif.metadata.eml.EmlWriter;
+import org.gbif.registry.metadata.EMLWriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +37,6 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import freemarker.template.TemplateException;
-
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +63,7 @@ public class DwcaWriter {
   private final Map<Term, List<Term>> terms = Maps.newHashMap();
   // key=rowType, value=default values per column
   private final Map<Term, Map<Term, String>> defaultValues = Maps.newHashMap();
-  private Eml eml;
+  private Dataset eml;
   
   /**
    * Creates a new writer without header rows.
@@ -296,7 +295,7 @@ public class DwcaWriter {
     writeRow(row, rowType);
   }
 
-  public void setEml(Eml eml) {
+  public void setEml(Dataset eml) {
     this.eml = eml;
   }
 
@@ -328,12 +327,8 @@ public class DwcaWriter {
 
   private void addEml() throws IOException {
     if (eml != null) {
-      File emlFile = new File(dir, "eml.xml");
-      try {
-        EmlWriter.writeEmlFile(emlFile, eml);
-      } catch (TemplateException e) {
-        throw new IOException("EML template exception: " + e.getMessage());
-      }
+      Writer writer = new FileWriter(new File(dir, "eml.xml"));
+      EMLWriter.write(eml, writer);
     }
   }
 
@@ -350,11 +345,7 @@ public class DwcaWriter {
         arch.addExtension(buildArchiveFile(arch, rowType, null));
       }
     }
-    try {
-      MetaDescriptorWriter.writeMetaFile(metaFile, arch);
-    } catch (TemplateException e) {
-      throw new IOException("Meta.xml template exception: " + e.getMessage());
-    }
+    MetaDescriptorWriter.writeMetaFile(metaFile, arch);
   }
 
   private ArchiveFile buildArchiveFile(Archive archive, Term rowType, Term idTerm) {

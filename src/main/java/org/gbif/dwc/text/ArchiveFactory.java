@@ -1,9 +1,5 @@
 package org.gbif.dwc.text;
 
-import com.google.common.base.Strings;
-import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -12,26 +8,30 @@ import org.gbif.dwc.text.ArchiveField.DataType;
 import org.gbif.file.CSVReader;
 import org.gbif.file.CSVReaderFactory;
 import org.gbif.file.DownloadUtil;
-import org.gbif.metadata.handler.BasicMetadataSaxHandler;
 import org.gbif.utils.file.BomSafeInputStreamWrapper;
 import org.gbif.utils.file.CompressionUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.commons.io.FileUtils;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import com.google.common.base.Strings;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 public class ArchiveFactory {
 
@@ -39,7 +39,7 @@ public class ArchiveFactory {
      * SAX handler to parse a meta.xml descriptor for dwc archives. It populates a given archive instance and ignores
      * namespaces. The parser needs to be namespace aware!
      */
-    static class MetaHandler extends BasicMetadataSaxHandler {
+    static class MetaHandler extends SimpleSaxHandler {
 
         private static final String NS_DWCA = "http://rs.tdwg.org/dwc/text/";
         private Archive archive;

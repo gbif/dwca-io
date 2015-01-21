@@ -1,5 +1,6 @@
 package org.gbif.dwc.text;
 
+import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.record.DarwinCoreRecord;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.RecordImpl;
@@ -8,9 +9,7 @@ import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.file.CSVReader;
-import org.gbif.metadata.BasicMetadata;
-import org.gbif.metadata.MetadataException;
-import org.gbif.metadata.MetadataFactory;
+import org.gbif.registry.metadata.parse.DatasetParser;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 
@@ -241,7 +240,7 @@ public class Archive implements Iterable<StarRecord> {
   private static final Logger LOG = LoggerFactory.getLogger(Archive.class);
 
   private String metadataLocation;
-  private BasicMetadata metadata;
+  private Dataset metadata;
   private File location;
   private ArchiveFile core;
   private Set<ArchiveFile> extensions = new HashSet<ArchiveFile>();
@@ -294,21 +293,23 @@ public class Archive implements Iterable<StarRecord> {
     return location;
   }
 
-  public BasicMetadata getMetadata() throws MetadataException {
+  public Dataset getMetadata() throws MetadataException {
     if (metadata == null) {
-      MetadataFactory factory = new MetadataFactory();
       File mf = getMetadataLocationFile();
-      if (mf.exists()) {
-        metadata = factory.read(mf);
-      } else {
-        // try url ???
-        try {
+      try {
+        InputStream stream;
+        if (mf.exists()) {
+          stream = FileUtils.getInputStream(mf);
+        } else {
+          // try as url
           URL url = new URL(metadataLocation);
-          InputStream in = url.openStream();
-          metadata = factory.read(in);
-        } catch (Exception ignored) {
-          // hmm, no clue
+          stream = url.openStream();
         }
+        metadata = DatasetParser.build(stream);
+      } catch (IOException e) {
+        throw new MetadataException(e);
+      } catch (RuntimeException e) {
+        throw new MetadataException(e);
       }
     }
     return metadata;
