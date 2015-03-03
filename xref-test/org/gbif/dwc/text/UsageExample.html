@@ -9,7 +9,7 @@
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.gbif.dwc.text;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.Record;
-<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.StarRecordImpl;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.StarRecord;
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.terms.DcTerm;
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.terms.DwcTerm;
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   
@@ -25,7 +25,7 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>      System.out.println(<span class="jxr_string">"Reading archive from "</span>+arch.getLocation().getAbsolutePath());
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>      System.out.println(<span class="jxr_string">"Archive of rowtype "</span>+arch.getCore().getRowType()+<span class="jxr_string">" with "</span>+arch.getExtensions().size()+<span class="jxr_string">" extensions"</span>);
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>      <em class="jxr_comment">// loop over star records. i.e. core with all linked extension records</em>
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>      <strong class="jxr_keyword">for</strong> (StarRecordImpl rec : arch) {
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>      <strong class="jxr_keyword">for</strong> (StarRecord rec : arch) {
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>        <em class="jxr_comment">// print core ID + scientific name</em>
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>        System.out.println(rec.core().id()
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>          + <span class="jxr_string">" sciname:"</span> + rec.core().value(DwcTerm.scientificName)

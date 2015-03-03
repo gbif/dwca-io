@@ -9,7 +9,7 @@
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.gbif.dwc.text;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.Record;
-<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.StarRecordImpl;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.StarRecord;
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.terms.DcTerm;
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.terms.DwcTerm;
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> org.gbif.file.CSVReader;
@@ -188,7 +188,7 @@
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>     assertEquals(3, arch.getExtensions().size());
 <a class="jxr_linenumber" name="L181" href="#L181">181</a> 
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">boolean</strong> found = false;
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     <strong class="jxr_keyword">for</strong> (StarRecordImpl rec : arch) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>     <strong class="jxr_keyword">for</strong> (StarRecord rec : arch) {
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>       <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"980-sp10"</span>.equals(rec.core().id())) {
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         found = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>       }
@@ -211,7 +211,7 @@
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>     <strong class="jxr_keyword">int</strong> counter = 0;
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">int</strong> occCounter = 0;
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>     Set&lt;String&gt; ids = Sets.newHashSet();
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>     <strong class="jxr_keyword">for</strong> (StarRecordImpl rec : arch) {
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>     <strong class="jxr_keyword">for</strong> (StarRecord rec : arch) {
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>       counter++;
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>       ids.add(rec.core().id());
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>       List&lt;Record&gt; occs = rec.extension(DwcTerm.Occurrence);
@@ -343,8 +343,8 @@
 <a class="jxr_linenumber" name="L335" href="#L335">335</a>     assertNotNull(arch.getCore().getId());
 <a class="jxr_linenumber" name="L336" href="#L336">336</a>     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
 <a class="jxr_linenumber" name="L337" href="#L337">337</a>     assertEquals(0, arch.getExtensions().size());
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>     Iterator&lt;StarRecordImpl&gt; dwci = arch.iterator();
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>     StarRecordImpl star = dwci.next();
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     Iterator&lt;StarRecord&gt; dwci = arch.iterator();
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>     StarRecord star = dwci.next();
 <a class="jxr_linenumber" name="L340" href="#L340">340</a>     assertEquals(<span class="jxr_string">"Globicephala melaena melaena Traill"</span>, star.core().value(DwcTerm.scientificName));
 <a class="jxr_linenumber" name="L341" href="#L341">341</a>     assertNull(arch.getCore().getLocation());
 <a class="jxr_linenumber" name="L342" href="#L342">342</a> 
@@ -370,15 +370,15 @@
 <a class="jxr_linenumber" name="L362" href="#L362">362</a>     assertNotNull(arch.getCore().getId());
 <a class="jxr_linenumber" name="L363" href="#L363">363</a>     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
 <a class="jxr_linenumber" name="L364" href="#L364">364</a>     assertEquals(0, arch.getExtensions().size());
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>     Iterator&lt;StarRecordImpl&gt; dwci = arch.iterator();
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>     StarRecordImpl star = dwci.next();
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>     Iterator&lt;StarRecord&gt; dwci = arch.iterator();
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>     StarRecord star = dwci.next();
 <a class="jxr_linenumber" name="L367" href="#L367">367</a>     star = dwci.next();
 <a class="jxr_linenumber" name="L368" href="#L368">368</a>     star = dwci.next();
 <a class="jxr_linenumber" name="L369" href="#L369">369</a>     star = dwci.next();
 <a class="jxr_linenumber" name="L370" href="#L370">370</a>     star = dwci.next();
 <a class="jxr_linenumber" name="L371" href="#L371">371</a>     assertEquals(<span class="jxr_string">"Delphinus delphis var. delphis"</span>, star.core().value(DwcTerm.scientificName));
 <a class="jxr_linenumber" name="L372" href="#L372">372</a>     <strong class="jxr_keyword">int</strong> i = 0;
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>     <strong class="jxr_keyword">for</strong> (StarRecordImpl rec : arch) {
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>     <strong class="jxr_keyword">for</strong> (StarRecord rec : arch) {
 <a class="jxr_linenumber" name="L374" href="#L374">374</a>       i++;
 <a class="jxr_linenumber" name="L375" href="#L375">375</a>       <strong class="jxr_keyword">if</strong> (i &gt; 20) {
 <a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">break</strong>;
@@ -509,7 +509,7 @@
 <a class="jxr_linenumber" name="L501" href="#L501">501</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNullCoreID() <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L502" href="#L502">502</a>     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L503" href="#L503">503</a>       Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile(<span class="jxr_string">"nullCoreID.zip"</span>), <strong class="jxr_keyword">new</strong> File(System.getProperty(<span class="jxr_string">"java.io.tmpdir"</span>)));
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>       Iterator&lt;StarRecordImpl&gt; iter = archive.iterator();
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>       Iterator&lt;StarRecord&gt; iter = archive.iterator();
 <a class="jxr_linenumber" name="L505" href="#L505">505</a>       <strong class="jxr_keyword">while</strong> (iter.hasNext()) {
 <a class="jxr_linenumber" name="L506" href="#L506">506</a>         iter.next();
 <a class="jxr_linenumber" name="L507" href="#L507">507</a>       }

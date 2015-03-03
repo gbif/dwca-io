@@ -8,7 +8,7 @@
 <div id="overview"><a href="../../../../../testapidocs/org/gbif/dwc/text/ArchivePlaziTest.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.gbif.dwc.text;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
-<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.StarRecordImpl;
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.record.StarRecord;
 <a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.utils.file.FileUtils;
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> java.io.File;
@@ -23,7 +23,7 @@
 <a class="jxr_linenumber" name="L15" href="#L15">15</a>  
 <a class="jxr_linenumber" name="L16" href="#L16">16</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> assertNumberStarRecords(Archive arch, <strong class="jxr_keyword">int</strong> expectedRecords) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>      <strong class="jxr_keyword">int</strong> rows = 0;
-<a class="jxr_linenumber" name="L18" href="#L18">18</a>      <strong class="jxr_keyword">for</strong> (StarRecordImpl rec : arch) {
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>      <strong class="jxr_keyword">for</strong> (StarRecord rec : arch) {
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>        assertNotNull(rec);
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>        rows++;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>      }

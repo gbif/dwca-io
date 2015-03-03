@@ -9,7 +9,7 @@
 <pre><span class="sourceLineNo">001</span>package org.gbif.dwc.text;<a name="line.1"></a>
 <span class="sourceLineNo">002</span><a name="line.2"></a>
 <span class="sourceLineNo">003</span>import org.gbif.dwc.record.Record;<a name="line.3"></a>
-<span class="sourceLineNo">004</span>import org.gbif.dwc.record.StarRecordImpl;<a name="line.4"></a>
+<span class="sourceLineNo">004</span>import org.gbif.dwc.record.StarRecord;<a name="line.4"></a>
 <span class="sourceLineNo">005</span>import org.gbif.dwc.terms.DcTerm;<a name="line.5"></a>
 <span class="sourceLineNo">006</span>import org.gbif.dwc.terms.DwcTerm;<a name="line.6"></a>
 <span class="sourceLineNo">007</span>import org.gbif.utils.file.FileUtils;<a name="line.7"></a>
@@ -31,7 +31,7 @@
 <span class="sourceLineNo">023</span>    assertEquals(2, arch.getExtensions().size());<a name="line.23"></a>
 <span class="sourceLineNo">024</span>    int found = 0;<a name="line.24"></a>
 <span class="sourceLineNo">025</span>    int extensionRecords = 0;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>    for (StarRecordImpl rec : arch) {<a name="line.26"></a>
+<span class="sourceLineNo">026</span>    for (StarRecord rec : arch) {<a name="line.26"></a>
 <span class="sourceLineNo">027</span>      //System.out.println(rec.core().id() + " --&gt; " + rec.size());<a name="line.27"></a>
 <span class="sourceLineNo">028</span>      // count all extension records<a name="line.28"></a>
 <span class="sourceLineNo">029</span>      extensionRecords += rec.size();<a name="line.29"></a>

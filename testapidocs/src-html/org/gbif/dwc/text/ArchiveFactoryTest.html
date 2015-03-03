@@ -9,7 +9,7 @@
 <pre><span class="sourceLineNo">001</span>package org.gbif.dwc.text;<a name="line.1"></a>
 <span class="sourceLineNo">002</span><a name="line.2"></a>
 <span class="sourceLineNo">003</span>import org.gbif.dwc.record.Record;<a name="line.3"></a>
-<span class="sourceLineNo">004</span>import org.gbif.dwc.record.StarRecordImpl;<a name="line.4"></a>
+<span class="sourceLineNo">004</span>import org.gbif.dwc.record.StarRecord;<a name="line.4"></a>
 <span class="sourceLineNo">005</span>import org.gbif.dwc.terms.DcTerm;<a name="line.5"></a>
 <span class="sourceLineNo">006</span>import org.gbif.dwc.terms.DwcTerm;<a name="line.6"></a>
 <span class="sourceLineNo">007</span>import org.gbif.file.CSVReader;<a name="line.7"></a>
@@ -188,7 +188,7 @@
 <span class="sourceLineNo">180</span>    assertEquals(3, arch.getExtensions().size());<a name="line.180"></a>
 <span class="sourceLineNo">181</span><a name="line.181"></a>
 <span class="sourceLineNo">182</span>    boolean found = false;<a name="line.182"></a>
-<span class="sourceLineNo">183</span>    for (StarRecordImpl rec : arch) {<a name="line.183"></a>
+<span class="sourceLineNo">183</span>    for (StarRecord rec : arch) {<a name="line.183"></a>
 <span class="sourceLineNo">184</span>      if ("980-sp10".equals(rec.core().id())) {<a name="line.184"></a>
 <span class="sourceLineNo">185</span>        found = true;<a name="line.185"></a>
 <span class="sourceLineNo">186</span>      }<a name="line.186"></a>
@@ -211,7 +211,7 @@
 <span class="sourceLineNo">203</span>    int counter = 0;<a name="line.203"></a>
 <span class="sourceLineNo">204</span>    int occCounter = 0;<a name="line.204"></a>
 <span class="sourceLineNo">205</span>    Set&lt;String&gt; ids = Sets.newHashSet();<a name="line.205"></a>
-<span class="sourceLineNo">206</span>    for (StarRecordImpl rec : arch) {<a name="line.206"></a>
+<span class="sourceLineNo">206</span>    for (StarRecord rec : arch) {<a name="line.206"></a>
 <span class="sourceLineNo">207</span>      counter++;<a name="line.207"></a>
 <span class="sourceLineNo">208</span>      ids.add(rec.core().id());<a name="line.208"></a>
 <span class="sourceLineNo">209</span>      List&lt;Record&gt; occs = rec.extension(DwcTerm.Occurrence);<a name="line.209"></a>
@@ -343,8 +343,8 @@
 <span class="sourceLineNo">335</span>    assertNotNull(arch.getCore().getId());<a name="line.335"></a>
 <span class="sourceLineNo">336</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));<a name="line.336"></a>
 <span class="sourceLineNo">337</span>    assertEquals(0, arch.getExtensions().size());<a name="line.337"></a>
-<span class="sourceLineNo">338</span>    Iterator&lt;StarRecordImpl&gt; dwci = arch.iterator();<a name="line.338"></a>
-<span class="sourceLineNo">339</span>    StarRecordImpl star = dwci.next();<a name="line.339"></a>
+<span class="sourceLineNo">338</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.338"></a>
+<span class="sourceLineNo">339</span>    StarRecord star = dwci.next();<a name="line.339"></a>
 <span class="sourceLineNo">340</span>    assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));<a name="line.340"></a>
 <span class="sourceLineNo">341</span>    assertNull(arch.getCore().getLocation());<a name="line.341"></a>
 <span class="sourceLineNo">342</span><a name="line.342"></a>
@@ -370,15 +370,15 @@
 <span class="sourceLineNo">362</span>    assertNotNull(arch.getCore().getId());<a name="line.362"></a>
 <span class="sourceLineNo">363</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));<a name="line.363"></a>
 <span class="sourceLineNo">364</span>    assertEquals(0, arch.getExtensions().size());<a name="line.364"></a>
-<span class="sourceLineNo">365</span>    Iterator&lt;StarRecordImpl&gt; dwci = arch.iterator();<a name="line.365"></a>
-<span class="sourceLineNo">366</span>    StarRecordImpl star = dwci.next();<a name="line.366"></a>
+<span class="sourceLineNo">365</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.365"></a>
+<span class="sourceLineNo">366</span>    StarRecord star = dwci.next();<a name="line.366"></a>
 <span class="sourceLineNo">367</span>    star = dwci.next();<a name="line.367"></a>
 <span class="sourceLineNo">368</span>    star = dwci.next();<a name="line.368"></a>
 <span class="sourceLineNo">369</span>    star = dwci.next();<a name="line.369"></a>
 <span class="sourceLineNo">370</span>    star = dwci.next();<a name="line.370"></a>
 <span class="sourceLineNo">371</span>    assertEquals("Delphinus delphis var. delphis", star.core().value(DwcTerm.scientificName));<a name="line.371"></a>
 <span class="sourceLineNo">372</span>    int i = 0;<a name="line.372"></a>
-<span class="sourceLineNo">373</span>    for (StarRecordImpl rec : arch) {<a name="line.373"></a>
+<span class="sourceLineNo">373</span>    for (StarRecord rec : arch) {<a name="line.373"></a>
 <span class="sourceLineNo">374</span>      i++;<a name="line.374"></a>
 <span class="sourceLineNo">375</span>      if (i &gt; 20) {<a name="line.375"></a>
 <span class="sourceLineNo">376</span>        break;<a name="line.376"></a>
@@ -509,7 +509,7 @@
 <span class="sourceLineNo">501</span>  public void testNullCoreID() throws IOException {<a name="line.501"></a>
 <span class="sourceLineNo">502</span>    try {<a name="line.502"></a>
 <span class="sourceLineNo">503</span>      Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), new File(System.getProperty("java.io.tmpdir")));<a name="line.503"></a>
-<span class="sourceLineNo">504</span>      Iterator&lt;StarRecordImpl&gt; iter = archive.iterator();<a name="line.504"></a>
+<span class="sourceLineNo">504</span>      Iterator&lt;StarRecord&gt; iter = archive.iterator();<a name="line.504"></a>
 <span class="sourceLineNo">505</span>      while (iter.hasNext()) {<a name="line.505"></a>
 <span class="sourceLineNo">506</span>        iter.next();<a name="line.506"></a>
 <span class="sourceLineNo">507</span>      }<a name="line.507"></a>
