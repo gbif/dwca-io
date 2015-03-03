@@ -1,6 +1,7 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecordImpl;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.file.CSVReader;
@@ -179,7 +180,7 @@ public class ArchiveFactoryTest {
     assertEquals(3, arch.getExtensions().size());
 
     boolean found = false;
-    for (StarRecord rec : arch) {
+    for (StarRecordImpl rec : arch) {
       if ("980-sp10".equals(rec.core().id())) {
         found = true;
       }
@@ -202,7 +203,7 @@ public class ArchiveFactoryTest {
     int counter = 0;
     int occCounter = 0;
     Set<String> ids = Sets.newHashSet();
-    for (StarRecord rec : arch) {
+    for (StarRecordImpl rec : arch) {
       counter++;
       ids.add(rec.core().id());
       List<Record> occs = rec.extension(DwcTerm.Occurrence);
@@ -334,8 +335,8 @@ public class ArchiveFactoryTest {
     assertNotNull(arch.getCore().getId());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertEquals(0, arch.getExtensions().size());
-    Iterator<StarRecord> dwci = arch.iterator();
-    StarRecord star = dwci.next();
+    Iterator<StarRecordImpl> dwci = arch.iterator();
+    StarRecordImpl star = dwci.next();
     assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));
     assertNull(arch.getCore().getLocation());
 
@@ -361,15 +362,15 @@ public class ArchiveFactoryTest {
     assertNotNull(arch.getCore().getId());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertEquals(0, arch.getExtensions().size());
-    Iterator<StarRecord> dwci = arch.iterator();
-    StarRecord star = dwci.next();
+    Iterator<StarRecordImpl> dwci = arch.iterator();
+    StarRecordImpl star = dwci.next();
     star = dwci.next();
     star = dwci.next();
     star = dwci.next();
     star = dwci.next();
     assertEquals("Delphinus delphis var. delphis", star.core().value(DwcTerm.scientificName));
     int i = 0;
-    for (StarRecord rec : arch) {
+    for (StarRecordImpl rec : arch) {
       i++;
       if (i > 20) {
         break;
@@ -500,7 +501,7 @@ public class ArchiveFactoryTest {
   public void testNullCoreID() throws IOException {
     try {
       Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), new File(System.getProperty("java.io.tmpdir")));
-      Iterator<StarRecord> iter = archive.iterator();
+      Iterator<StarRecordImpl> iter = archive.iterator();
       while (iter.hasNext()) {
         iter.next();
       }

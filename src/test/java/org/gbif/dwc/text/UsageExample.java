@@ -1,6 +1,7 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecordImpl;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 
@@ -16,7 +17,7 @@ public class UsageExample {
     System.out.println("Reading archive from "+arch.getLocation().getAbsolutePath());
     System.out.println("Archive of rowtype "+arch.getCore().getRowType()+" with "+arch.getExtensions().size()+" extensions");
     // loop over star records. i.e. core with all linked extension records
-    for (StarRecord rec : arch) {
+    for (StarRecordImpl rec : arch) {
       // print core ID + scientific name
       System.out.println(rec.core().id()
         + " sciname:" + rec.core().value(DwcTerm.scientificName)

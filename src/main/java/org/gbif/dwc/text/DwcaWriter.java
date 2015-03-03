@@ -355,7 +355,7 @@ public class DwcaWriter {
 
     af.setEncoding("utf-8");
     af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
-    af.setRowType(rowType.qualifiedName());
+    af.setRowType(rowType);
 
     ArchiveField id = new ArchiveField();
     id.setIndex(0);

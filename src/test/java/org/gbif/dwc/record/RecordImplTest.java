@@ -118,7 +118,7 @@ public class RecordImplTest {
     fields.add(new ArchiveField(4, DwcTerm.phylum, null, null));
     fields.add(new ArchiveField(6, DwcTerm.class_, null, null));
     fields.add(new ArchiveField(7, DwcTerm.acceptedNameUsage, null, null));
-    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), true);
+    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true);
 
     String[] row =
       {"5432", "Abies alba Mill.", "Mill.", "Harry", "Monocotyledonae", "Bertram", "Pincodiae", "Picea picaea L."};
@@ -129,12 +129,12 @@ public class RecordImplTest {
     assertEquals("Plantae", rec.value(DwcTerm.kingdom));
     assertEquals(row[4], rec.value(DwcTerm.phylum));
     assertEquals(row[6], rec.value(DwcTerm.class_));
-    assertEquals(row[6], rec.value(DwcTerm.class_.qualifiedName()));
+    assertEquals(row[6], rec.value(DwcTerm.class_));
     assertNull(rec.value(DwcTerm.order));
     assertEquals(row[7], rec.value(DwcTerm.acceptedNameUsage));
 
     assertEquals(row[0], rec.id());
-    assertEquals(DwcTerm.Taxon.qualifiedName(), rec.rowType());
+    assertEquals(DwcTerm.Taxon, rec.rowType());
   }
 
   @Test
@@ -143,7 +143,7 @@ public class RecordImplTest {
     ArchiveField id = new ArchiveField(0, DwcTerm.taxonID, null, null);
     Set<ArchiveField> fields = new HashSet<ArchiveField>();
     fields.add(new ArchiveField(1, DwcTerm.datasetName, DATASET, null));
-    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), true);
+    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true);
 
     String[] row = {"5432", "IPNI"};
     rec.setRow(row);

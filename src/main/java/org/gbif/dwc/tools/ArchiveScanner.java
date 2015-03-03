@@ -4,7 +4,7 @@ import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.text.Archive;
 import org.gbif.dwc.text.ArchiveFactory;
-import org.gbif.dwc.text.StarRecord;
+import org.gbif.dwc.record.StarRecordImpl;
 import org.gbif.dwc.text.UnsupportedArchiveException;
 
 import java.io.File;
@@ -72,7 +72,7 @@ public class ArchiveScanner {
 
     // count records
     int i = 0;
-    for (StarRecord rec : arch) {
+    for (StarRecordImpl rec : arch) {
       i++;
     }
     System.out.println("Archive contains " + i + " core records.");
@@ -80,7 +80,7 @@ public class ArchiveScanner {
     // show some records
     i = 0;
     if (maxNumbers > 0) {
-      for (StarRecord rec : arch) {
+      for (StarRecordImpl rec : arch) {
         i++;
         if (i > offset + maxNumbers) {
           break;

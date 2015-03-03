@@ -48,7 +48,7 @@ public class DarwinCoreRecordTest {
     ArchiveField id = new ArchiveField(0, DwcTerm.taxonID, null, null);
     Set<ArchiveField> fields = new HashSet<ArchiveField>();
     fields.add(new ArchiveField(1, DwcTerm.datasetName, DATASET, null));
-    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), true);
+    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true);
 
     String[] row = {"5432", "IPNI"};
     rec.setRow(row);

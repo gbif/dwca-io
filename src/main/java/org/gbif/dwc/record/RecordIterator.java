@@ -40,11 +40,11 @@ public class RecordIterator implements ClosableIterator<Record> {
   // needed to create RecordImpl
   private final ArchiveField id;
   private final Map<Term, ArchiveField> fields;
-  private final String rowType;
+  private final Term rowType;
   private final boolean replaceNulls;
 
   public RecordIterator(ClosableIterator<String[]> recordSource, ArchiveField id, Map<Term, ArchiveField> fields,
-    String rowType, boolean replaceNulls) {
+    Term rowType, boolean replaceNulls) {
     this.id = id;
     this.fields = fields;
     this.rowType = rowType;

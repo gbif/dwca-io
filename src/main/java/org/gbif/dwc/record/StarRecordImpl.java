@@ -1,30 +1,28 @@
-package org.gbif.dwc.text;
+package org.gbif.dwc.record;
 
-import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.Term;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class StarRecord implements Iterable<Record> {
+public class StarRecordImpl implements StarRecord {
 
   private Record core;
-  private final SortedMap<String, List<Record>> extensions;
+  private final Map<Term, List<Record>> extensions;
 
-  public StarRecord(Collection<String> extensions) {
-    this.extensions = new TreeMap<String, List<Record>>();
-    for (String rowType : extensions) {
+  public StarRecordImpl(Collection<Term> extensions) {
+    this.extensions = new HashMap<Term, List<Record>>();
+    for (Term rowType : extensions) {
       this.extensions.put(rowType, new ArrayList<Record>());
     }
   }
 
-  public void addRecord(String rowType, Record record) {
+  public void addRecord(Term rowType, Record record) {
     if (!extensions.containsKey(rowType)) {
       throw new IllegalArgumentException("RowType not supported");
     }
@@ -39,10 +37,6 @@ public class StarRecord implements Iterable<Record> {
   }
 
   public boolean hasExtension(Term rowType) {
-    return hasExtension(rowType.qualifiedName());
-  }
-
-  public boolean hasExtension(String rowType) {
     return extensions.containsKey(rowType);
   }
 
@@ -55,25 +49,13 @@ public class StarRecord implements Iterable<Record> {
    * @return possibly empty list of extension record or null if extension is not mapped at all
    */
   public List<Record> extension(Term rowType) {
-    return extension(rowType.qualifiedName());
-  }
-
-  /**
-   * Retrieves all extension records of a specific extension.
-   * If the requested extension is not mapped null will be returned.
-   *
-   * @param rowType the exact qualified name of the rowType, e.g. http://rs.gbif.org/terms/1.0/VernacularName
-   *
-   * @return possibly empty list of extension record or null if extension is not mapped at all
-   */
-  public List<Record> extension(String rowType) {
     return extensions.get(rowType);
   }
 
   /**
    * Retrieves all extension records related to the core record across all extensions as a map.
    */
-  public Map<String, List<Record>> extensions() {
+  public Map<Term, List<Record>> extensions() {
     return extensions;
   }
 
@@ -100,7 +82,7 @@ public class StarRecord implements Iterable<Record> {
   /**
    * @return set of extension rowTypes associated with this star record
    */
-  public Set<String> rowTypes() {
+  public Set<Term> rowTypes() {
     return extensions.keySet();
   }
 

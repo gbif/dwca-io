@@ -67,7 +67,7 @@ public class CoreIdRenamer {
   public void rename(Archive arch) throws IOException {
     ArchiveField id = arch.getCore().getId();
     TermFactory fact = TermFactory.instance();
-    Term rowType = fact.findTerm(arch.getCore().getRowType());
+    Term rowType = arch.getCore().getRowType();
 
     // detect dependent terms with ids to be renamed accordingly
     List<Term> relatedTerms = new ArrayList<Term>();
@@ -147,7 +147,7 @@ public class CoreIdRenamer {
   public static void main(String[] args) throws IOException {
     CoreIdRenamer renamer = new CoreIdRenamer();
     Archive arch = ArchiveFactory.openArchive(new File("/Users/markus/Desktop/ecat_checklist"));
-    arch.getCore().setRowType(DwcTerm.Taxon.qualifiedName());
+    arch.getCore().setRowType(DwcTerm.Taxon);
     renamer.rename(arch);
   }
 }

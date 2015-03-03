@@ -8,6 +8,7 @@ import org.gbif.dwc.text.ArchiveFile;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +21,10 @@ public class RecordImpl implements Record {
   private final ArchiveField id;
   private final Map<Term, ArchiveField> fields;
   protected String[] row;
-  private final String rowType;
+  private final Term rowType;
   private final boolean replaceNulls;
 
-  public RecordImpl(ArchiveField id, Collection<ArchiveField> fields, String rowType, boolean replaceNulls) {
+  public RecordImpl(ArchiveField id, Collection<ArchiveField> fields, Term rowType, boolean replaceNulls) {
     this.id = id;
     this.fields = new HashMap<Term, ArchiveField>();
     for (ArchiveField f : fields) {
@@ -33,7 +34,7 @@ public class RecordImpl implements Record {
     this.replaceNulls = replaceNulls;
   }
 
-  public RecordImpl(ArchiveField id, Map<Term, ArchiveField> fields, String rowType, boolean replaceNulls) {
+  public RecordImpl(ArchiveField id, Map<Term, ArchiveField> fields, Term rowType, boolean replaceNulls) {
     this.id = id;
     this.fields = fields;
     this.rowType = rowType;
@@ -80,7 +81,7 @@ public class RecordImpl implements Record {
     return null;
   }
 
-  public String rowType() {
+  public Term rowType() {
     return rowType;
   }
 
@@ -122,16 +123,7 @@ public class RecordImpl implements Record {
     return value(fields.get(term));
   }
 
-  /**
-   * Returns core data file values based on a qualified term name.
-   *
-   * @return the value of the term in the core data file
-   */
-  public String value(String qterm) {
-    return value(TERM_FACTORY.findTerm(qterm));
-  }
-
-  public Collection<Term> terms() {
+  public Set<Term> terms() {
     return fields.keySet();
   }
 }

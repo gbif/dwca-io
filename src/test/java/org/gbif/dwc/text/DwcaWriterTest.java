@@ -1,6 +1,7 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecordImpl;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.DwcTerm;
@@ -172,7 +173,7 @@ public class DwcaWriterTest {
       tempArch.deleteOnExit();
       System.out.println("Writing temporary test archive to " + tempArch.getAbsolutePath());
       DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, tempArch);
-      for (StarRecord rec : arch) {
+      for (StarRecordImpl rec : arch) {
         // core
         coreRecords++;
         allRecords += rec.size();
@@ -182,12 +183,11 @@ public class DwcaWriterTest {
           writer.addCoreColumn(term, rec.core().value(term));
         }
         // extensions
-        for (String rt : rec.extensions().keySet()) {
-          Term rowType = termFactory.findTerm(rt);
-          ArchiveFile af = arch.getExtension(rowType);
+        for (Term rt : rec.extensions().keySet()) {
+          ArchiveFile af = arch.getExtension(rt);
           // iterate over records for one extension
           for (Record row : rec.extension(rt)) {
-            writer.addExtensionRecord(rowType, DwcaWriter.recordToMap(row, af));
+            writer.addExtensionRecord(rt, DwcaWriter.recordToMap(row, af));
           }
         }
       }
@@ -197,7 +197,7 @@ public class DwcaWriterTest {
       Archive arch2 = ArchiveFactory.openArchive(tempArch);
       int coreRecords2 = 0;
       int allRecords2 = 0;
-      for (StarRecord rec : arch2) {
+      for (StarRecordImpl rec : arch2) {
         // core
         coreRecords2++;
         allRecords2 += rec.size();

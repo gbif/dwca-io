@@ -5,6 +5,7 @@ import org.gbif.dwc.record.DarwinCoreRecord;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.RecordImpl;
 import org.gbif.dwc.record.RecordIterator;
+import org.gbif.dwc.record.StarRecordImpl;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -29,7 +30,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.google.common.collect.PeekingIterator;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see <a href="http://darwincore.googlecode.com/svn/trunk/terms/guides/text/index.htm">Darwin Core Text Guide</a>
  */
-public class Archive implements Iterable<StarRecord> {
+public class Archive implements Iterable<StarRecordImpl> {
 
   /**
    * An iterator of fixed DarwinCoreRecords over the core file only. This iterator doesn't need any sorted data files
@@ -124,19 +124,19 @@ public class Archive implements Iterable<StarRecord> {
    * Extension rows with a non existing coreid are skipped. This requires that we use the same sorting order in the
    * java code as we use for sorting the data files!
    */
-  class ArchiveIterator implements ClosableIterator<StarRecord> {
+  class ArchiveIterator implements ClosableIterator<StarRecordImpl> {
 
-    private final StarRecord rec;
+    private final StarRecordImpl rec;
     private RecordIterator coreIter;
     private Set<RecordIterator> closables = new HashSet<RecordIterator>();
-    private Map<String, PeekingIterator<Record>> extensionIters = new HashMap<String, PeekingIterator<Record>>();
-    private Map<String, Integer> extensionRecordsSkipped = new HashMap<String, Integer>();
+    private Map<Term, PeekingIterator<Record>> extensionIters = new HashMap<Term, PeekingIterator<Record>>();
+    private Map<Term, Integer> extensionRecordsSkipped = new HashMap<Term, Integer>();
 
     /**
      * @param replaceNulls if true replaces common literal null values in all records
      */
     ArchiveIterator(Archive archive, boolean replaceNulls) {
-      List<String> rowTypes = new ArrayList<String>();
+      List<Term> rowTypes = new ArrayList<Term>();
 
       try {
         if (extensions.isEmpty()) {
@@ -162,7 +162,7 @@ public class Archive implements Iterable<StarRecord> {
         extensionRecordsSkipped.put(af.getRowType(), 0);
       }
 
-      rec = new StarRecord(rowTypes);
+      rec = new StarRecordImpl(rowTypes);
     }
 
     private RecordIterator buildSortedIterator(ArchiveFile af, boolean replaceNulls) {
@@ -183,7 +183,7 @@ public class Archive implements Iterable<StarRecord> {
       for (ClosableIterator<Record> it : closables) {
         it.close();
       }
-      for (Map.Entry<String, Integer> stringIntegerEntry : extensionRecordsSkipped.entrySet()) {
+      for (Map.Entry<Term, Integer> stringIntegerEntry : extensionRecordsSkipped.entrySet()) {
         Integer skipped = stringIntegerEntry.getValue();
         if (skipped > 0) {
           LOG.debug("{} {} extension records without matching core", skipped, stringIntegerEntry.getKey());
@@ -195,15 +195,15 @@ public class Archive implements Iterable<StarRecord> {
       return coreIter.hasNext();
     }
 
-    public StarRecord next() {
+    public StarRecordImpl next() {
       Record core = coreIter.next();
       rec.newCoreRecord(core);
       // add extension records if core id exists
       if (core.id() != null) {
         String id = core.id();
-        for (Map.Entry<String, PeekingIterator<Record>> ext : extensionIters.entrySet()) {
+        for (Map.Entry<Term, PeekingIterator<Record>> ext : extensionIters.entrySet()) {
           PeekingIterator<Record> it = ext.getValue();
-          String rowType = ext.getKey();
+          Term rowType = ext.getKey();
           while (it.hasNext()) {
             String extId = it.peek().id();
             // make sure we have an extid
@@ -256,30 +256,9 @@ public class Archive implements Iterable<StarRecord> {
   }
 
   public ArchiveFile getExtension(Term rowType) {
-    return getExtension(rowType.qualifiedName(), true);
-  }
-
-  public ArchiveFile getExtension(String rowType, boolean allowUnqalifiedMatches) {
     for (ArchiveFile af : extensions) {
-      if (af.getRowType() != null && af.getRowType().equalsIgnoreCase(rowType)) {
+      if (af.getRowType() != null && af.getRowType().equals(rowType)) {
         return af;
-      }
-    }
-    // no qualified row type matches, try unqualified row type matching?
-    if (allowUnqalifiedMatches) {
-      if (rowType.contains("/")) {
-        rowType = StringUtils.substringAfterLast(rowType, "/").trim();
-      }
-      for (ArchiveFile af : extensions) {
-        String rt = af.getRowType();
-        if (rt != null) {
-          if (rt.contains("/")) {
-            rt = StringUtils.substringAfterLast(rt, "/").trim();
-          }
-          if (rt != null && rt.equalsIgnoreCase(rowType)) {
-            return af;
-          }
-        }
       }
     }
     return null;
@@ -354,7 +333,7 @@ public class Archive implements Iterable<StarRecord> {
   /**
    * @return a complete iterator using star records with all extension records that replace literal null values.
    */
-  public ClosableIterator<StarRecord> iterator() {
+  public ClosableIterator<StarRecordImpl> iterator() {
     return new ArchiveIterator(this, true);
   }
 
@@ -362,7 +341,7 @@ public class Archive implements Iterable<StarRecord> {
    * @return a complete iterator using star records with all extension records that are not replacing literal null
    *         values.
    */
-  public ClosableIterator<StarRecord> iteratorRaw() {
+  public ClosableIterator<StarRecordImpl> iteratorRaw() {
     return new ArchiveIterator(this, false);
   }
 

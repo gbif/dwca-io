@@ -69,7 +69,7 @@ public class ArchiveFile implements Iterable<Record> {
   // this is actually ignored by the CSVReader and any of \n, \r or \n\r is used
   private String linesTerminatedBy = "\n";
   private String encoding = "utf8";
-  private String rowType = "http://rs.tdwg.org/dwc/xsd/simpledarwincore/SimpleDarwinRecord";
+  private Term rowType;
   private Integer ignoreHeaderLines = 0;
 
   private String dateFormat = "YYYY-MM-DD";
@@ -202,7 +202,7 @@ public class ArchiveFile implements Iterable<Record> {
     return locations;
   }
 
-  public String getRowType() {
+  public Term getRowType() {
     return rowType;
   }
 
@@ -261,7 +261,7 @@ public class ArchiveFile implements Iterable<Record> {
     this.linesTerminatedBy = StringUtils.defaultIfEmpty(linesTerminatedBy, null);
   }
 
-  public void setRowType(String rowType) {
+  public void setRowType(Term rowType) {
     this.rowType = rowType;
   }
 }

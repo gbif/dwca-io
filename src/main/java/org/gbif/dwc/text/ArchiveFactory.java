@@ -36,6 +36,10 @@ import org.xml.sax.SAXException;
 
 public class ArchiveFactory {
 
+  private static final TermFactory TERM_FACTORY = TermFactory.instance();
+
+  private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);
+
     /**
      * SAX handler to parse a meta.xml descriptor for dwc archives. It populates a given archive instance and ignores
      * namespaces. The parser needs to be namespace aware!
@@ -110,7 +114,7 @@ public class ArchiveFactory {
                 dwcFile.setLinesTerminatedBy(unescapeBackslash(getAttr(attr, "linesTerminatedBy")));
             }
             if (getAttr(attr, "rowType") != null) {
-                dwcFile.setRowType(getAttr(attr, "rowType"));
+                dwcFile.setRowType(TERM_FACTORY.findTerm(getAttr(attr, "rowType")));
             }
             String ignoreHeaderLines = getAttr(attr, "ignoreHeaderLines");
             try {
@@ -216,10 +220,6 @@ public class ArchiveFactory {
         }
 
     }
-
-    private static final TermFactory TERM_FACTORY = TermFactory.instance();
-
-    private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);
 
     private static final SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();
 
