@@ -1,6 +1,6 @@
 package org.gbif.dwc.text;
 
-import org.gbif.dwc.record.StarRecordImpl;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
@@ -15,7 +15,7 @@ public class ArchivePlaziTest {
 
   private void assertNumberStarRecords(Archive arch, int expectedRecords) throws IOException {
     int rows = 0;
-    for (StarRecordImpl rec : arch) {
+    for (StarRecord rec : arch) {
       assertNotNull(rec);
       rows++;
     }

@@ -1,7 +1,7 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.Record;
-import org.gbif.dwc.record.StarRecordImpl;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.utils.file.FileUtils;
@@ -23,7 +23,7 @@ public class StarIteratorTest {
     assertEquals(2, arch.getExtensions().size());
     int found = 0;
     int extensionRecords = 0;
-    for (StarRecordImpl rec : arch) {
+    for (StarRecord rec : arch) {
       //System.out.println(rec.core().id() + " --> " + rec.size());
       // count all extension records
       extensionRecords += rec.size();

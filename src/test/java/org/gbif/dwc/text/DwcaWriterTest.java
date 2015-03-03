@@ -1,11 +1,11 @@
 package org.gbif.dwc.text;
 
 import org.gbif.dwc.record.Record;
-import org.gbif.dwc.record.StarRecordImpl;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.DcTerm;
-import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
+import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.utils.file.FileUtils;
 
@@ -18,7 +18,6 @@ import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,7 +172,7 @@ public class DwcaWriterTest {
       tempArch.deleteOnExit();
       System.out.println("Writing temporary test archive to " + tempArch.getAbsolutePath());
       DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, tempArch);
-      for (StarRecordImpl rec : arch) {
+      for (StarRecord rec : arch) {
         // core
         coreRecords++;
         allRecords += rec.size();
@@ -197,7 +196,7 @@ public class DwcaWriterTest {
       Archive arch2 = ArchiveFactory.openArchive(tempArch);
       int coreRecords2 = 0;
       int allRecords2 = 0;
-      for (StarRecordImpl rec : arch2) {
+      for (StarRecord rec : arch2) {
         // core
         coreRecords2++;
         allRecords2 += rec.size();

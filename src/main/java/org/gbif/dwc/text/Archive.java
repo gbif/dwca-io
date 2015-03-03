@@ -5,6 +5,7 @@ import org.gbif.dwc.record.DarwinCoreRecord;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.RecordImpl;
 import org.gbif.dwc.record.RecordIterator;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.record.StarRecordImpl;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see <a href="http://darwincore.googlecode.com/svn/trunk/terms/guides/text/index.htm">Darwin Core Text Guide</a>
  */
-public class Archive implements Iterable<StarRecordImpl> {
+public class Archive implements Iterable<StarRecord> {
 
   /**
    * An iterator of fixed DarwinCoreRecords over the core file only. This iterator doesn't need any sorted data files
@@ -124,7 +125,7 @@ public class Archive implements Iterable<StarRecordImpl> {
    * Extension rows with a non existing coreid are skipped. This requires that we use the same sorting order in the
    * java code as we use for sorting the data files!
    */
-  class ArchiveIterator implements ClosableIterator<StarRecordImpl> {
+  class ArchiveIterator implements ClosableIterator<StarRecord> {
 
     private final StarRecordImpl rec;
     private RecordIterator coreIter;
@@ -196,7 +197,7 @@ public class Archive implements Iterable<StarRecordImpl> {
       return coreIter.hasNext();
     }
 
-    public StarRecordImpl next() {
+    public StarRecord next() {
       Record core = coreIter.next();
       rec.newCoreRecord(core);
       // add extension records if core id exists
@@ -335,7 +336,7 @@ public class Archive implements Iterable<StarRecordImpl> {
    * @return a complete iterator using star records with all extension records that replace literal null values and
    * html entities.
    */
-  public ClosableIterator<StarRecordImpl> iterator() {
+  public ClosableIterator<StarRecord> iterator() {
     return new ArchiveIterator(this, true, true);
   }
 
@@ -343,7 +344,7 @@ public class Archive implements Iterable<StarRecordImpl> {
    * @return a complete iterator using star records with all extension records that are not replacing literal null
    *         values or html entities.
    */
-  public ClosableIterator<StarRecordImpl> iteratorRaw() {
+  public ClosableIterator<StarRecord> iteratorRaw() {
     return new ArchiveIterator(this, false, false);
   }
 
