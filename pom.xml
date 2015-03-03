@@ -18,10 +18,10 @@
   <properties>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>3.3.2</commons-lang.version>
-    <dwc-api.version>1.10</dwc-api.version>
+    <dwc-api.version>1.11-SNAPSHOT</dwc-api.version>
     <freemarker.version>2.3.21</freemarker.version>
     <gbif-common.version>0.17</gbif-common.version>
-    <gbif-registry-metadata.version>2.25-SNAPSHOT</gbif-registry-metadata.version>
+    <gbif-registry-metadata.version>2.25</gbif-registry-metadata.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
     <logback.version>1.1.2</logback.version>
