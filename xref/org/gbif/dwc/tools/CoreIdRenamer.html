@@ -75,7 +75,7 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> rename(<a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a> arch) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <a href="../../../../org/gbif/dwc/text/ArchiveField.html">ArchiveField</a> id = arch.getCore().getId();
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      TermFactory fact = TermFactory.instance();
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      Term rowType = fact.findTerm(arch.getCore().getRowType());
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      Term rowType = arch.getCore().getRowType();
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <em class="jxr_comment">// detect dependent terms with ids to be renamed accordingly</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      List&lt;Term&gt; relatedTerms = <strong class="jxr_keyword">new</strong> ArrayList&lt;Term&gt;();
@@ -155,7 +155,7 @@
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     <a href="../../../../org/gbif/dwc/tools/CoreIdRenamer.html">CoreIdRenamer</a> renamer = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/tools/CoreIdRenamer.html">CoreIdRenamer</a>();
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     <a href="../../../../org/gbif/dwc/text/Archive.html">Archive</a> arch = ArchiveFactory.openArchive(<strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"/Users/markus/Desktop/ecat_checklist"</span>));
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>     arch.getCore().setRowType(DwcTerm.Taxon.qualifiedName());
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>     arch.getCore().setRowType(DwcTerm.Taxon);
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>     renamer.rename(arch);
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>   }
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> }

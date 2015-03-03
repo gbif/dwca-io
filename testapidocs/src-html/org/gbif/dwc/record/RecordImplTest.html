@@ -60,8 +60,8 @@
 <span class="sourceLineNo">052</span>    af.setIndex(0);<a name="line.52"></a>
 <span class="sourceLineNo">053</span>    af.setType(ArchiveField.DataType.string);<a name="line.53"></a>
 <span class="sourceLineNo">054</span>    List&lt;ArchiveField&gt; fields = Lists.newArrayList(af);<a name="line.54"></a>
-<span class="sourceLineNo">055</span>    final RecordImpl r = new RecordImpl(null, fields, null, true);<a name="line.55"></a>
-<span class="sourceLineNo">056</span>    final RecordImpl r2 = new RecordImpl(null, fields, null, false);<a name="line.56"></a>
+<span class="sourceLineNo">055</span>    final RecordImpl r = new RecordImpl(null, fields, null, true, false);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    final RecordImpl r2 = new RecordImpl(null, fields, null, false, false);<a name="line.56"></a>
 <span class="sourceLineNo">057</span><a name="line.57"></a>
 <span class="sourceLineNo">058</span>    String val = setRows(null, r, r2);<a name="line.58"></a>
 <span class="sourceLineNo">059</span>    assertNull(r.value(t));<a name="line.59"></a>
@@ -126,7 +126,7 @@
 <span class="sourceLineNo">118</span>    fields.add(new ArchiveField(4, DwcTerm.phylum, null, null));<a name="line.118"></a>
 <span class="sourceLineNo">119</span>    fields.add(new ArchiveField(6, DwcTerm.class_, null, null));<a name="line.119"></a>
 <span class="sourceLineNo">120</span>    fields.add(new ArchiveField(7, DwcTerm.acceptedNameUsage, null, null));<a name="line.120"></a>
-<span class="sourceLineNo">121</span>    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), true);<a name="line.121"></a>
+<span class="sourceLineNo">121</span>    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true, true);<a name="line.121"></a>
 <span class="sourceLineNo">122</span><a name="line.122"></a>
 <span class="sourceLineNo">123</span>    String[] row =<a name="line.123"></a>
 <span class="sourceLineNo">124</span>      {"5432", "Abies alba Mill.", "Mill.", "Harry", "Monocotyledonae", "Bertram", "Pincodiae", "Picea picaea L."};<a name="line.124"></a>
@@ -137,12 +137,12 @@
 <span class="sourceLineNo">129</span>    assertEquals("Plantae", rec.value(DwcTerm.kingdom));<a name="line.129"></a>
 <span class="sourceLineNo">130</span>    assertEquals(row[4], rec.value(DwcTerm.phylum));<a name="line.130"></a>
 <span class="sourceLineNo">131</span>    assertEquals(row[6], rec.value(DwcTerm.class_));<a name="line.131"></a>
-<span class="sourceLineNo">132</span>    assertEquals(row[6], rec.value(DwcTerm.class_.qualifiedName()));<a name="line.132"></a>
+<span class="sourceLineNo">132</span>    assertEquals(row[6], rec.value(DwcTerm.class_));<a name="line.132"></a>
 <span class="sourceLineNo">133</span>    assertNull(rec.value(DwcTerm.order));<a name="line.133"></a>
 <span class="sourceLineNo">134</span>    assertEquals(row[7], rec.value(DwcTerm.acceptedNameUsage));<a name="line.134"></a>
 <span class="sourceLineNo">135</span><a name="line.135"></a>
 <span class="sourceLineNo">136</span>    assertEquals(row[0], rec.id());<a name="line.136"></a>
-<span class="sourceLineNo">137</span>    assertEquals(DwcTerm.Taxon.qualifiedName(), rec.rowType());<a name="line.137"></a>
+<span class="sourceLineNo">137</span>    assertEquals(DwcTerm.Taxon, rec.rowType());<a name="line.137"></a>
 <span class="sourceLineNo">138</span>  }<a name="line.138"></a>
 <span class="sourceLineNo">139</span><a name="line.139"></a>
 <span class="sourceLineNo">140</span>  @Test<a name="line.140"></a>
@@ -151,7 +151,7 @@
 <span class="sourceLineNo">143</span>    ArchiveField id = new ArchiveField(0, DwcTerm.taxonID, null, null);<a name="line.143"></a>
 <span class="sourceLineNo">144</span>    Set&lt;ArchiveField&gt; fields = new HashSet&lt;ArchiveField&gt;();<a name="line.144"></a>
 <span class="sourceLineNo">145</span>    fields.add(new ArchiveField(1, DwcTerm.datasetName, DATASET, null));<a name="line.145"></a>
-<span class="sourceLineNo">146</span>    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), true);<a name="line.146"></a>
+<span class="sourceLineNo">146</span>    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true, true);<a name="line.146"></a>
 <span class="sourceLineNo">147</span><a name="line.147"></a>
 <span class="sourceLineNo">148</span>    String[] row = {"5432", "IPNI"};<a name="line.148"></a>
 <span class="sourceLineNo">149</span>    rec.setRow(row);<a name="line.149"></a>

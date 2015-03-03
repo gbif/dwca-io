@@ -9,36 +9,37 @@
 <pre><span class="sourceLineNo">001</span>package org.gbif.dwc.text;<a name="line.1"></a>
 <span class="sourceLineNo">002</span><a name="line.2"></a>
 <span class="sourceLineNo">003</span>import org.gbif.dwc.record.Record;<a name="line.3"></a>
-<span class="sourceLineNo">004</span>import org.gbif.dwc.terms.DcTerm;<a name="line.4"></a>
-<span class="sourceLineNo">005</span>import org.gbif.dwc.terms.DwcTerm;<a name="line.5"></a>
-<span class="sourceLineNo">006</span><a name="line.6"></a>
-<span class="sourceLineNo">007</span>import java.io.File;<a name="line.7"></a>
-<span class="sourceLineNo">008</span>import java.io.IOException;<a name="line.8"></a>
-<span class="sourceLineNo">009</span><a name="line.9"></a>
-<span class="sourceLineNo">010</span>public class UsageExample {<a name="line.10"></a>
-<span class="sourceLineNo">011</span><a name="line.11"></a>
-<span class="sourceLineNo">012</span>  public static void main(String[] args) throws IOException, UnsupportedArchiveException {<a name="line.12"></a>
-<span class="sourceLineNo">013</span>    // opens csv files with headers or dwc-a direcotries with a meta.xml descriptor<a name="line.13"></a>
-<span class="sourceLineNo">014</span>    Archive arch = ArchiveFactory.openArchive(new File(args[0]));<a name="line.14"></a>
-<span class="sourceLineNo">015</span><a name="line.15"></a>
-<span class="sourceLineNo">016</span>    System.out.println("Reading archive from "+arch.getLocation().getAbsolutePath());<a name="line.16"></a>
-<span class="sourceLineNo">017</span>    System.out.println("Archive of rowtype "+arch.getCore().getRowType()+" with "+arch.getExtensions().size()+" extensions");<a name="line.17"></a>
-<span class="sourceLineNo">018</span>    // loop over star records. i.e. core with all linked extension records<a name="line.18"></a>
-<span class="sourceLineNo">019</span>    for (StarRecord rec : arch) {<a name="line.19"></a>
-<span class="sourceLineNo">020</span>      // print core ID + scientific name<a name="line.20"></a>
-<span class="sourceLineNo">021</span>      System.out.println(rec.core().id()<a name="line.21"></a>
-<span class="sourceLineNo">022</span>        + " sciname:" + rec.core().value(DwcTerm.scientificName)<a name="line.22"></a>
-<span class="sourceLineNo">023</span>        + " bor:" + rec.core().value(DwcTerm.basisOfRecord)<a name="line.23"></a>
-<span class="sourceLineNo">024</span>      );<a name="line.24"></a>
-<span class="sourceLineNo">025</span>      // print out all rowTypes<a name="line.25"></a>
-<span class="sourceLineNo">026</span>      for (Record erec : rec) {<a name="line.26"></a>
-<span class="sourceLineNo">027</span>        // print out extension rowtype<a name="line.27"></a>
-<span class="sourceLineNo">028</span>        System.out.println(erec.rowType() + ", id="+erec.value(DcTerm.identifier));<a name="line.28"></a>
-<span class="sourceLineNo">029</span>      }<a name="line.29"></a>
-<span class="sourceLineNo">030</span>    }<a name="line.30"></a>
-<span class="sourceLineNo">031</span>  }<a name="line.31"></a>
-<span class="sourceLineNo">032</span><a name="line.32"></a>
-<span class="sourceLineNo">033</span>}<a name="line.33"></a>
+<span class="sourceLineNo">004</span>import org.gbif.dwc.record.StarRecordImpl;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import org.gbif.dwc.terms.DcTerm;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import org.gbif.dwc.terms.DwcTerm;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.io.File;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.io.IOException;<a name="line.9"></a>
+<span class="sourceLineNo">010</span><a name="line.10"></a>
+<span class="sourceLineNo">011</span>public class UsageExample {<a name="line.11"></a>
+<span class="sourceLineNo">012</span><a name="line.12"></a>
+<span class="sourceLineNo">013</span>  public static void main(String[] args) throws IOException, UnsupportedArchiveException {<a name="line.13"></a>
+<span class="sourceLineNo">014</span>    // opens csv files with headers or dwc-a direcotries with a meta.xml descriptor<a name="line.14"></a>
+<span class="sourceLineNo">015</span>    Archive arch = ArchiveFactory.openArchive(new File(args[0]));<a name="line.15"></a>
+<span class="sourceLineNo">016</span><a name="line.16"></a>
+<span class="sourceLineNo">017</span>    System.out.println("Reading archive from "+arch.getLocation().getAbsolutePath());<a name="line.17"></a>
+<span class="sourceLineNo">018</span>    System.out.println("Archive of rowtype "+arch.getCore().getRowType()+" with "+arch.getExtensions().size()+" extensions");<a name="line.18"></a>
+<span class="sourceLineNo">019</span>    // loop over star records. i.e. core with all linked extension records<a name="line.19"></a>
+<span class="sourceLineNo">020</span>    for (StarRecordImpl rec : arch) {<a name="line.20"></a>
+<span class="sourceLineNo">021</span>      // print core ID + scientific name<a name="line.21"></a>
+<span class="sourceLineNo">022</span>      System.out.println(rec.core().id()<a name="line.22"></a>
+<span class="sourceLineNo">023</span>        + " sciname:" + rec.core().value(DwcTerm.scientificName)<a name="line.23"></a>
+<span class="sourceLineNo">024</span>        + " bor:" + rec.core().value(DwcTerm.basisOfRecord)<a name="line.24"></a>
+<span class="sourceLineNo">025</span>      );<a name="line.25"></a>
+<span class="sourceLineNo">026</span>      // print out all rowTypes<a name="line.26"></a>
+<span class="sourceLineNo">027</span>      for (Record erec : rec) {<a name="line.27"></a>
+<span class="sourceLineNo">028</span>        // print out extension rowtype<a name="line.28"></a>
+<span class="sourceLineNo">029</span>        System.out.println(erec.rowType() + ", id="+erec.value(DcTerm.identifier));<a name="line.29"></a>
+<span class="sourceLineNo">030</span>      }<a name="line.30"></a>
+<span class="sourceLineNo">031</span>    }<a name="line.31"></a>
+<span class="sourceLineNo">032</span>  }<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>}<a name="line.34"></a>
 
 
 

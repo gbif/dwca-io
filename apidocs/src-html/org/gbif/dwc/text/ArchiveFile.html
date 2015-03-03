@@ -77,7 +77,7 @@
 <span class="sourceLineNo">069</span>  // this is actually ignored by the CSVReader and any of \n, \r or \n\r is used<a name="line.69"></a>
 <span class="sourceLineNo">070</span>  private String linesTerminatedBy = "\n";<a name="line.70"></a>
 <span class="sourceLineNo">071</span>  private String encoding = "utf8";<a name="line.71"></a>
-<span class="sourceLineNo">072</span>  private String rowType = "http://rs.tdwg.org/dwc/xsd/simpledarwincore/SimpleDarwinRecord";<a name="line.72"></a>
+<span class="sourceLineNo">072</span>  private Term rowType;<a name="line.72"></a>
 <span class="sourceLineNo">073</span>  private Integer ignoreHeaderLines = 0;<a name="line.73"></a>
 <span class="sourceLineNo">074</span><a name="line.74"></a>
 <span class="sourceLineNo">075</span>  private String dateFormat = "YYYY-MM-DD";<a name="line.75"></a>
@@ -210,7 +210,7 @@
 <span class="sourceLineNo">202</span>    return locations;<a name="line.202"></a>
 <span class="sourceLineNo">203</span>  }<a name="line.203"></a>
 <span class="sourceLineNo">204</span><a name="line.204"></a>
-<span class="sourceLineNo">205</span>  public String getRowType() {<a name="line.205"></a>
+<span class="sourceLineNo">205</span>  public Term getRowType() {<a name="line.205"></a>
 <span class="sourceLineNo">206</span>    return rowType;<a name="line.206"></a>
 <span class="sourceLineNo">207</span>  }<a name="line.207"></a>
 <span class="sourceLineNo">208</span><a name="line.208"></a>
@@ -231,7 +231,7 @@
 <span class="sourceLineNo">223</span>  }<a name="line.223"></a>
 <span class="sourceLineNo">224</span><a name="line.224"></a>
 <span class="sourceLineNo">225</span>  public Iterator&lt;Record&gt; iterator() {<a name="line.225"></a>
-<span class="sourceLineNo">226</span>    return RecordIterator.build(this, true);<a name="line.226"></a>
+<span class="sourceLineNo">226</span>    return RecordIterator.build(this, true, true);<a name="line.226"></a>
 <span class="sourceLineNo">227</span>  }<a name="line.227"></a>
 <span class="sourceLineNo">228</span><a name="line.228"></a>
 <span class="sourceLineNo">229</span>  public void setArchive(Archive archive) {<a name="line.229"></a>
@@ -269,7 +269,7 @@
 <span class="sourceLineNo">261</span>    this.linesTerminatedBy = StringUtils.defaultIfEmpty(linesTerminatedBy, null);<a name="line.261"></a>
 <span class="sourceLineNo">262</span>  }<a name="line.262"></a>
 <span class="sourceLineNo">263</span><a name="line.263"></a>
-<span class="sourceLineNo">264</span>  public void setRowType(String rowType) {<a name="line.264"></a>
+<span class="sourceLineNo">264</span>  public void setRowType(Term rowType) {<a name="line.264"></a>
 <span class="sourceLineNo">265</span>    this.rowType = rowType;<a name="line.265"></a>
 <span class="sourceLineNo">266</span>  }<a name="line.266"></a>
 <span class="sourceLineNo">267</span>}<a name="line.267"></a>

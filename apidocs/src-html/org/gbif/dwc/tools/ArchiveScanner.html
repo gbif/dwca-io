@@ -12,7 +12,7 @@
 <span class="sourceLineNo">004</span>import org.gbif.dwc.terms.DwcTerm;<a name="line.4"></a>
 <span class="sourceLineNo">005</span>import org.gbif.dwc.text.Archive;<a name="line.5"></a>
 <span class="sourceLineNo">006</span>import org.gbif.dwc.text.ArchiveFactory;<a name="line.6"></a>
-<span class="sourceLineNo">007</span>import org.gbif.dwc.text.StarRecord;<a name="line.7"></a>
+<span class="sourceLineNo">007</span>import org.gbif.dwc.record.StarRecordImpl;<a name="line.7"></a>
 <span class="sourceLineNo">008</span>import org.gbif.dwc.text.UnsupportedArchiveException;<a name="line.8"></a>
 <span class="sourceLineNo">009</span><a name="line.9"></a>
 <span class="sourceLineNo">010</span>import java.io.File;<a name="line.10"></a>
@@ -80,7 +80,7 @@
 <span class="sourceLineNo">072</span><a name="line.72"></a>
 <span class="sourceLineNo">073</span>    // count records<a name="line.73"></a>
 <span class="sourceLineNo">074</span>    int i = 0;<a name="line.74"></a>
-<span class="sourceLineNo">075</span>    for (StarRecord rec : arch) {<a name="line.75"></a>
+<span class="sourceLineNo">075</span>    for (StarRecordImpl rec : arch) {<a name="line.75"></a>
 <span class="sourceLineNo">076</span>      i++;<a name="line.76"></a>
 <span class="sourceLineNo">077</span>    }<a name="line.77"></a>
 <span class="sourceLineNo">078</span>    System.out.println("Archive contains " + i + " core records.");<a name="line.78"></a>
@@ -88,7 +88,7 @@
 <span class="sourceLineNo">080</span>    // show some records<a name="line.80"></a>
 <span class="sourceLineNo">081</span>    i = 0;<a name="line.81"></a>
 <span class="sourceLineNo">082</span>    if (maxNumbers &gt; 0) {<a name="line.82"></a>
-<span class="sourceLineNo">083</span>      for (StarRecord rec : arch) {<a name="line.83"></a>
+<span class="sourceLineNo">083</span>      for (StarRecordImpl rec : arch) {<a name="line.83"></a>
 <span class="sourceLineNo">084</span>        i++;<a name="line.84"></a>
 <span class="sourceLineNo">085</span>        if (i &gt; offset + maxNumbers) {<a name="line.85"></a>
 <span class="sourceLineNo">086</span>          break;<a name="line.86"></a>

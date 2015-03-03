@@ -56,7 +56,7 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      ArchiveField id = <strong class="jxr_keyword">new</strong> ArchiveField(0, DwcTerm.taxonID, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      Set&lt;ArchiveField&gt; fields = <strong class="jxr_keyword">new</strong> HashSet&lt;ArchiveField&gt;();
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      fields.add(<strong class="jxr_keyword">new</strong> ArchiveField(1, DwcTerm.datasetName, DATASET, <strong class="jxr_keyword">null</strong>));
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>      RecordImpl rec = <strong class="jxr_keyword">new</strong> RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      RecordImpl rec = <strong class="jxr_keyword">new</strong> RecordImpl(id, fields, DwcTerm.Taxon, <strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      String[] row = {<span class="jxr_string">"5432"</span>, <span class="jxr_string">"IPNI"</span>};
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      rec.setRow(row);

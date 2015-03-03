@@ -56,7 +56,7 @@
 <span class="sourceLineNo">048</span>    ArchiveField id = new ArchiveField(0, DwcTerm.taxonID, null, null);<a name="line.48"></a>
 <span class="sourceLineNo">049</span>    Set&lt;ArchiveField&gt; fields = new HashSet&lt;ArchiveField&gt;();<a name="line.49"></a>
 <span class="sourceLineNo">050</span>    fields.add(new ArchiveField(1, DwcTerm.datasetName, DATASET, null));<a name="line.50"></a>
-<span class="sourceLineNo">051</span>    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon.qualifiedName(), true);<a name="line.51"></a>
+<span class="sourceLineNo">051</span>    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true, true);<a name="line.51"></a>
 <span class="sourceLineNo">052</span><a name="line.52"></a>
 <span class="sourceLineNo">053</span>    String[] row = {"5432", "IPNI"};<a name="line.53"></a>
 <span class="sourceLineNo">054</span>    rec.setRow(row);<a name="line.54"></a>
