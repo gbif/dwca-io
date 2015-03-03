@@ -41,14 +41,20 @@ public class RecordIterator implements ClosableIterator<Record> {
   private final ArchiveField id;
   private final Map<Term, ArchiveField> fields;
   private final Term rowType;
+  private final boolean replaceEntities;
   private final boolean replaceNulls;
 
+  /**
+   * @param replaceNulls if true record values will have literal nulls replaced with NULL.
+   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
+   */
   public RecordIterator(ClosableIterator<String[]> recordSource, ArchiveField id, Map<Term, ArchiveField> fields,
-    Term rowType, boolean replaceNulls) {
+    Term rowType, boolean replaceNulls, boolean replaceEntities) {
     this.id = id;
     this.fields = fields;
     this.rowType = rowType;
     this.replaceNulls = replaceNulls;
+    this.replaceEntities = replaceEntities;
     closable = recordSource;
     if (closable == null) {
       Iterator<String[]> empty = Iterators.emptyIterator();
@@ -60,11 +66,12 @@ public class RecordIterator implements ClosableIterator<Record> {
 
   /**
    * @param replaceNulls if true record values will have literal nulls replaced with NULL.
+   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
-  public static RecordIterator build(ArchiveFile source, boolean replaceNulls) {
+  public static RecordIterator build(ArchiveFile source, boolean replaceNulls, boolean replaceEntities) {
     try {
       CSVReader csvr = CSVReader.build(source);
-      return new RecordIterator(csvr, source.getId(), source.getFields(), source.getRowType(), replaceNulls);
+      return new RecordIterator(csvr, source.getId(), source.getFields(), source.getRowType(), replaceNulls, replaceEntities);
     } catch (IOException e) {
       LOG.error("Can't open archive file " + source + " for building a record iterator", e);
     }
@@ -84,7 +91,7 @@ public class RecordIterator implements ClosableIterator<Record> {
     RecordImpl record = null;
     try {
       // update record with cached row
-      record = new RecordImpl(id, fields, rowType, replaceNulls);
+      record = new RecordImpl(id, fields, rowType, replaceNulls, replaceEntities);
       String[] row = iter.next();
       while (row.length == 0) {
         // ignore rows without a single column

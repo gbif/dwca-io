@@ -223,7 +223,7 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   public Iterator<Record> iterator() {
-    return RecordIterator.build(this, true);
+    return RecordIterator.build(this, true, true);
   }
 
   public void setArchive(Archive archive) {

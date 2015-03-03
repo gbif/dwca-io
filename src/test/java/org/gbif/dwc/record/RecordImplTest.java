@@ -52,8 +52,8 @@ public class RecordImplTest {
     af.setIndex(0);
     af.setType(ArchiveField.DataType.string);
     List<ArchiveField> fields = Lists.newArrayList(af);
-    final RecordImpl r = new RecordImpl(null, fields, null, true);
-    final RecordImpl r2 = new RecordImpl(null, fields, null, false);
+    final RecordImpl r = new RecordImpl(null, fields, null, true, false);
+    final RecordImpl r2 = new RecordImpl(null, fields, null, false, false);
 
     String val = setRows(null, r, r2);
     assertNull(r.value(t));
@@ -118,7 +118,7 @@ public class RecordImplTest {
     fields.add(new ArchiveField(4, DwcTerm.phylum, null, null));
     fields.add(new ArchiveField(6, DwcTerm.class_, null, null));
     fields.add(new ArchiveField(7, DwcTerm.acceptedNameUsage, null, null));
-    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true);
+    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true, true);
 
     String[] row =
       {"5432", "Abies alba Mill.", "Mill.", "Harry", "Monocotyledonae", "Bertram", "Pincodiae", "Picea picaea L."};
@@ -143,7 +143,7 @@ public class RecordImplTest {
     ArchiveField id = new ArchiveField(0, DwcTerm.taxonID, null, null);
     Set<ArchiveField> fields = new HashSet<ArchiveField>();
     fields.add(new ArchiveField(1, DwcTerm.datasetName, DATASET, null));
-    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true);
+    RecordImpl rec = new RecordImpl(id, fields, DwcTerm.Taxon, true, true);
 
     String[] row = {"5432", "IPNI"};
     rec.setRow(row);

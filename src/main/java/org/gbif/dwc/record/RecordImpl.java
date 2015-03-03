@@ -9,13 +9,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
 public class RecordImpl implements Record {
 
-  private static final Pattern NULL_REPL = Pattern.compile("^\\s*(null|\\\\N)?\\s*$", Pattern.CASE_INSENSITIVE);
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
 
   private final ArchiveField id;
@@ -23,8 +21,13 @@ public class RecordImpl implements Record {
   protected String[] row;
   private final Term rowType;
   private final boolean replaceNulls;
+  private final boolean replaceEntities;
 
-  public RecordImpl(ArchiveField id, Collection<ArchiveField> fields, Term rowType, boolean replaceNulls) {
+  /**
+   * @param replaceNulls if true record values will have literal nulls replaced with NULL.
+   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
+   */
+  public RecordImpl(ArchiveField id, Collection<ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
     this.id = id;
     this.fields = new HashMap<Term, ArchiveField>();
     for (ArchiveField f : fields) {
@@ -32,40 +35,37 @@ public class RecordImpl implements Record {
     }
     this.rowType = rowType;
     this.replaceNulls = replaceNulls;
+    this.replaceEntities = replaceEntities;
   }
 
-  public RecordImpl(ArchiveField id, Map<Term, ArchiveField> fields, Term rowType, boolean replaceNulls) {
+  /**
+   * @param replaceNulls if true record values will have literal nulls replaced with NULL.
+   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
+   */
+  public RecordImpl(ArchiveField id, Map<Term, ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
     this.id = id;
     this.fields = fields;
     this.rowType = rowType;
     this.replaceNulls = replaceNulls;
+    this.replaceEntities = replaceEntities;
   }
 
-  public RecordImpl(ArchiveFile af, boolean replaceNulls) {
+  /**
+   * @param replaceNulls if true record values will have literal nulls replaced with NULL.
+   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
+   */
+  public RecordImpl(ArchiveFile af, boolean replaceNulls, boolean replaceEntities) {
     this.id = af.getId();
     this.fields = af.getFields();
     this.rowType = af.getRowType();
     this.replaceNulls = replaceNulls;
-  }
-
-  /**
-   * Method that replaces common, literal NULL values with real nulls.
-   * For example you often find "null", "NULL" or "\N" as values in text files.
-   * This method is not used by the value() methods under the hood to allow access to raw data in case NULL makes
-   * sense.
-   *
-   * @return the input string or null in case its a literal form of NULL
-   */
-  protected String replaceNull(String val) {
-    if (val == null || NULL_REPL.matcher(val).find()) {
-      return null;
-    }
-    return val;
+    this.replaceEntities = replaceEntities;
   }
 
   public String column(int index) {
     if (row.length > index) {
-      return row[index];
+      // if requested return column value cleaned
+      return CleanUtils.clean(row[index], replaceNulls, replaceEntities);
     }
     return null;
   }
@@ -101,12 +101,12 @@ public class RecordImpl implements Record {
         return f.getDefaultValue();
       }
       String val = column(f.getIndex());
-      if (StringUtils.trimToNull(val) == null) {
+      if (StringUtils.isBlank(val)) {
         // if column is empty use default value
         return f.getDefaultValue();
       }
-      // otherwise return column value, if requested with cleaned nulls
-      return replaceNulls ? replaceNull(val) : val;
+      // otherwise return already cleand column value
+      return val;
     }
     return null;
   }

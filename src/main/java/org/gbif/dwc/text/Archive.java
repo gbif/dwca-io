@@ -54,7 +54,7 @@ public class Archive implements Iterable<StarRecordImpl> {
     private final Set<Term> mappedTerms = new HashSet<Term>();
 
     ArchiveDwcIterator(Archive archive) {
-      record = new RecordImpl(archive.getCore(), true);
+      record = new RecordImpl(archive.getCore(), true, true);
       core = archive.getCore();
       // remember used DwC and DC terms
       for (DwcTerm term : DwcTerm.values()) {
@@ -135,19 +135,19 @@ public class Archive implements Iterable<StarRecordImpl> {
     /**
      * @param replaceNulls if true replaces common literal null values in all records
      */
-    ArchiveIterator(Archive archive, boolean replaceNulls) {
+    ArchiveIterator(Archive archive, boolean replaceNulls, boolean replaceEntities) {
       List<Term> rowTypes = new ArrayList<Term>();
 
       try {
         if (extensions.isEmpty()) {
           // no need to sort
-          coreIter = RecordIterator.build(archive.getCore(), replaceNulls);
+          coreIter = RecordIterator.build(archive.getCore(), replaceNulls, replaceEntities);
         } else {
           // sort data files to align extension records into a single star record
           if (!archive.sorted) {
             archive.sortFiles();
           }
-          coreIter = buildSortedIterator(archive.getCore(), replaceNulls);
+          coreIter = buildSortedIterator(archive.getCore(), replaceNulls, replaceEntities);
         }
       } catch (IOException e) {
         LOG.warn("IOException opening core file", e);
@@ -156,7 +156,8 @@ public class Archive implements Iterable<StarRecordImpl> {
       for (ArchiveFile af : archive.getExtensions()) {
         rowTypes.add(af.getRowType());
         RecordIterator iter =
-          extensions.isEmpty() ? RecordIterator.build(af, replaceNulls) : buildSortedIterator(af, replaceNulls);
+          extensions.isEmpty() ? RecordIterator.build(af, replaceNulls, replaceEntities) : buildSortedIterator(af,
+            replaceNulls, replaceNulls);
         closables.add(iter);
         extensionIters.put(af.getRowType(), Iterators.peekingIterator(iter));
         extensionRecordsSkipped.put(af.getRowType(), 0);
@@ -165,13 +166,13 @@ public class Archive implements Iterable<StarRecordImpl> {
       rec = new StarRecordImpl(rowTypes);
     }
 
-    private RecordIterator buildSortedIterator(ArchiveFile af, boolean replaceNulls) {
+    private RecordIterator buildSortedIterator(ArchiveFile af, boolean replaceNulls, boolean replaceEntities) {
       // we need to sort the data files
       String original = af.getLocation();
       // temporarily modify archive file to create iterator over sorted file
       af.getLocations().clear();
       af.addLocation(ArchiveFile.getLocationSorted(original));
-      RecordIterator iter = RecordIterator.build(af, replaceNulls);
+      RecordIterator iter = RecordIterator.build(af, replaceNulls, replaceEntities);
       // revert to original
       af.getLocations().clear();
       af.addLocation(original);
@@ -331,18 +332,19 @@ public class Archive implements Iterable<StarRecordImpl> {
   }
 
   /**
-   * @return a complete iterator using star records with all extension records that replace literal null values.
+   * @return a complete iterator using star records with all extension records that replace literal null values and
+   * html entities.
    */
   public ClosableIterator<StarRecordImpl> iterator() {
-    return new ArchiveIterator(this, true);
+    return new ArchiveIterator(this, true, true);
   }
 
   /**
    * @return a complete iterator using star records with all extension records that are not replacing literal null
-   *         values.
+   *         values or html entities.
    */
   public ClosableIterator<StarRecordImpl> iteratorRaw() {
-    return new ArchiveIterator(this, false);
+    return new ArchiveIterator(this, false, false);
   }
 
   /**
