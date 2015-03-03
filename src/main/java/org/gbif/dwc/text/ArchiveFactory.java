@@ -13,6 +13,7 @@ import org.gbif.utils.file.CompressionUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -266,6 +267,9 @@ public class ArchiveFactory {
      */
     public static Archive openArchive(File unzippedFolderLocation) throws IOException, UnsupportedArchiveException {
         Archive archive = new Archive();
+        if (!unzippedFolderLocation.exists()) {
+          throw new FileNotFoundException("Archive folder not existing: " + unzippedFolderLocation.getAbsolutePath());
+        }
         archive.setLocation(unzippedFolderLocation);
 
         File mf = null;

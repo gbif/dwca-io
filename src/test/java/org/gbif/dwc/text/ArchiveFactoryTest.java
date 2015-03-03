@@ -9,6 +9,7 @@ import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -220,6 +221,14 @@ public class ArchiveFactoryTest {
     }
     assertEquals("Occurrence extension file has 740 records", 740, occCounter2);
     assertEquals("Occurrence start extensions should be 740 records", 740, occCounter);
+  }
+
+  @Test(expected = FileNotFoundException.class)
+  public void testNonExistingFile() throws Exception {
+    // test zip with 1 extension file
+    File none = new File("/ping/pong/nuts");
+    // try to open archive
+    ArchiveFactory.openArchive(none);
   }
 
   @Test
