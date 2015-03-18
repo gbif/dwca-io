@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.gbif</groupId>
     <artifactId>motherpom</artifactId>
-    <version>19</version>
+    <version>20</version>
   </parent>
 
   <groupId>org.gbif</groupId>
@@ -18,7 +18,7 @@
   <properties>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>3.3.2</commons-lang.version>
-    <dwc-api.version>1.11-SNAPSHOT</dwc-api.version>
+    <dwc-api.version>1.11</dwc-api.version>
     <freemarker.version>2.3.21</freemarker.version>
     <gbif-common.version>0.17</gbif-common.version>
     <gbif-registry-metadata.version>2.25</gbif-registry-metadata.version>
