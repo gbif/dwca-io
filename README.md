@@ -23,7 +23,8 @@ Read an archive and display the scientific name of each records:
 
 Read from a folder(extracted archive) and display the scientific name of each records + vernacular name(s) from the extension:
 ```java
-  Archive dwcArchive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+  //WARNING: StarRecord requires underlying data files(including extensions) to be sorted by the coreid column
+  Archive dwcArchive = ArchiveFactory.openArchive(new File("/tmp/myarchive"));
   System.out.println("Archive rowtype: " + dwcArchive.getCore().getRowType() + ", "
       + dwcArchive.getExtensions().size() + " extension(s)");
   // loop over core darwin core star records
