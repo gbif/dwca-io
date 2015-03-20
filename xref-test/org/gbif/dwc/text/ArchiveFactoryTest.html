@@ -154,7 +154,7 @@
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIssue2158() <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException, IOException {
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>     <em class="jxr_comment">// test zip with 1 extension file</em>
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     File zip = FileUtils.getClasspathFile(<span class="jxr_string">"archive-tax.zip"</span>);
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>     File tmpDir = File.createTempFile(<span class="jxr_string">"dwca-reader-test"</span>, <span class="jxr_string">".tmp"</span>).getParentFile();
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     File tmpDir = File.createTempFile(<span class="jxr_string">"dwca-io-test"</span>, <span class="jxr_string">".tmp"</span>).getParentFile();
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>     CompressionUtil.decompressFile(tmpDir, zip);
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>     <em class="jxr_comment">// read archive from this tmp dir</em>
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>     Archive arch = ArchiveFactory.openArchive(tmpDir);
@@ -180,7 +180,7 @@
 <a class="jxr_linenumber" name="L172" href="#L172">172</a>   @Test
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testExtensionNPE() <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException, IOException {
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>     File zip = FileUtils.getClasspathFile(<span class="jxr_string">"checklist_980.zip"</span>);
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     File tmpDir = File.createTempFile(<span class="jxr_string">"dwca-reader-test"</span>, <span class="jxr_string">".tmp"</span>).getParentFile();
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>     File tmpDir = File.createTempFile(<span class="jxr_string">"dwca-io-test"</span>, <span class="jxr_string">".tmp"</span>).getParentFile();
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>     CompressionUtil.decompressFile(tmpDir, zip);
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>     <em class="jxr_comment">// read archive from this tmp dir</em>
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>     Archive arch = ArchiveFactory.openArchive(tmpDir);
@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>   @Ignore(<span class="jxr_string">"currently fails with only 661 records coming through instead of 740"</span>)
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testStarIteratorExtRecords() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>     File zip = FileUtils.getClasspathFile(<span class="jxr_string">"checklist_980.zip"</span>);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>     File tmpDir = File.createTempFile(<span class="jxr_string">"dwca-reader-test"</span>, <span class="jxr_string">".tmp"</span>).getParentFile();
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>     File tmpDir = File.createTempFile(<span class="jxr_string">"dwca-io-test"</span>, <span class="jxr_string">".tmp"</span>).getParentFile();
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>     CompressionUtil.decompressFile(tmpDir, zip);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>     <em class="jxr_comment">// read archive from this tmp dir</em>
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>     Archive arch = ArchiveFactory.openArchive(tmpDir);
