@@ -5,6 +5,7 @@ import org.gbif.dwc.terms.Term;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -700,4 +701,67 @@ public class DarwinCoreTaxon {
     this.vernacularName = vernacularName;
   }
 
+  @Override
+  public int hashCode() {
+    return Objects
+      .hashCode(type, modified, language, license, rightsHolder, accessRights, bibliographicCitation, references,
+        institutionID, collectionID, datasetID, institutionCode, collectionCode, datasetName, ownerInstitutionCode,
+        basisOfRecord, informationWithheld, dataGeneralizations, dynamicProperties, taxonID, scientificNameID,
+        acceptedNameUsageID, parentNameUsageID, originalNameUsageID, nameAccordingToID, namePublishedInID,
+        taxonConceptID, scientificName, acceptedNameUsage, parentNameUsage, originalNameUsage, nameAccordingTo,
+        namePublishedIn, namePublishedInYear, higherClassification, kingdom, phylum, classs, order, family, genus,
+        subgenus, specificEpithet, infraspecificEpithet, taxonRank, verbatimTaxonRank, scientificNameAuthorship,
+        vernacularName, nomenclaturalCode, taxonomicStatus, nomenclaturalStatus, taxonRemarks);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    final DarwinCoreTaxon other = (DarwinCoreTaxon) obj;
+    return Objects.equal(this.type, other.type) && Objects.equal(this.modified, other.modified) && Objects
+      .equal(this.language, other.language) && Objects.equal(this.license, other.license) && Objects
+             .equal(this.rightsHolder, other.rightsHolder) && Objects.equal(this.accessRights, other.accessRights)
+           && Objects.equal(this.bibliographicCitation, other.bibliographicCitation) && Objects
+      .equal(this.references, other.references) && Objects.equal(this.institutionID, other.institutionID) && Objects
+             .equal(this.collectionID, other.collectionID) && Objects.equal(this.datasetID, other.datasetID) && Objects
+             .equal(this.institutionCode, other.institutionCode) && Objects
+             .equal(this.collectionCode, other.collectionCode) && Objects.equal(this.datasetName, other.datasetName)
+           && Objects.equal(this.ownerInstitutionCode, other.ownerInstitutionCode) && Objects
+             .equal(this.basisOfRecord, other.basisOfRecord) && Objects
+             .equal(this.informationWithheld, other.informationWithheld) && Objects
+             .equal(this.dataGeneralizations, other.dataGeneralizations) && Objects
+             .equal(this.dynamicProperties, other.dynamicProperties) && Objects.equal(this.taxonID, other.taxonID)
+           && Objects.equal(this.scientificNameID, other.scientificNameID) && Objects
+             .equal(this.acceptedNameUsageID, other.acceptedNameUsageID) && Objects
+             .equal(this.parentNameUsageID, other.parentNameUsageID) && Objects
+             .equal(this.originalNameUsageID, other.originalNameUsageID) && Objects
+             .equal(this.nameAccordingToID, other.nameAccordingToID) && Objects
+             .equal(this.namePublishedInID, other.namePublishedInID) && Objects
+             .equal(this.taxonConceptID, other.taxonConceptID) && Objects
+             .equal(this.scientificName, other.scientificName) && Objects
+             .equal(this.acceptedNameUsage, other.acceptedNameUsage) && Objects
+             .equal(this.parentNameUsage, other.parentNameUsage) && Objects
+             .equal(this.originalNameUsage, other.originalNameUsage) && Objects
+             .equal(this.nameAccordingTo, other.nameAccordingTo) && Objects
+             .equal(this.namePublishedIn, other.namePublishedIn) && Objects
+             .equal(this.namePublishedInYear, other.namePublishedInYear) && Objects
+             .equal(this.higherClassification, other.higherClassification) && Objects.equal(this.kingdom, other.kingdom)
+           && Objects.equal(this.phylum, other.phylum) && Objects.equal(this.classs, other.classs) && Objects
+             .equal(this.order, other.order) && Objects.equal(this.family, other.family) && Objects
+             .equal(this.genus, other.genus) && Objects.equal(this.subgenus, other.subgenus) && Objects
+             .equal(this.specificEpithet, other.specificEpithet) && Objects
+             .equal(this.infraspecificEpithet, other.infraspecificEpithet) && Objects
+             .equal(this.taxonRank, other.taxonRank) && Objects.equal(this.verbatimTaxonRank, other.verbatimTaxonRank)
+           && Objects.equal(this.scientificNameAuthorship, other.scientificNameAuthorship) && Objects
+             .equal(this.vernacularName, other.vernacularName) && Objects
+             .equal(this.nomenclaturalCode, other.nomenclaturalCode) && Objects
+             .equal(this.taxonomicStatus, other.taxonomicStatus) && Objects
+             .equal(this.nomenclaturalStatus, other.nomenclaturalStatus) && Objects
+             .equal(this.taxonRemarks, other.taxonRemarks);
+  }
 }

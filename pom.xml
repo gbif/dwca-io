@@ -8,33 +8,33 @@
   </parent>
 
   <groupId>org.gbif</groupId>
-  <artifactId>dwca-reader</artifactId>
+  <artifactId>dwca-io</artifactId>
   <version>1.22-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Darwin Core Archive Reader</name>
-  <url>http://github.com/gbif/dwca-reader</url>
+  <name>Darwin Core Archive IO Library</name>
+  <url>http://github.com/gbif/dwca-io</url>
 
   <properties>
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>3.3.2</commons-lang.version>
-    <dwc-api.version>1.11</dwc-api.version>
+    <dwc-api.version>1.12-SNAPSHOT</dwc-api.version>
     <freemarker.version>2.3.21</freemarker.version>
     <gbif-common.version>0.17</gbif-common.version>
-    <gbif-registry-metadata.version>2.25</gbif-registry-metadata.version>
+    <gbif-registry-metadata.version>2.26</gbif-registry-metadata.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
     <logback.version>1.1.2</logback.version>
     <mockito.version>1.9.5</mockito.version>
     <slf4j.version>1.7.10</slf4j.version>
 
-    <jdkLevel>1.5</jdkLevel>
+    <jdkLevel>1.6</jdkLevel>
   </properties>
 
   <scm>
-	  <connection>scm:git:git@github.com:gbif/dwca-reader.git</connection>
-	  <url>https://github.com/gbif/dwca-reader</url>
-	  <developerConnection>scm:git:git@github.com:gbif/dwca-reader.git</developerConnection>
+	  <connection>scm:git:git@github.com:gbif/dwca-io.git</connection>
+	  <url>https://github.com/gbif/dwca-io</url>
+	  <developerConnection>scm:git:git@github.com:gbif/dwca-io.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 

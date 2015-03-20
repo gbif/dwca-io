@@ -1,4 +1,5 @@
-dwca-reader
+dwca-io
 ===========
 
-Darwin Core Archive Reader
+Java library for reading and writing Darwin Core Archive files.
+Formerly know as dwca-reader

@@ -1,5 +1,7 @@
 package org.gbif.dwc.record;
 
+import com.google.common.base.Objects;
+
 /**
  * A bean representing a simple Darwin Core record with a property for each dwc term apart from terms of group
  * MeasurementOrFact or ResourceRelationship.
@@ -93,9 +95,12 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String occurrenceStatus;
   private String organismID;
   private String organismName;
+  private String organismQuantity;
+  private String organismQuantityType;
   private String organismRemarks;
   private String organismScope;
   private String otherCatalogNumbers;
+  private String parentEventID;
   private String pointRadiusSpatialFit;
   private String preparations;
   private String previousIdentifications;
@@ -103,6 +108,8 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   private String recordNumber;
   private String reproductiveCondition;
   private String samplingEffort;
+  private String sampleSizeUnit;
+  private String sampleSizeValue;
   private String samplingProtocol;
   private String sex;
   private String startDayOfYear;
@@ -485,6 +492,14 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     return organismName;
   }
 
+  public String getOrganismQuantity() {
+    return organismQuantity;
+  }
+
+  public String getOrganismQuantityType() {
+    return organismQuantityType;
+  }
+
   public String getOrganismRemarks() {
     return organismRemarks;
   }
@@ -495,6 +510,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getOtherCatalogNumbers() {
     return otherCatalogNumbers;
+  }
+
+  public String getParentEventID() {
+    return parentEventID;
   }
 
   public String getPointRadiusSpatialFit() {
@@ -527,6 +546,14 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public String getSamplingProtocol() {
     return samplingProtocol;
+  }
+
+  public String getSampleSizeUnit() {
+    return sampleSizeUnit;
+  }
+
+  public String getSampleSizeValue() {
+    return sampleSizeValue;
   }
 
   public String getSex() {
@@ -892,6 +919,7 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
   public void setMember(String member) {
     this.member = member;
   }
+
   public void setMinimumDepthInMeters(String minimumDepthInMeters) {
     this.minimumDepthInMeters = norm(minimumDepthInMeters);
   }
@@ -932,6 +960,14 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.organismName = norm(organismName);
   }
 
+  public void setOrganismQuantity(String organismQuantity) {
+    this.organismQuantity = organismQuantity;
+  }
+
+  public void setOrganismQuantityType(String organismQuantityType) {
+    this.organismQuantityType = organismQuantityType;
+  }
+
   public void setOrganismRemarks(String organismRemarks) {
     this.organismRemarks = norm(organismRemarks);
   }
@@ -942,6 +978,10 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setOtherCatalogNumbers(String otherCatalogNumbers) {
     this.otherCatalogNumbers = norm(otherCatalogNumbers);
+  }
+
+  public void setParentEventID(String parentEventID) {
+    this.parentEventID = parentEventID;
   }
 
   public void setPointRadiusSpatialFit(String pointRadiusSpatialFit) {
@@ -974,6 +1014,14 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
 
   public void setSamplingProtocol(String samplingProtocol) {
     this.samplingProtocol = norm(samplingProtocol);
+  }
+
+  public void setSampleSizeUnit(String sampleSizeUnit) {
+    this.sampleSizeUnit = sampleSizeUnit;
+  }
+
+  public void setSampleSizeValue(String sampleSizeValue) {
+    this.sampleSizeValue = sampleSizeValue;
   }
 
   public void setSex(String sex) {
@@ -1036,4 +1084,134 @@ public class DarwinCoreRecord extends DarwinCoreTaxon {
     this.year = norm(year);
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id, associatedMedia, associatedOccurrences, associatedOrganisms, associatedReferences,
+      associatedSequences, associatedTaxa, bed, behavior, catalogNumber, continent, coordinatePrecision,
+      coordinateUncertaintyInMeters, country, countryCode, county, dateIdentified, day, decimalLatitude,
+      decimalLongitude, disposition, earliestAgeOrLowestStage, earliestEonOrLowestEonothem, earliestEpochOrLowestSeries,
+      earliestEraOrLowestErathem, earliestPeriodOrLowestSystem, endDayOfYear, establishmentMeans, eventDate, eventID,
+      eventRemarks, eventTime, fieldNotes, fieldNumber, footprintSpatialFit, footprintSRS, footprintWKT, formation,
+      geodeticDatum, geologicalContextID, georeferencedBy, georeferencedDate, georeferenceProtocol, georeferenceRemarks,
+      georeferenceSources, georeferenceVerificationStatus, group, habitat, higherGeography, higherGeographyID,
+      highestBiostratigraphicZone, identificationID, identificationQualifier, identificationReferences,
+      identificationRemarks, identificationVerificationStatus, identifiedBy, individualCount, island, islandGroup,
+      latestAgeOrHighestStage, latestEonOrHighestEonothem, latestEpochOrHighestSeries, latestEraOrHighestErathem,
+      latestPeriodOrHighestSystem, lifeStage, lithostratigraphicTerms, locality, locationAccordingTo, locationID,
+      locationRemarks, lowestBiostratigraphicZone, materialSampleID, maximumDepthInMeters,
+      maximumDistanceAboveSurfaceInMeters, maximumElevationInMeters, member, minimumDepthInMeters,
+      minimumDistanceAboveSurfaceInMeters, minimumElevationInMeters, month, municipality, occurrenceID,
+      occurrenceRemarks, occurrenceStatus, organismID, organismName, organismQuantity, organismQuantityType,
+      organismRemarks, organismScope, otherCatalogNumbers, parentEventID, pointRadiusSpatialFit, preparations,
+      previousIdentifications, recordedBy, recordNumber, reproductiveCondition, samplingEffort, sampleSizeUnit,
+      sampleSizeValue, samplingProtocol, sex, startDayOfYear, stateProvince, typeStatus, verbatimCoordinates,
+      verbatimCoordinateSystem, verbatimDepth, verbatimElevation, verbatimEventDate, verbatimLatitude, verbatimLocality,
+      verbatimLongitude, verbatimSRS, waterBody, year);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    final DarwinCoreRecord other = (DarwinCoreRecord) obj;
+    return Objects.equal(this.id, other.id) && Objects.equal(this.associatedMedia, other.associatedMedia) && Objects
+      .equal(this.associatedOccurrences, other.associatedOccurrences) && Objects
+             .equal(this.associatedOrganisms, other.associatedOrganisms) && Objects
+             .equal(this.associatedReferences, other.associatedReferences) && Objects
+             .equal(this.associatedSequences, other.associatedSequences) && Objects
+             .equal(this.associatedTaxa, other.associatedTaxa) && Objects.equal(this.bed, other.bed) && Objects
+             .equal(this.behavior, other.behavior) && Objects.equal(this.catalogNumber, other.catalogNumber) && Objects
+             .equal(this.continent, other.continent) && Objects
+             .equal(this.coordinatePrecision, other.coordinatePrecision) && Objects
+             .equal(this.coordinateUncertaintyInMeters, other.coordinateUncertaintyInMeters) && Objects
+             .equal(this.country, other.country) && Objects.equal(this.countryCode, other.countryCode) && Objects
+             .equal(this.county, other.county) && Objects.equal(this.dateIdentified, other.dateIdentified) && Objects
+             .equal(this.day, other.day) && Objects.equal(this.decimalLatitude, other.decimalLatitude) && Objects
+             .equal(this.decimalLongitude, other.decimalLongitude) && Objects.equal(this.disposition, other.disposition)
+           && Objects.equal(this.earliestAgeOrLowestStage, other.earliestAgeOrLowestStage) && Objects
+      .equal(this.earliestEonOrLowestEonothem, other.earliestEonOrLowestEonothem) && Objects
+             .equal(this.earliestEpochOrLowestSeries, other.earliestEpochOrLowestSeries) && Objects
+             .equal(this.earliestEraOrLowestErathem, other.earliestEraOrLowestErathem) && Objects
+             .equal(this.earliestPeriodOrLowestSystem, other.earliestPeriodOrLowestSystem) && Objects
+             .equal(this.endDayOfYear, other.endDayOfYear) && Objects
+             .equal(this.establishmentMeans, other.establishmentMeans) && Objects.equal(this.eventDate, other.eventDate)
+           && Objects.equal(this.eventID, other.eventID) && Objects.equal(this.eventRemarks, other.eventRemarks)
+           && Objects.equal(this.eventTime, other.eventTime) && Objects.equal(this.fieldNotes, other.fieldNotes)
+           && Objects.equal(this.fieldNumber, other.fieldNumber) && Objects
+             .equal(this.footprintSpatialFit, other.footprintSpatialFit) && Objects
+             .equal(this.footprintSRS, other.footprintSRS) && Objects.equal(this.footprintWKT, other.footprintWKT)
+           && Objects.equal(this.formation, other.formation) && Objects.equal(this.geodeticDatum, other.geodeticDatum)
+           && Objects.equal(this.geologicalContextID, other.geologicalContextID) && Objects
+             .equal(this.georeferencedBy, other.georeferencedBy) && Objects
+             .equal(this.georeferencedDate, other.georeferencedDate) && Objects
+             .equal(this.georeferenceProtocol, other.georeferenceProtocol) && Objects
+             .equal(this.georeferenceRemarks, other.georeferenceRemarks) && Objects
+             .equal(this.georeferenceSources, other.georeferenceSources) && Objects
+             .equal(this.georeferenceVerificationStatus, other.georeferenceVerificationStatus) && Objects
+             .equal(this.group, other.group) && Objects.equal(this.habitat, other.habitat) && Objects
+             .equal(this.higherGeography, other.higherGeography) && Objects
+             .equal(this.higherGeographyID, other.higherGeographyID) && Objects
+             .equal(this.highestBiostratigraphicZone, other.highestBiostratigraphicZone) && Objects
+             .equal(this.identificationID, other.identificationID) && Objects
+             .equal(this.identificationQualifier, other.identificationQualifier) && Objects
+             .equal(this.identificationReferences, other.identificationReferences) && Objects
+             .equal(this.identificationRemarks, other.identificationRemarks) && Objects
+             .equal(this.identificationVerificationStatus, other.identificationVerificationStatus) && Objects
+             .equal(this.identifiedBy, other.identifiedBy) && Objects.equal(this.individualCount, other.individualCount)
+           && Objects.equal(this.island, other.island) && Objects.equal(this.islandGroup, other.islandGroup) && Objects
+             .equal(this.latestAgeOrHighestStage, other.latestAgeOrHighestStage) && Objects
+             .equal(this.latestEonOrHighestEonothem, other.latestEonOrHighestEonothem) && Objects
+             .equal(this.latestEpochOrHighestSeries, other.latestEpochOrHighestSeries) && Objects
+             .equal(this.latestEraOrHighestErathem, other.latestEraOrHighestErathem) && Objects
+             .equal(this.latestPeriodOrHighestSystem, other.latestPeriodOrHighestSystem) && Objects
+             .equal(this.lifeStage, other.lifeStage) && Objects
+             .equal(this.lithostratigraphicTerms, other.lithostratigraphicTerms) && Objects
+             .equal(this.locality, other.locality) && Objects.equal(this.locationAccordingTo, other.locationAccordingTo)
+           && Objects.equal(this.locationID, other.locationID) && Objects
+             .equal(this.locationRemarks, other.locationRemarks) && Objects
+             .equal(this.lowestBiostratigraphicZone, other.lowestBiostratigraphicZone) && Objects
+             .equal(this.materialSampleID, other.materialSampleID) && Objects
+             .equal(this.maximumDepthInMeters, other.maximumDepthInMeters) && Objects
+             .equal(this.maximumDistanceAboveSurfaceInMeters, other.maximumDistanceAboveSurfaceInMeters) && Objects
+             .equal(this.maximumElevationInMeters, other.maximumElevationInMeters) && Objects
+             .equal(this.member, other.member) && Objects.equal(this.minimumDepthInMeters, other.minimumDepthInMeters)
+           && Objects.equal(this.minimumDistanceAboveSurfaceInMeters, other.minimumDistanceAboveSurfaceInMeters)
+           && Objects.equal(this.minimumElevationInMeters, other.minimumElevationInMeters) && Objects
+             .equal(this.month, other.month) && Objects.equal(this.municipality, other.municipality) && Objects
+             .equal(this.occurrenceID, other.occurrenceID) && Objects
+             .equal(this.occurrenceRemarks, other.occurrenceRemarks) && Objects
+             .equal(this.occurrenceStatus, other.occurrenceStatus) && Objects.equal(this.organismID, other.organismID)
+           && Objects.equal(this.organismName, other.organismName) && Objects
+             .equal(this.organismQuantity, other.organismQuantity) && Objects
+             .equal(this.organismQuantityType, other.organismQuantityType) && Objects
+             .equal(this.organismRemarks, other.organismRemarks) && Objects
+             .equal(this.organismScope, other.organismScope) && Objects
+             .equal(this.otherCatalogNumbers, other.otherCatalogNumbers) && Objects
+             .equal(this.parentEventID, other.parentEventID) && Objects
+             .equal(this.pointRadiusSpatialFit, other.pointRadiusSpatialFit) && Objects
+             .equal(this.preparations, other.preparations) && Objects
+             .equal(this.previousIdentifications, other.previousIdentifications) && Objects
+             .equal(this.recordedBy, other.recordedBy) && Objects.equal(this.recordNumber, other.recordNumber)
+           && Objects.equal(this.reproductiveCondition, other.reproductiveCondition) && Objects
+             .equal(this.samplingEffort, other.samplingEffort) && Objects
+             .equal(this.sampleSizeUnit, other.sampleSizeUnit) && Objects
+             .equal(this.sampleSizeValue, other.sampleSizeValue) && Objects
+             .equal(this.samplingProtocol, other.samplingProtocol) && Objects.equal(this.sex, other.sex) && Objects
+             .equal(this.startDayOfYear, other.startDayOfYear) && Objects.equal(this.stateProvince, other.stateProvince)
+           && Objects.equal(this.typeStatus, other.typeStatus) && Objects
+             .equal(this.verbatimCoordinates, other.verbatimCoordinates) && Objects
+             .equal(this.verbatimCoordinateSystem, other.verbatimCoordinateSystem) && Objects
+             .equal(this.verbatimDepth, other.verbatimDepth) && Objects
+             .equal(this.verbatimElevation, other.verbatimElevation) && Objects
+             .equal(this.verbatimEventDate, other.verbatimEventDate) && Objects
+             .equal(this.verbatimLatitude, other.verbatimLatitude) && Objects
+             .equal(this.verbatimLocality, other.verbatimLocality) && Objects
+             .equal(this.verbatimLongitude, other.verbatimLongitude) && Objects
+             .equal(this.verbatimSRS, other.verbatimSRS) && Objects.equal(this.waterBody, other.waterBody) && Objects
+             .equal(this.year, other.year);
+  }
 }

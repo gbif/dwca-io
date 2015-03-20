@@ -146,7 +146,7 @@ public class ArchiveFactoryTest {
   public void testIssue2158() throws UnsupportedArchiveException, IOException {
     // test zip with 1 extension file
     File zip = FileUtils.getClasspathFile("archive-tax.zip");
-    File tmpDir = File.createTempFile("dwca-reader-test", ".tmp").getParentFile();
+    File tmpDir = File.createTempFile("dwca-io-test", ".tmp").getParentFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
     Archive arch = ArchiveFactory.openArchive(tmpDir);
@@ -172,7 +172,7 @@ public class ArchiveFactoryTest {
   @Test
   public void testExtensionNPE() throws UnsupportedArchiveException, IOException {
     File zip = FileUtils.getClasspathFile("checklist_980.zip");
-    File tmpDir = File.createTempFile("dwca-reader-test", ".tmp").getParentFile();
+    File tmpDir = File.createTempFile("dwca-io-test", ".tmp").getParentFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
     Archive arch = ArchiveFactory.openArchive(tmpDir);
@@ -196,7 +196,7 @@ public class ArchiveFactoryTest {
   @Ignore("currently fails with only 661 records coming through instead of 740")
   public void testStarIteratorExtRecords() throws Exception {
     File zip = FileUtils.getClasspathFile("checklist_980.zip");
-    File tmpDir = File.createTempFile("dwca-reader-test", ".tmp").getParentFile();
+    File tmpDir = File.createTempFile("dwca-io-test", ".tmp").getParentFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
     Archive arch = ArchiveFactory.openArchive(tmpDir);
