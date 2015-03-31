@@ -1,4 +1,4 @@
-org.gbif.dwc.record
-org.gbif.dwc.text
-org.gbif.dwc.tools
-org.gbif.file
+org.gbif.dwca.io
+org.gbif.dwca.record
+org.gbif.dwca.tools
+org.gbif.io
