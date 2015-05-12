@@ -57,4 +57,13 @@ public class ArchiveFileTest {
     assertEquals(3248, counter);
     assertEquals("3082", last.id());
   }
+
+  @Test
+  public void testRowTypeEquivalence() {
+    ArchiveFile af = new ArchiveFile();
+    af.setRowType(DwcTerm.Occurrence);
+    assertEquals(af.getRowType(), DwcTerm.Occurrence);
+    assertTrue(af.getRowType().equals(DwcTerm.Occurrence));
+    assertTrue(af.getRowType().qualifiedName().equals(DwcTerm.Occurrence.qualifiedName()));
+  }
 }

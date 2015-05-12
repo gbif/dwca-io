@@ -293,6 +293,9 @@ public class ArchiveFactoryTest {
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("MOBOTDarwinCore.csv"));
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
+    assertEquals(DwcTerm.occurrenceID, arch.getCore().getId().getTerm());
+    assertNotNull(arch.getCore().getRowType());
+    assertEquals(DwcTerm.Occurrence, arch.getCore().getRowType());
     assertTrue(arch.getCore().hasTerm(DwcTerm.occurrenceID));
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertEquals("UTF-8", arch.getCore().getEncoding());
@@ -333,10 +336,13 @@ public class ArchiveFactoryTest {
     assertEquals(new Character('"'), arch.getCore().getFieldsEnclosedBy());
     assertEquals("test", arch.getCore().getLocation());
 
-    // test direct pointer to core data file
+    // test direct pointer to core data file (with taxonID, meaning it has dwc:Taxon rowType)
     arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc/DarwinCore.txt"));
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
+    assertEquals(DwcTerm.taxonID, arch.getCore().getId().getTerm());
+    assertNotNull(arch.getCore().getRowType());
+    assertEquals(DwcTerm.Taxon, arch.getCore().getRowType());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertEquals(0, arch.getExtensions().size());
     Iterator<StarRecord> dwci = arch.iterator();
@@ -344,10 +350,13 @@ public class ArchiveFactoryTest {
     assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));
     assertNull(arch.getCore().getLocation());
 
-    // test folder with single text file in
+    // test folder with single text file in (with taxonID, meaning it has dwc:Taxon rowType)
     arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("dwca"));
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
+    assertEquals(DwcTerm.taxonID, arch.getCore().getId().getTerm());
+    assertNotNull(arch.getCore().getRowType());
+    assertEquals(DwcTerm.Taxon, arch.getCore().getRowType());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertTrue(arch.getCore().hasTerm(DwcTerm.taxonID));
     assertEquals(0, arch.getExtensions().size());
@@ -514,4 +523,41 @@ public class ArchiveFactoryTest {
     }
   }
 
+  /**
+   * Test opening a single data file with both eventID column, meaning it has dwc:Event rowType.
+   */
+  @Test
+  public void testOpenArchiveForEventCore() throws IOException, UnsupportedArchiveException {
+    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event.txt"));
+    assertNotNull(arch.getCore());
+    assertNotNull(arch.getCore().getId());
+    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());
+    assertNotNull(arch.getCore().getRowType());
+    assertEquals(DwcTerm.Event, arch.getCore().getRowType());
+    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));
+    assertEquals(0, arch.getExtensions().size());
+    Iterator<StarRecord> dwci = arch.iterator();
+    StarRecord star = dwci.next();
+    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));
+    assertNull(arch.getCore().getLocation());
+  }
+
+  /**
+   * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term
+   * gets set to dc:identifier, but its rowType never gets set.
+   */
+  @Test
+  public void testOpenArchiveForGenericCore() throws IOException, UnsupportedArchiveException {
+    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event-plus-id.txt"));
+    assertNotNull(arch.getCore());
+    assertNotNull(arch.getCore().getId());
+    assertEquals(DcTerm.identifier, arch.getCore().getId().getTerm());
+    assertNull(arch.getCore().getRowType());
+    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));
+    assertEquals(0, arch.getExtensions().size());
+    Iterator<StarRecord> dwci = arch.iterator();
+    StarRecord star = dwci.next();
+    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));
+    assertNull(arch.getCore().getLocation());
+  }
 }

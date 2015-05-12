@@ -1,0 +1,10 @@
+id	eventID	samplingProtocol	eventDate	eventRemarks	sampleSizeValue	sampleSizeUnit	locality	decimalLatitude	decimalLongitude
+1	1	AQEM	10/04/2006	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Aubach above Wiesthal	50.037493	9.428878
+2	2	AQEM	21/06/2006	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Kinzig O3 Rothenbergen	50.18689	9.100369
+3	3	AQEM	13/07/2006	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Kinzig W1 Bulau	50.1316	8.9657
+4	4	AQEM	23/04/2008	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Aubach above Wiesthal	50.037493	9.428878
+5	5	AQEM	11/06/2008	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Kinzig O3 Rothenbergen	50.18689	9.100369
+6	6	AQEM	11/06/2008	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Kinzig W1 Bulau	50.1316	8.9657
+7	7	AQEM	16/03/2010	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Aubach above Wiesthal	50.037493	9.428878
+8	8	AQEM	28/06/2010	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Kinzig O3 Rothenbergen	50.18689	9.100369
+9	9	AQEM	25/06/2010	organismQuantity value is for 1 sq m; need to adjust value to reflect sampleSizeValue of 1.25 sq. m.	1.25	square_metre	Kinzig W1 Bulau	50.1316	8.9657

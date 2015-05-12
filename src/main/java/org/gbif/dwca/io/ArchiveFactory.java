@@ -384,9 +384,23 @@ public class ArchiveFactory {
                 try {
                     Term dt = TERM_FACTORY.findTerm(head);
                     ArchiveField field = new ArchiveField(index, dt, null, DataType.string);
-                    if (dwcFile.getId() == null &&
-                        (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt.equals(DcTerm.identifier))) {
+                    if (dwcFile.getId() == null && (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt
+                      .equals(DwcTerm.eventID) || dt.equals(DcTerm.identifier))) {
                         dwcFile.setId(field);
+
+                        // Set the rowType corresponding to the type of id encountered (e.g. dwc:Taxon for taxonID).
+                        // Please note the ordering of ids is important, and the first id encountered will be used
+                        // unless the generic id (dc:identifier) was encountered first.
+                        // Ideally only one id will be used per rowType anyways.
+                        if (dwcFile.getRowType() == null && dwcFile.getId().getTerm() != DcTerm.identifier) {
+                            if (dt.equals(DwcTerm.occurrenceID)) {
+                                    dwcFile.setRowType(DwcTerm.Occurrence);
+                            } else if (dt.equals(DwcTerm.taxonID)) {
+                                    dwcFile.setRowType(DwcTerm.Taxon);
+                            } else if (dt.equals(DwcTerm.eventID)) {
+                                    dwcFile.setRowType(DwcTerm.Event);
+                            }
+                        }
                     }
                     dwcFile.addField(field);
                 } catch (IllegalArgumentException e) {
