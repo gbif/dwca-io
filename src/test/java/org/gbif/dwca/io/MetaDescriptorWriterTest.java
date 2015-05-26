@@ -9,6 +9,8 @@ import org.gbif.dwca.io.MetaDescriptorWriter;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -38,12 +40,9 @@ public class MetaDescriptorWriterTest {
       assertEquals(";", arch.getCore().getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
 
       // write meta.xml
-      File temp = File.createTempFile("meta", ".xml");
-      temp.deleteOnExit();
-      System.out.println("Writing temporary test eml file to " + temp.getAbsolutePath());
-      MetaDescriptorWriter.writeMetaFile(temp, arch);
+      File tmpDwca = createTmpMeta(arch);
 
-      Archive arch2 = ArchiveFactory.openArchive(temp);
+      Archive arch2 = ArchiveFactory.openArchive(tmpDwca);
       // core props
       ArchiveFile core = arch2.getCore();
       assertNotNull(core);
@@ -73,11 +72,20 @@ public class MetaDescriptorWriterTest {
     }
   }
 
+  private File createTmpMeta(Archive arch) throws IOException {
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
+    tmpDir.deleteOnExit();
+    File tmpMeta = new File(tmpDir, "meta.xml");
+    System.out.println("Writing temporary test meta file to " + tmpMeta.getAbsolutePath());
+    MetaDescriptorWriter.writeMetaFile(tmpMeta, arch);
+    return tmpDir;
+  }
+
   @Test
   public void testRoundtripQuotes() {
     try {
       // read archive
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("meta_quot.xml"));
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("xml-entity-meta"));
       assertNotNull(arch);
       assertNotNull(arch.getCore());
       assertNotNull(arch.getCore().getId());
@@ -85,12 +93,9 @@ public class MetaDescriptorWriterTest {
       assertEquals(1, arch.getExtensions().size());
 
       // write meta.xml
-      File temp = File.createTempFile("meta", ".xml");
-      temp.deleteOnExit();
-      //      System.out.println("Writing temporary test meta.xml file to " + temp.getAbsolutePath());
-      MetaDescriptorWriter.writeMetaFile(temp, arch);
+      File tmpDwca = createTmpMeta(arch);
+      Archive arch2 = ArchiveFactory.openArchive(tmpDwca);
 
-      Archive arch2 = ArchiveFactory.openArchive(temp);
       // core props
       ArchiveFile core = arch2.getCore();
       assertNotNull(core);

@@ -15,6 +15,7 @@ import org.gbif.utils.file.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -97,6 +98,37 @@ public class ArchiveFactoryTest {
     assertTrue(found);
   }
 
+  /**
+   * Test GNUB style dwca with a single tab delimited file that has a .tab suffix.
+   */
+  @Test
+  public void testGnubTab() throws UnsupportedArchiveException, IOException {
+    File tab = FileUtils.getClasspathFile("gnub.tab");
+    // read archive from this tmp dir
+    Archive arch = ArchiveFactory.openArchive(tab);
+
+    Record rec = arch.getCore().iterator().next();
+    assertEquals("246daa62-6fce-448f-88b4-94b0ccc89cf1", rec.id());
+  }
+
+  /**
+   * Test GNUB style dwca with a single tab delimited file that has a .tab suffix.
+   */
+  @Test
+  public void testGnubTabZip() throws UnsupportedArchiveException, IOException {
+    // test GNUB zip with 1 data file
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
+    tmpDir.deleteOnExit();
+    File zip = FileUtils.getClasspathFile("gnub.tab.zip");
+    CompressionUtil.decompressFile(tmpDir, zip);
+
+    // read archive from this tmp dir
+    Archive arch = ArchiveFactory.openArchive(tmpDir);
+
+    Record rec = arch.getCore().iterator().next();
+    assertEquals("246daa62-6fce-448f-88b4-94b0ccc89cf1", rec.id());
+  }
+
   @Test
   public void testCsvExcelStyle() throws UnsupportedArchiveException, IOException {
     File csv = FileUtils.getClasspathFile("csv_optional_quotes_excel2008CSV.csv");
@@ -150,7 +182,7 @@ public class ArchiveFactoryTest {
   public void testIssue2158() throws UnsupportedArchiveException, IOException {
     // test zip with 1 extension file
     File zip = FileUtils.getClasspathFile("archive-tax.zip");
-    File tmpDir = File.createTempFile("dwca-io-test", ".tmp").getParentFile();
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
     Archive arch = ArchiveFactory.openArchive(tmpDir);
@@ -176,7 +208,7 @@ public class ArchiveFactoryTest {
   @Test
   public void testExtensionNPE() throws UnsupportedArchiveException, IOException {
     File zip = FileUtils.getClasspathFile("checklist_980.zip");
-    File tmpDir = File.createTempFile("dwca-io-test", ".tmp").getParentFile();
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
     Archive arch = ArchiveFactory.openArchive(tmpDir);
@@ -200,7 +232,7 @@ public class ArchiveFactoryTest {
   @Ignore("currently fails with only 661 records coming through instead of 740")
   public void testStarIteratorExtRecords() throws Exception {
     File zip = FileUtils.getClasspathFile("checklist_980.zip");
-    File tmpDir = File.createTempFile("dwca-io-test", ".tmp").getParentFile();
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
     Archive arch = ArchiveFactory.openArchive(tmpDir);
@@ -218,7 +250,7 @@ public class ArchiveFactoryTest {
 
     // read extension file on its own and extract core ids to be cross checked with core id set
     CSVReader occReader = CSVReaderFactory.build(arch.getExtension(DwcTerm.Occurrence));
-    int occCounter2=0;
+    int occCounter2 = 0;
     for (String[] rec : occReader) {
       String id = rec[1];
       occCounter2++;
@@ -240,7 +272,7 @@ public class ArchiveFactoryTest {
   public void testOpenArchiveAsZip() throws UnsupportedArchiveException, IOException {
     // test zip with 1 extension file
     File zip = FileUtils.getClasspathFile("archive-tax.zip");
-    File tmpDir = FileUtils.createTempDir();
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     tmpDir.deleteOnExit();
 
     // open archive from zip
@@ -257,28 +289,28 @@ public class ArchiveFactoryTest {
     assertTrue(found);
   }
 
-    @Test
-    public void testOpenArchiveAsTarGzip() throws UnsupportedArchiveException, IOException {
-        // test gziped tar file with 1 extension
-        File zip = FileUtils.getClasspathFile("archive-tax.tar.gz");
-        File tmpDir = FileUtils.createTempDir();
-        tmpDir.deleteOnExit();
+  @Test
+  public void testOpenArchiveAsTarGzip() throws UnsupportedArchiveException, IOException {
+    // test gziped tar file with 1 extension
+    File zip = FileUtils.getClasspathFile("archive-tax.tar.gz");
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
+    tmpDir.deleteOnExit();
 
-        // open compressed archive
-        Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
-        assertNotNull(arch.getCore().getId());
-        assertEquals(1, arch.getExtensions().size());
+    // open compressed archive
+    Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
+    assertNotNull(arch.getCore().getId());
+    assertEquals(1, arch.getExtensions().size());
 
-        boolean found = false;
-        for (Record rec : arch.getCore()) {
-            if ("113775".equals(rec.id())) {
-                found = true;
-            }
-        }
-        assertTrue(found);
+    boolean found = false;
+    for (Record rec : arch.getCore()) {
+      if ("113775".equals(rec.id())) {
+        found = true;
+      }
     }
+    assertTrue(found);
+  }
 
-    /**
+  /**
    * Identifier not set properly when reading single csv file
    * the csv file attached is a utf16 little endian encoded file.
    * This encoding is known to cause problems and not supported.
@@ -319,18 +351,8 @@ public class ArchiveFactoryTest {
     assertEquals(2, arch.getExtensions().size());
     assertEquals("DarwinCore.txt", arch.getCore().getLocation());
 
-    // test meta.xml alone
-    arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc/meta.xml"));
-    assertNotNull(arch.getCore());
-    assertTrue(arch.getCore().getId().getIndex() == 0);
-    assertNull(arch.getCore().getFieldsEnclosedBy());
-    assertEquals("\t", arch.getCore().getFieldsTerminatedBy());
-    assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
-    assertEquals(2, arch.getExtensions().size());
-    assertEquals("DarwinCore.txt", arch.getCore().getLocation());
-
     // test meta.xml with xml entities as attribute values
-    arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("meta_quot.xml"));
+    arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("xml-entity-meta"));
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(new Character('"'), arch.getCore().getFieldsEnclosedBy());
@@ -513,7 +535,8 @@ public class ArchiveFactoryTest {
   @Test
   public void testNullCoreID() throws IOException {
     try {
-      Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), new File(System.getProperty("java.io.tmpdir")));
+      Archive archive = ArchiveFactory
+        .openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), new File(System.getProperty("java.io.tmpdir")));
       Iterator<StarRecord> iter = archive.iterator();
       while (iter.hasNext()) {
         iter.next();

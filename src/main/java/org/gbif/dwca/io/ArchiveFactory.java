@@ -12,9 +12,9 @@ import org.gbif.utils.file.BomSafeInputStreamWrapper;
 import org.gbif.utils.file.CompressionUtil;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -27,10 +27,11 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import com.google.common.base.Strings;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -264,94 +265,103 @@ public class ArchiveFactory {
         }
     }
 
+  /**
+   * Opens a dwca archive which is just a single decompressed data file with headers, e.g. a csv or tab delimited file
+   */
+  public static Archive openArchiveDataFile(File dataFile) throws IOException, UnsupportedArchiveException {
+    Archive archive = new Archive();
+    archive.setLocation(dataFile);
+
+    ArchiveFile coreFile = readFileHeaders(dataFile);
+    archive.setCore(coreFile);
+
+    // check if we also have a metadata file next to this data file
+    discoverMetadataFile(archive, dataFile.getParentFile());
+
+    // final validation
+    return validateArchive(archive);
+  }
+
     /**
-     * @param unzippedFolderLocation the location of an expanded archive directory or just a single dwc text file
+     * @param dwcaFolder the location of an expanded dwc archive directory or just a single dwc text file
      */
-    public static Archive openArchive(File unzippedFolderLocation) throws IOException, UnsupportedArchiveException {
-        Archive archive = new Archive();
-        if (!unzippedFolderLocation.exists()) {
-          throw new FileNotFoundException("Archive folder not existing: " + unzippedFolderLocation.getAbsolutePath());
-        }
-        archive.setLocation(unzippedFolderLocation);
+    public static Archive openArchive(File dwcaFolder) throws IOException, UnsupportedArchiveException {
+      if (!dwcaFolder.exists()) {
+        throw new FileNotFoundException("Archive folder not existing: " + dwcaFolder.getAbsolutePath());
+      }
+      // delegate to open data file method if its a single file, not a folder
+      if (dwcaFolder.isFile()) {
+        return openArchiveDataFile(dwcaFolder);
+      }
 
-        File mf = null;
-        // see if we can find a meta.xml descriptor file
-        if (unzippedFolderLocation.isFile()) {
-            String suffix = unzippedFolderLocation.getName().substring(unzippedFolderLocation.getName().lastIndexOf("."));
-            if (suffix.equalsIgnoreCase(".xml")) {
-                // could be a metafile on its own pointing to remote data files...
-                mf = unzippedFolderLocation;
-            }
-        } else {
-          
-          // HACK: http://dev.gbif.org/issues/browse/POR-2396
-          // Accommodate archives coming from legacy IPTs which put a "\" before each filename
-          Iterator<File> iter = FileUtils.iterateFiles(unzippedFolderLocation, new String[]{"xml", "txt"}, false);
-          while (iter.hasNext()) {
-            File f = iter.next();
-            if (f.getName().startsWith("\\")) {
-              String orig = f.getName();
-              String replacement = f.getName().replaceFirst("\\\\", "");
-              LOG.info("Renaming file from {} to {}", orig, replacement);
-              f.renameTo(new File(unzippedFolderLocation, replacement));
-            }
-          }
-          
-          mf = new File(unzippedFolderLocation, "meta.xml");
-        }
-        // read metadata
-        if (mf != null && mf.exists()) {
-            // read metafile
-            readMetaDescriptor(archive, new FileInputStream(mf), true);
-            if (archive.getMetadataLocation() == null) {
-                // search for known metadata filenames
-                File emlFile = new File(mf.getParentFile(), "eml.xml");
-                if (emlFile.exists()) {
-                    archive.setMetadataLocation("eml.xml");
-                }
-            }
-        } else {
-            // try to detect data files ourselves as best as we can...
-            // currently support a single data file or a folder which contains a single data file
-            if (unzippedFolderLocation.isFile()) {
-                ArchiveFile coreFile = readFileHeaders(unzippedFolderLocation);
-                archive.setCore(coreFile);
-            } else {
-                // folder. see if we got only 1 file in there...
-                List<File> dataFiles = new ArrayList<File>();
-                FilenameFilter ff = new SuffixFileFilter(".csv", IOCase.INSENSITIVE);
-                dataFiles.addAll(Arrays.asList(unzippedFolderLocation.listFiles(ff)));
-                ff = new SuffixFileFilter(".txt", IOCase.INSENSITIVE);
-                dataFiles.addAll(Arrays.asList(unzippedFolderLocation.listFiles(ff)));
+      Archive archive = new Archive();
+      archive.setLocation(dwcaFolder);
 
-                if (dataFiles.size() == 1) {
-                    // set pointer to data file
-                    File dataFile = new File(unzippedFolderLocation, dataFiles.get(0).getName());
-                    archive.setLocation(unzippedFolderLocation);
-                    if (archive.getMetadataLocation() == null && unzippedFolderLocation.isDirectory()) {
-                        // search for known metadata filenames
-                        File emlFile = new File(unzippedFolderLocation, "eml.xml");
-                        if (emlFile.exists()) {
-                            archive.setMetadataLocation("eml.xml");
-                        }
-                    }
-                    ArchiveFile coreFile = readFileHeaders(dataFile);
-                    coreFile.getLocations().clear();
-                    coreFile.addLocation(dataFile.getName());
-                    archive.setCore(coreFile);
-                } else {
-                    throw new UnsupportedArchiveException(
-                        "The archive given is a folder with more or less than 1 data files having a txt or csv suffix");
-                }
-            }
+      // HACK: http://dev.gbif.org/issues/browse/POR-2396
+      // Accommodate archives coming from legacy IPTs which put a "\" before each filename
+      Iterator<File> iter = FileUtils.iterateFiles(dwcaFolder, new String[] {"xml", "txt"}, false);
+      while (iter.hasNext()) {
+        File f = iter.next();
+        if (f.getName().startsWith("\\")) {
+          String orig = f.getName();
+          String replacement = f.getName().replaceFirst("\\\\", "");
+          LOG.info("Renaming file from {} to {}", orig, replacement);
+          f.renameTo(new File(dwcaFolder, replacement));
         }
-        // final validation
-        validateArchive(archive);
-        // report basic stats
-        LOG.debug("Archive contains " + archive.getExtensions().size() + " described extension files");
-        LOG.debug("Archive contains " + archive.getCore().getFields().size() + " core properties");
-        return archive;
+      }
+
+      // read metadata
+      File mf = new File(dwcaFolder, "meta.xml");
+      if (mf.exists()) {
+        // read metafile
+        readMetaDescriptor(archive, new FileInputStream(mf), true);
+
+      } else {
+        // meta.xml lacking.
+        // Try to detect data files ourselves as best as we can.
+        // look for a single, visible text data file
+        List<File> dataFiles = new ArrayList<File>();
+        for (String suffix : Lists.newArrayList(".csv", ".txt", ".tab", ".text", ".data")) {
+          FileFilter ff = FileFilterUtils.and(
+            FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE),
+            HiddenFileFilter.VISIBLE
+          );
+          dataFiles.addAll(Arrays.asList(dwcaFolder.listFiles(ff)));
+        }
+
+        if (dataFiles.size() == 1) {
+          File dataFile = new File(dwcaFolder, dataFiles.get(0).getName());
+          ArchiveFile coreFile = readFileHeaders(dataFile);
+          coreFile.getLocations().clear();
+          coreFile.addLocation(dataFile.getName());
+          archive.setCore(coreFile);
+
+        } else {
+          throw new UnsupportedArchiveException(
+            "The archive given is a folder with more or less than 1 data files having a csv, txt or tab suffix");
+        }
+      }
+
+      // check if we also have a metadata file next to this data file
+      discoverMetadataFile(archive, mf.getParentFile());
+
+      // final validation
+      return validateArchive(archive);
     }
+
+
+  private static void discoverMetadataFile(Archive archive, File folder) {
+    if (archive.getMetadataLocation() == null) {
+      // search for popular metadata filenames
+      for (String metadataFN : Lists.newArrayList("eml.xml", "metadata.xml")) {
+        File emlFile = new File(folder, metadataFN);
+        if (emlFile.exists()) {
+          archive.setMetadataLocation(metadataFN);
+          break;
+        }
+      }
+    }
+  }
 
     /**
      * Use internal term factory to find/build a new Term based on its qualified name.
@@ -428,11 +438,15 @@ public class ArchiveFactory {
         }
     }
 
-    private static void validateArchive(Archive archive) throws UnsupportedArchiveException {
+    private static Archive validateArchive(Archive archive) throws UnsupportedArchiveException {
         validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());
         for (ArchiveFile af : archive.getExtensions()) {
             validateExtensionFile(af);
         }
+      // report basic stats
+      LOG.debug("Archive contains " + archive.getExtensions().size() + " described extension files");
+      LOG.debug("Archive contains " + archive.getCore().getFields().size() + " core properties");
+      return archive;
     }
 
     private static void validateCoreFile(ArchiveFile f, boolean hasExtensions) throws UnsupportedArchiveException {
