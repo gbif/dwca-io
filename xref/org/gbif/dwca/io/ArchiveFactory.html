@@ -30,17 +30,17 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.util.Iterator;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> javax.xml.parsers.SAXParser;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> javax.xml.parsers.SAXParserFactory;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Strings;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> com.google.common.collect.Lists;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> com.google.common.io.Files;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.FileUtils;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.IOCase;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.filefilter.FileFilterUtils;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.filefilter.HiddenFileFilter;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> javax.xml.parsers.SAXParser;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> javax.xml.parsers.SAXParserFactory;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Strings;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.google.common.collect.Lists;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> com.google.common.io.Files;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.FileUtils;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.IOCase;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.filefilter.FileFilterUtils;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.filefilter.HiddenFileFilter;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.filefilter.TrueFileFilter;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.xml.sax.Attributes;
@@ -273,224 +273,237 @@
 <a class="jxr_linenumber" name="L265" href="#L265">265</a>     <em class="jxr_comment">// try to decompress archive</em>
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L267" href="#L267">267</a>       CompressionUtil.decompressFile(archiveDir, archiveFile, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>       <em class="jxr_comment">// continue to read archive from the tmp dir</em>
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>       <strong class="jxr_keyword">return</strong> openArchive(archiveDir);
-<a class="jxr_linenumber" name="L270" href="#L270">270</a> 
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>     } <strong class="jxr_keyword">catch</strong> (CompressionUtil.UnsupportedCompressionType e) {
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>       LOG.debug(<span class="jxr_string">"Could not uncompress archive [{}], try to read as single text file"</span>, archiveFile, e);
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>       <em class="jxr_comment">// If its a text file only we will get this exception - but also for corrupt compressions</em>
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>       <em class="jxr_comment">// try to open as text file only and if successful copy file to archive dir</em>
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>       <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> arch = openArchiveDataFile(archiveFile);
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>       Files.copy(archiveFile, <strong class="jxr_keyword">new</strong> File(archiveDir, archiveFile.getName()));
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>       <strong class="jxr_keyword">return</strong> arch;
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>     }
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>   }
-<a class="jxr_linenumber" name="L280" href="#L280">280</a> 
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L282" href="#L282">282</a> <em class="jxr_javadoccomment">   * Opens a dwca archive which is just a single decompressed data file with headers, e.g. a csv or tab delimited file</em>
-<a class="jxr_linenumber" name="L283" href="#L283">283</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> openArchiveDataFile(File dataFile) <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>     <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a>();
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>     archive.setLocation(dataFile);
-<a class="jxr_linenumber" name="L287" href="#L287">287</a> 
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>     <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> coreFile = readFileHeaders(dataFile);
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>     archive.setCore(coreFile);
-<a class="jxr_linenumber" name="L290" href="#L290">290</a> 
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>     <em class="jxr_comment">// check if we also have a metadata file next to this data file</em>
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>     discoverMetadataFile(archive, dataFile.getParentFile());
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>       <em class="jxr_comment">// we keep subfolder, but often the entire archive is within one subfolder. Remove that root folder if present</em>
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>       File[] rootFiles = archiveDir.listFiles((FileFilter) HiddenFileFilter.VISIBLE);
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>       <strong class="jxr_keyword">if</strong> (rootFiles.length == 1) {
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>         File root = rootFiles[0];
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>         <strong class="jxr_keyword">if</strong> (root.isDirectory()) {
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>           <em class="jxr_comment">// single root dir, flatten structure</em>
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>           LOG.debug(<span class="jxr_string">"Removing single root folder {} found in decompressed archive"</span>, root.getAbsoluteFile());
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>           <strong class="jxr_keyword">for</strong> (File f : FileUtils.listFiles(root, TrueFileFilter.TRUE, <strong class="jxr_keyword">null</strong>)) {
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>             File f2 = <strong class="jxr_keyword">new</strong> File(archiveDir, f.getName());
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>             f.renameTo(f2);
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>           }
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>         }
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>       }
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>       <em class="jxr_comment">// continue to read archive from the tmp dir</em>
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>       <strong class="jxr_keyword">return</strong> openArchive(archiveDir);
+<a class="jxr_linenumber" name="L283" href="#L283">283</a> 
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>     } <strong class="jxr_keyword">catch</strong> (CompressionUtil.UnsupportedCompressionType e) {
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>       LOG.debug(<span class="jxr_string">"Could not uncompress archive [{}], try to read as single text file"</span>, archiveFile, e);
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>       <em class="jxr_comment">// If its a text file only we will get this exception - but also for corrupt compressions</em>
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>       <em class="jxr_comment">// try to open as text file only and if successful copy file to archive dir</em>
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>       <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> arch = openArchiveDataFile(archiveFile);
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>       Files.copy(archiveFile, <strong class="jxr_keyword">new</strong> File(archiveDir, archiveFile.getName()));
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>       <strong class="jxr_keyword">return</strong> arch;
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>     }
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>   }
 <a class="jxr_linenumber" name="L293" href="#L293">293</a> 
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>     <em class="jxr_comment">// final validation</em>
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>     <strong class="jxr_keyword">return</strong> validateArchive(archive);
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>   }
-<a class="jxr_linenumber" name="L297" href="#L297">297</a> 
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L299" href="#L299">299</a> <em class="jxr_javadoccomment">   * @param dwcaFolder the location of an expanded dwc archive directory or just a single dwc text file</em>
-<a class="jxr_linenumber" name="L300" href="#L300">300</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> openArchive(File dwcaFolder) <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>     <strong class="jxr_keyword">if</strong> (!dwcaFolder.exists()) {
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FileNotFoundException(<span class="jxr_string">"Archive folder not existing: "</span> + dwcaFolder.getAbsolutePath());
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>     }
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>     <em class="jxr_comment">// delegate to open data file method if its a single file, not a folder</em>
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>     <strong class="jxr_keyword">if</strong> (dwcaFolder.isFile()) {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>       <strong class="jxr_keyword">return</strong> openArchiveDataFile(dwcaFolder);
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>     }
-<a class="jxr_linenumber" name="L309" href="#L309">309</a> 
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>     <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a>();
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>     archive.setLocation(dwcaFolder);
-<a class="jxr_linenumber" name="L312" href="#L312">312</a> 
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <em class="jxr_comment">// Accommodate archives coming from legacy IPTs which put a "\&quot; before each filename</em>
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>     <em class="jxr_comment">// http://dev.gbif.org/issues/browse/POR-2396</em>
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>     <em class="jxr_comment">// https://code.google.com/p/gbif-providertoolkit/issues/detail?id=1015</em>
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>     Iterator&lt;File&gt; iter = FileUtils.iterateFiles(dwcaFolder, <strong class="jxr_keyword">new</strong> String[] {<span class="jxr_string">"xml"</span>, <span class="jxr_string">"txt"</span>}, false);
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>     <strong class="jxr_keyword">while</strong> (iter.hasNext()) {
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>       File f = iter.next();
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>       <strong class="jxr_keyword">if</strong> (f.getName().startsWith(<span class="jxr_string">"&#92;&#92;"</span>)) {
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>         String orig = f.getName();
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>         String replacement = f.getName().replaceFirst(<span class="jxr_string">"&#92;&#92;&#92;&#92;"</span>, <span class="jxr_string">""</span>);
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         LOG.info(<span class="jxr_string">"Renaming file from {} to {}"</span>, orig, replacement);
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>         f.renameTo(<strong class="jxr_keyword">new</strong> File(dwcaFolder, replacement));
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>       }
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>     }
-<a class="jxr_linenumber" name="L326" href="#L326">326</a> 
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <em class="jxr_comment">// read metadata</em>
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>     File mf = <strong class="jxr_keyword">new</strong> File(dwcaFolder, <span class="jxr_string">"meta.xml"</span>);
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>     <strong class="jxr_keyword">if</strong> (mf.exists()) {
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>       <em class="jxr_comment">// read metafile</em>
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>       readMetaDescriptor(archive, <strong class="jxr_keyword">new</strong> FileInputStream(mf), <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L332" href="#L332">332</a> 
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>       <em class="jxr_comment">// meta.xml lacking.</em>
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>       <em class="jxr_comment">// Try to detect data files ourselves as best as we can.</em>
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>       <em class="jxr_comment">// look for a single, visible text data file</em>
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>       List&lt;File&gt; dataFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;();
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>       <strong class="jxr_keyword">for</strong> (String suffix : Lists.newArrayList(<span class="jxr_string">".csv"</span>, <span class="jxr_string">".txt"</span>, <span class="jxr_string">".tab"</span>, <span class="jxr_string">".text"</span>, <span class="jxr_string">".data"</span>)) {
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>         FileFilter ff =
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>           FileFilterUtils.and(FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE), HiddenFileFilter.VISIBLE);
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>         dataFiles.addAll(Arrays.asList(dwcaFolder.listFiles(ff)));
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>       }
-<a class="jxr_linenumber" name="L343" href="#L343">343</a> 
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>       <strong class="jxr_keyword">if</strong> (dataFiles.size() == 1) {
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>         File dataFile = <strong class="jxr_keyword">new</strong> File(dwcaFolder, dataFiles.get(0).getName());
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>         <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> coreFile = readFileHeaders(dataFile);
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>         coreFile.getLocations().clear();
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>         coreFile.addLocation(dataFile.getName());
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>         archive.setCore(coreFile);
-<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>       } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>           <span class="jxr_string">"The archive given is a folder with more or less than 1 data files having a csv, txt or tab suffix"</span>);
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>       }
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>     }
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L295" href="#L295">295</a> <em class="jxr_javadoccomment">   * Opens a dwca archive which is just a single decompressed data file with headers, e.g. a csv or tab delimited file</em>
+<a class="jxr_linenumber" name="L296" href="#L296">296</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> openArchiveDataFile(File dataFile) <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>     <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a>();
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>     archive.setLocation(dataFile);
+<a class="jxr_linenumber" name="L300" href="#L300">300</a> 
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>     <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> coreFile = readFileHeaders(dataFile);
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>     archive.setCore(coreFile);
+<a class="jxr_linenumber" name="L303" href="#L303">303</a> 
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>     <em class="jxr_comment">// check if we also have a metadata file next to this data file</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>     discoverMetadataFile(archive, dataFile.getParentFile());
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> 
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>     <em class="jxr_comment">// final validation</em>
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>     <strong class="jxr_keyword">return</strong> validateArchive(archive);
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>   }
+<a class="jxr_linenumber" name="L310" href="#L310">310</a> 
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> <em class="jxr_javadoccomment">   * @param dwcaFolder the location of an expanded dwc archive directory or just a single dwc text file</em>
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> openArchive(File dwcaFolder) <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>     <strong class="jxr_keyword">if</strong> (!dwcaFolder.exists()) {
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FileNotFoundException(<span class="jxr_string">"Archive folder not existing: "</span> + dwcaFolder.getAbsolutePath());
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>     }
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>     <em class="jxr_comment">// delegate to open data file method if its a single file, not a folder</em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>     <strong class="jxr_keyword">if</strong> (dwcaFolder.isFile()) {
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>       <strong class="jxr_keyword">return</strong> openArchiveDataFile(dwcaFolder);
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>     }
+<a class="jxr_linenumber" name="L322" href="#L322">322</a> 
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>     <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a>();
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>     archive.setLocation(dwcaFolder);
+<a class="jxr_linenumber" name="L325" href="#L325">325</a> 
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>     <em class="jxr_comment">// Accommodate archives coming from legacy IPTs which put a "\&quot; before each filename</em>
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <em class="jxr_comment">// http://dev.gbif.org/issues/browse/POR-2396</em>
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>     <em class="jxr_comment">// https://code.google.com/p/gbif-providertoolkit/issues/detail?id=1015</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>     Iterator&lt;File&gt; iter = FileUtils.iterateFiles(dwcaFolder, <strong class="jxr_keyword">new</strong> String[] {<span class="jxr_string">"xml"</span>, <span class="jxr_string">"txt"</span>}, false);
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>     <strong class="jxr_keyword">while</strong> (iter.hasNext()) {
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>       File f = iter.next();
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>       <strong class="jxr_keyword">if</strong> (f.getName().startsWith(<span class="jxr_string">"&#92;&#92;"</span>)) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>         String orig = f.getName();
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>         String replacement = f.getName().replaceFirst(<span class="jxr_string">"&#92;&#92;&#92;&#92;"</span>, <span class="jxr_string">""</span>);
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>         LOG.info(<span class="jxr_string">"Renaming file from {} to {}"</span>, orig, replacement);
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>         f.renameTo(<strong class="jxr_keyword">new</strong> File(dwcaFolder, replacement));
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>       }
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     }
+<a class="jxr_linenumber" name="L339" href="#L339">339</a> 
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>     <em class="jxr_comment">// read metadata</em>
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>     File mf = <strong class="jxr_keyword">new</strong> File(dwcaFolder, <span class="jxr_string">"meta.xml"</span>);
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>     <strong class="jxr_keyword">if</strong> (mf.exists()) {
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>       <em class="jxr_comment">// read metafile</em>
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>       readMetaDescriptor(archive, <strong class="jxr_keyword">new</strong> FileInputStream(mf), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> 
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>       <em class="jxr_comment">// meta.xml lacking.</em>
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>       <em class="jxr_comment">// Try to detect data files ourselves as best as we can.</em>
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>       <em class="jxr_comment">// look for a single, visible text data file</em>
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>       List&lt;File&gt; dataFiles = <strong class="jxr_keyword">new</strong> ArrayList&lt;File&gt;();
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>       <strong class="jxr_keyword">for</strong> (String suffix : Lists.newArrayList(<span class="jxr_string">".csv"</span>, <span class="jxr_string">".txt"</span>, <span class="jxr_string">".tab"</span>, <span class="jxr_string">".text"</span>, <span class="jxr_string">".data"</span>)) {
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>         FileFilter ff =
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>           FileFilterUtils.and(FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE), HiddenFileFilter.VISIBLE);
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>         dataFiles.addAll(Arrays.asList(dwcaFolder.listFiles(ff)));
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>       }
 <a class="jxr_linenumber" name="L356" href="#L356">356</a> 
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>     <em class="jxr_comment">// check if we also have a metadata file next to this data file</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>     discoverMetadataFile(archive, mf.getParentFile());
-<a class="jxr_linenumber" name="L359" href="#L359">359</a> 
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>     <em class="jxr_comment">// final validation</em>
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>     <strong class="jxr_keyword">return</strong> validateArchive(archive);
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>   }
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>       <strong class="jxr_keyword">if</strong> (dataFiles.size() == 1) {
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>         File dataFile = <strong class="jxr_keyword">new</strong> File(dwcaFolder, dataFiles.get(0).getName());
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>         <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> coreFile = readFileHeaders(dataFile);
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>         coreFile.getLocations().clear();
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>         coreFile.addLocation(dataFile.getName());
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>         archive.setCore(coreFile);
 <a class="jxr_linenumber" name="L363" href="#L363">363</a> 
-<a class="jxr_linenumber" name="L364" href="#L364">364</a> 
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> discoverMetadataFile(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive, File folder) {
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>     <strong class="jxr_keyword">if</strong> (archive.getMetadataLocation() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>       <em class="jxr_comment">// search for popular metadata filenames</em>
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>       <strong class="jxr_keyword">for</strong> (String metadataFN : Lists.newArrayList(<span class="jxr_string">"eml.xml"</span>, <span class="jxr_string">"metadata.xml"</span>)) {
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         File emlFile = <strong class="jxr_keyword">new</strong> File(folder, metadataFN);
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>         <strong class="jxr_keyword">if</strong> (emlFile.exists()) {
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>           archive.setMetadataLocation(metadataFN);
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>           <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>         }
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>       }
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>     }
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>   }
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>       } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>           <span class="jxr_string">"The archive given is a folder with more or less than 1 data files having a csv, txt or tab suffix"</span>);
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>       }
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>     }
+<a class="jxr_linenumber" name="L369" href="#L369">369</a> 
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>     <em class="jxr_comment">// check if we also have a metadata file next to this data file</em>
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>     discoverMetadataFile(archive, mf.getParentFile());
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> 
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>     <em class="jxr_comment">// final validation</em>
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>     <strong class="jxr_keyword">return</strong> validateArchive(archive);
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>   }
+<a class="jxr_linenumber" name="L376" href="#L376">376</a> 
 <a class="jxr_linenumber" name="L377" href="#L377">377</a> 
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> readFileHeaders(File dataFile) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException, IOException {
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>     <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> dwcFile = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a>();
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>     dwcFile.addLocation(<strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>     dwcFile.setIgnoreHeaderLines(1);
-<a class="jxr_linenumber" name="L382" href="#L382">382</a> 
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>     <a href="../../../../org/gbif/io/CSVReader.html">CSVReader</a> reader = CSVReaderFactory.build(dataFile);
-<a class="jxr_linenumber" name="L384" href="#L384">384</a> 
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>     <em class="jxr_comment">// copy found delimiters &amp; encoding</em>
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>     dwcFile.setEncoding(reader.encoding);
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>     dwcFile.setFieldsTerminatedBy(reader.delimiter);
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>     dwcFile.setFieldsEnclosedBy(reader.quoteChar);
-<a class="jxr_linenumber" name="L389" href="#L389">389</a> 
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>     <em class="jxr_comment">// detect dwc terms as good as we can based on header row</em>
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>     String[] headers = reader.header;
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>     <strong class="jxr_keyword">int</strong> index = 0;
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>     <strong class="jxr_keyword">for</strong> (String head : headers) {
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>       <em class="jxr_comment">// there are never any quotes in term names - remove them just in case the csvreader didnt recognize them</em>
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>       <strong class="jxr_keyword">if</strong> (head != <strong class="jxr_keyword">null</strong> &amp;&amp; head.length() &gt; 1) {
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>           Term dt = TERM_FACTORY.findTerm(head);
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>           <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>(index, dt, <strong class="jxr_keyword">null</strong>, DataType.string);
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>           <strong class="jxr_keyword">if</strong> (dwcFile.getId() == <strong class="jxr_keyword">null</strong> &amp;&amp; (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>             .equals(DwcTerm.eventID) || dt.equals(DcTerm.identifier))) {
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             dwcFile.setId(field);
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> discoverMetadataFile(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive, File folder) {
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>     <strong class="jxr_keyword">if</strong> (archive.getMetadataLocation() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>       <em class="jxr_comment">// search for popular metadata filenames</em>
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>       <strong class="jxr_keyword">for</strong> (String metadataFN : Lists.newArrayList(<span class="jxr_string">"eml.xml"</span>, <span class="jxr_string">"metadata.xml"</span>)) {
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>         File emlFile = <strong class="jxr_keyword">new</strong> File(folder, metadataFN);
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         <strong class="jxr_keyword">if</strong> (emlFile.exists()) {
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>           archive.setMetadataLocation(metadataFN);
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>           <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>         }
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>       }
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>     }
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>   }
+<a class="jxr_linenumber" name="L390" href="#L390">390</a> 
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> readFileHeaders(File dataFile) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException, IOException {
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>     <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> dwcFile = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a>();
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>     dwcFile.addLocation(<strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>     dwcFile.setIgnoreHeaderLines(1);
+<a class="jxr_linenumber" name="L395" href="#L395">395</a> 
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>     <a href="../../../../org/gbif/io/CSVReader.html">CSVReader</a> reader = CSVReaderFactory.build(dataFile);
+<a class="jxr_linenumber" name="L397" href="#L397">397</a> 
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>     <em class="jxr_comment">// copy found delimiters &amp; encoding</em>
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>     dwcFile.setEncoding(reader.encoding);
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>     dwcFile.setFieldsTerminatedBy(reader.delimiter);
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>     dwcFile.setFieldsEnclosedBy(reader.quoteChar);
 <a class="jxr_linenumber" name="L402" href="#L402">402</a> 
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>             <em class="jxr_comment">// Set the rowType corresponding to the type of id encountered (e.g. dwc:Taxon for taxonID).</em>
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>             <em class="jxr_comment">// Please note the ordering of ids is important, and the first id encountered will be used</em>
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>             <em class="jxr_comment">// unless the generic id (dc:identifier) was encountered first.</em>
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>             <em class="jxr_comment">// Ideally only one id will be used per rowType anyways.</em>
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>             <strong class="jxr_keyword">if</strong> (dwcFile.getRowType() == <strong class="jxr_keyword">null</strong> &amp;&amp; dwcFile.getId().getTerm() != DcTerm.identifier) {
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>               <strong class="jxr_keyword">if</strong> (dt.equals(DwcTerm.occurrenceID)) {
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>                 dwcFile.setRowType(DwcTerm.Occurrence);
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>               } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (dt.equals(DwcTerm.taxonID)) {
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>                 dwcFile.setRowType(DwcTerm.Taxon);
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>               } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (dt.equals(DwcTerm.eventID)) {
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>                 dwcFile.setRowType(DwcTerm.Event);
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>               }
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>             }
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>           }
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>           dwcFile.addField(field);
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>         } <strong class="jxr_keyword">catch</strong> (IllegalArgumentException e) {
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>           LOG.warn(<span class="jxr_string">"Illegal term name &gt;&gt;{}&lt;&lt; found in header, ignore column {}"</span>, head, index);
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>         }
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>       }
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>       index++;
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>     }
-<a class="jxr_linenumber" name="L424" href="#L424">424</a> 
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>     <strong class="jxr_keyword">return</strong> dwcFile;
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>   }
-<a class="jxr_linenumber" name="L427" href="#L427">427</a> 
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> readMetaDescriptor(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive, InputStream metaDescriptor, <strong class="jxr_keyword">boolean</strong> normaliseTerms)
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>     <strong class="jxr_keyword">throws</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a> {
-<a class="jxr_linenumber" name="L430" href="#L430">430</a> 
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>       SAXParser p = SAX_FACTORY.newSAXParser();
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>       <a href="../../../../org/gbif/dwca/io/ArchiveFactory.html">MetaHandler</a> mh = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFactory.html">MetaHandler</a>(archive);
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>       LOG.debug(<span class="jxr_string">"Reading archive metadata file"</span>);
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>       <em class="jxr_comment">//    p.parse(metaDescriptor, mh);</em>
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>       p.parse(<strong class="jxr_keyword">new</strong> BomSafeInputStreamWrapper(metaDescriptor), mh);
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>     } <strong class="jxr_keyword">catch</strong> (Exception e1) {
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>       LOG.warn(<span class="jxr_string">"Exception caught"</span>, e1);
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(e1);
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>     }
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>   }
-<a class="jxr_linenumber" name="L442" href="#L442">442</a> 
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> validateArchive(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>     validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>     <strong class="jxr_keyword">for</strong> (ArchiveFile af : archive.getExtensions()) {
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>       validateExtensionFile(af);
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>     }
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <em class="jxr_comment">// report basic stats</em>
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>     LOG.debug(<span class="jxr_string">"Archive contains "</span> + archive.getExtensions().size() + <span class="jxr_string">" described extension files"</span>);
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>     LOG.debug(<span class="jxr_string">"Archive contains "</span> + archive.getCore().getFields().size() + <span class="jxr_string">" core properties"</span>);
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>     <strong class="jxr_keyword">return</strong> archive;
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>   }
-<a class="jxr_linenumber" name="L453" href="#L453">453</a> 
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> validateCoreFile(<a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> f, <strong class="jxr_keyword">boolean</strong> hasExtensions) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>     <strong class="jxr_keyword">if</strong> (hasExtensions) {
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>       <strong class="jxr_keyword">if</strong> (f.getId() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>         LOG.warn(
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>           <span class="jxr_string">"DwC-A core data file "</span> + f.getTitle() + <span class="jxr_string">" is lacking an id column. No extensions allowed in this case"</span>);
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>       }
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>     <em class="jxr_comment">// detect dwc terms as good as we can based on header row</em>
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>     String[] headers = reader.header;
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>     <strong class="jxr_keyword">int</strong> index = 0;
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>     <strong class="jxr_keyword">for</strong> (String head : headers) {
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>       <em class="jxr_comment">// there are never any quotes in term names - remove them just in case the csvreader didnt recognize them</em>
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>       <strong class="jxr_keyword">if</strong> (head != <strong class="jxr_keyword">null</strong> &amp;&amp; head.length() &gt; 1) {
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>           Term dt = TERM_FACTORY.findTerm(head);
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>           <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>(index, dt, <strong class="jxr_keyword">null</strong>, DataType.string);
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>           <strong class="jxr_keyword">if</strong> (dwcFile.getId() == <strong class="jxr_keyword">null</strong> &amp;&amp; (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>             .equals(DwcTerm.eventID) || dt.equals(DcTerm.identifier))) {
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>             dwcFile.setId(field);
+<a class="jxr_linenumber" name="L415" href="#L415">415</a> 
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>             <em class="jxr_comment">// Set the rowType corresponding to the type of id encountered (e.g. dwc:Taxon for taxonID).</em>
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>             <em class="jxr_comment">// Please note the ordering of ids is important, and the first id encountered will be used</em>
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>             <em class="jxr_comment">// unless the generic id (dc:identifier) was encountered first.</em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>             <em class="jxr_comment">// Ideally only one id will be used per rowType anyways.</em>
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>             <strong class="jxr_keyword">if</strong> (dwcFile.getRowType() == <strong class="jxr_keyword">null</strong> &amp;&amp; dwcFile.getId().getTerm() != DcTerm.identifier) {
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>               <strong class="jxr_keyword">if</strong> (dt.equals(DwcTerm.occurrenceID)) {
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>                 dwcFile.setRowType(DwcTerm.Occurrence);
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>               } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (dt.equals(DwcTerm.taxonID)) {
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>                 dwcFile.setRowType(DwcTerm.Taxon);
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>               } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (dt.equals(DwcTerm.eventID)) {
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>                 dwcFile.setRowType(DwcTerm.Event);
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>               }
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>             }
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>           }
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>           dwcFile.addField(field);
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>         } <strong class="jxr_keyword">catch</strong> (IllegalArgumentException e) {
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>           LOG.warn(<span class="jxr_string">"Illegal term name &gt;&gt;{}&lt;&lt; found in header, ignore column {}"</span>, head, index);
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>         }
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>       }
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>       index++;
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>     }
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> 
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>     <strong class="jxr_keyword">return</strong> dwcFile;
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>   }
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> 
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> readMetaDescriptor(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive, InputStream metaDescriptor, <strong class="jxr_keyword">boolean</strong> normaliseTerms)
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>     <strong class="jxr_keyword">throws</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a> {
+<a class="jxr_linenumber" name="L443" href="#L443">443</a> 
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>       SAXParser p = SAX_FACTORY.newSAXParser();
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>       <a href="../../../../org/gbif/dwca/io/ArchiveFactory.html">MetaHandler</a> mh = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFactory.html">MetaHandler</a>(archive);
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>       LOG.debug(<span class="jxr_string">"Reading archive metadata file"</span>);
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>       <em class="jxr_comment">//    p.parse(metaDescriptor, mh);</em>
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>       p.parse(<strong class="jxr_keyword">new</strong> BomSafeInputStreamWrapper(metaDescriptor), mh);
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>     } <strong class="jxr_keyword">catch</strong> (Exception e1) {
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>       LOG.warn(<span class="jxr_string">"Exception caught"</span>, e1);
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(e1);
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>     }
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>   }
+<a class="jxr_linenumber" name="L455" href="#L455">455</a> 
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> validateArchive(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>     validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>     <strong class="jxr_keyword">for</strong> (ArchiveFile af : archive.getExtensions()) {
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>       validateExtensionFile(af);
 <a class="jxr_linenumber" name="L460" href="#L460">460</a>     }
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>     validateFile(f);
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>   }
-<a class="jxr_linenumber" name="L463" href="#L463">463</a> 
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> validateExtensionFile(<a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> f) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>     <strong class="jxr_keyword">if</strong> (f.getId() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>         <span class="jxr_string">"DwC-A data file "</span> + f.getTitle() + <span class="jxr_string">" requires an id or foreign key to the core id"</span>);
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>     }
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>     validateFile(f);
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>   }
-<a class="jxr_linenumber" name="L471" href="#L471">471</a> 
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> validateFile(<a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> f) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>     <strong class="jxr_keyword">if</strong> (f == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(<span class="jxr_string">"DwC-A data file is NULL"</span>);
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>     }
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>     <strong class="jxr_keyword">if</strong> (f.getLocationFile() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(<span class="jxr_string">"DwC-A data file "</span> + f.getTitle() + <span class="jxr_string">" requires a location"</span>);
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>     }
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>     <strong class="jxr_keyword">if</strong> (f.getEncoding() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(<span class="jxr_string">"DwC-A data file "</span> + f.getTitle() + <span class="jxr_string">" requires a character encoding"</span>);
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>     <em class="jxr_comment">// report basic stats</em>
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>     LOG.debug(<span class="jxr_string">"Archive contains "</span> + archive.getExtensions().size() + <span class="jxr_string">" described extension files"</span>);
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>     LOG.debug(<span class="jxr_string">"Archive contains "</span> + archive.getCore().getFields().size() + <span class="jxr_string">" core properties"</span>);
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>     <strong class="jxr_keyword">return</strong> archive;
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>   }
+<a class="jxr_linenumber" name="L466" href="#L466">466</a> 
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> validateCoreFile(<a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> f, <strong class="jxr_keyword">boolean</strong> hasExtensions) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>     <strong class="jxr_keyword">if</strong> (hasExtensions) {
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>       <strong class="jxr_keyword">if</strong> (f.getId() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>         LOG.warn(
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>           <span class="jxr_string">"DwC-A core data file "</span> + f.getTitle() + <span class="jxr_string">" is lacking an id column. No extensions allowed in this case"</span>);
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>       }
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>     }
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>     validateFile(f);
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>   }
+<a class="jxr_linenumber" name="L476" href="#L476">476</a> 
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> validateExtensionFile(<a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> f) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>     <strong class="jxr_keyword">if</strong> (f.getId() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>         <span class="jxr_string">"DwC-A data file "</span> + f.getTitle() + <span class="jxr_string">" requires an id or foreign key to the core id"</span>);
 <a class="jxr_linenumber" name="L481" href="#L481">481</a>     }
-<a class="jxr_linenumber" name="L482" href="#L482">482</a> 
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>     validateFile(f);
 <a class="jxr_linenumber" name="L483" href="#L483">483</a>   }
 <a class="jxr_linenumber" name="L484" href="#L484">484</a> 
-<a class="jxr_linenumber" name="L485" href="#L485">485</a> }
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> validateFile(<a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> f) <strong class="jxr_keyword">throws</strong> UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>     <strong class="jxr_keyword">if</strong> (f == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(<span class="jxr_string">"DwC-A data file is NULL"</span>);
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>     }
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>     <strong class="jxr_keyword">if</strong> (f.getLocationFile() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(<span class="jxr_string">"DwC-A data file "</span> + f.getTitle() + <span class="jxr_string">" requires a location"</span>);
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>     }
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>     <strong class="jxr_keyword">if</strong> (f.getEncoding() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>       <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/UnsupportedArchiveException.html">UnsupportedArchiveException</a>(<span class="jxr_string">"DwC-A data file "</span> + f.getTitle() + <span class="jxr_string">" requires a character encoding"</span>);
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>     }
+<a class="jxr_linenumber" name="L495" href="#L495">495</a> 
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>   }
+<a class="jxr_linenumber" name="L497" href="#L497">497</a> 
+<a class="jxr_linenumber" name="L498" href="#L498">498</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2015 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>
