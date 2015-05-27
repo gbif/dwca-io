@@ -531,8 +531,10 @@ public class ArchiveFactoryTest {
   @Test
   public void testNullCoreID() throws IOException {
     try {
-      Archive archive = ArchiveFactory
-        .openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), new File(System.getProperty("java.io.tmpdir")));
+      File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
+      tmpDir.deleteOnExit();
+
+      Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), tmpDir);
       Iterator<StarRecord> iter = archive.iterator();
       while (iter.hasNext()) {
         iter.next();
