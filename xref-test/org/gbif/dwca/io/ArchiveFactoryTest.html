@@ -539,55 +539,57 @@
 <a class="jxr_linenumber" name="L531" href="#L531">531</a>   @Test
 <a class="jxr_linenumber" name="L532" href="#L532">532</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNullCoreID() <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L533" href="#L533">533</a>     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>       Archive archive = ArchiveFactory
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>         .openArchive(FileUtils.getClasspathFile(<span class="jxr_string">"nullCoreID.zip"</span>), <strong class="jxr_keyword">new</strong> File(System.getProperty(<span class="jxr_string">"java.io.tmpdir"</span>)));
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>       Iterator&lt;StarRecord&gt; iter = archive.iterator();
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>       <strong class="jxr_keyword">while</strong> (iter.hasNext()) {
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>         iter.next();
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>       }
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>     } <strong class="jxr_keyword">catch</strong> (UnsupportedArchiveException e) {
-<a class="jxr_linenumber" name="L541" href="#L541">541</a>       fail(<span class="jxr_string">"Extensions with no core IDs should be ignored"</span>);
-<a class="jxr_linenumber" name="L542" href="#L542">542</a>     }
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>   }
-<a class="jxr_linenumber" name="L544" href="#L544">544</a> 
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L546" href="#L546">546</a> <em class="jxr_javadoccomment">   * Test opening a single data file with both eventID column, meaning it has dwc:Event rowType.</em>
-<a class="jxr_linenumber" name="L547" href="#L547">547</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>   @Test
-<a class="jxr_linenumber" name="L549" href="#L549">549</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOpenArchiveForEventCore() <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(<span class="jxr_string">"event.txt"</span>));
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>     assertNotNull(arch.getCore());
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>     assertNotNull(arch.getCore().getId());
-<a class="jxr_linenumber" name="L553" href="#L553">553</a>     assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());
-<a class="jxr_linenumber" name="L554" href="#L554">554</a>     assertNotNull(arch.getCore().getRowType());
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>     assertEquals(DwcTerm.Event, arch.getCore().getRowType());
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>     assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));
-<a class="jxr_linenumber" name="L557" href="#L557">557</a>     assertEquals(0, arch.getExtensions().size());
-<a class="jxr_linenumber" name="L558" href="#L558">558</a>     Iterator&lt;StarRecord&gt; dwci = arch.iterator();
-<a class="jxr_linenumber" name="L559" href="#L559">559</a>     StarRecord star = dwci.next();
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>     assertEquals(<span class="jxr_string">"Aubach above Wiesthal"</span>, star.core().value(DwcTerm.locality));
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>     assertNull(arch.getCore().getLocation());
-<a class="jxr_linenumber" name="L562" href="#L562">562</a>   }
-<a class="jxr_linenumber" name="L563" href="#L563">563</a> 
-<a class="jxr_linenumber" name="L564" href="#L564">564</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L565" href="#L565">565</a> <em class="jxr_javadoccomment">   * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term</em>
-<a class="jxr_linenumber" name="L566" href="#L566">566</a> <em class="jxr_javadoccomment">   * gets set to dc:identifier, but its rowType never gets set.</em>
-<a class="jxr_linenumber" name="L567" href="#L567">567</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L568" href="#L568">568</a>   @Test
-<a class="jxr_linenumber" name="L569" href="#L569">569</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOpenArchiveForGenericCore() <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L570" href="#L570">570</a>     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(<span class="jxr_string">"event-plus-id.txt"</span>));
-<a class="jxr_linenumber" name="L571" href="#L571">571</a>     assertNotNull(arch.getCore());
-<a class="jxr_linenumber" name="L572" href="#L572">572</a>     assertNotNull(arch.getCore().getId());
-<a class="jxr_linenumber" name="L573" href="#L573">573</a>     assertEquals(DcTerm.identifier, arch.getCore().getId().getTerm());
-<a class="jxr_linenumber" name="L574" href="#L574">574</a>     assertNull(arch.getCore().getRowType());
-<a class="jxr_linenumber" name="L575" href="#L575">575</a>     assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));
-<a class="jxr_linenumber" name="L576" href="#L576">576</a>     assertEquals(0, arch.getExtensions().size());
-<a class="jxr_linenumber" name="L577" href="#L577">577</a>     Iterator&lt;StarRecord&gt; dwci = arch.iterator();
-<a class="jxr_linenumber" name="L578" href="#L578">578</a>     StarRecord star = dwci.next();
-<a class="jxr_linenumber" name="L579" href="#L579">579</a>     assertEquals(<span class="jxr_string">"Aubach above Wiesthal"</span>, star.core().value(DwcTerm.locality));
-<a class="jxr_linenumber" name="L580" href="#L580">580</a>     assertNull(arch.getCore().getLocation());
-<a class="jxr_linenumber" name="L581" href="#L581">581</a>   }
-<a class="jxr_linenumber" name="L582" href="#L582">582</a> }
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>       File tmpDir = Files.createTempDirectory(<span class="jxr_string">"dwca-io-test"</span>).toFile();
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>       tmpDir.deleteOnExit();
+<a class="jxr_linenumber" name="L536" href="#L536">536</a> 
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>       Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile(<span class="jxr_string">"nullCoreID.zip"</span>), tmpDir);
+<a class="jxr_linenumber" name="L538" href="#L538">538</a>       Iterator&lt;StarRecord&gt; iter = archive.iterator();
+<a class="jxr_linenumber" name="L539" href="#L539">539</a>       <strong class="jxr_keyword">while</strong> (iter.hasNext()) {
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>         iter.next();
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>       }
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>     } <strong class="jxr_keyword">catch</strong> (UnsupportedArchiveException e) {
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>       fail(<span class="jxr_string">"Extensions with no core IDs should be ignored"</span>);
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>     }
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>   }
+<a class="jxr_linenumber" name="L546" href="#L546">546</a> 
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">   * Test opening a single data file with both eventID column, meaning it has dwc:Event rowType.</em>
+<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>   @Test
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOpenArchiveForEventCore() <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(<span class="jxr_string">"event.txt"</span>));
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>     assertNotNull(arch.getCore());
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>     assertNotNull(arch.getCore().getId());
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>     assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>     assertNotNull(arch.getCore().getRowType());
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>     assertEquals(DwcTerm.Event, arch.getCore().getRowType());
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>     assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>     assertEquals(0, arch.getExtensions().size());
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>     Iterator&lt;StarRecord&gt; dwci = arch.iterator();
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>     StarRecord star = dwci.next();
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>     assertEquals(<span class="jxr_string">"Aubach above Wiesthal"</span>, star.core().value(DwcTerm.locality));
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>     assertNull(arch.getCore().getLocation());
+<a class="jxr_linenumber" name="L564" href="#L564">564</a>   }
+<a class="jxr_linenumber" name="L565" href="#L565">565</a> 
+<a class="jxr_linenumber" name="L566" href="#L566">566</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L567" href="#L567">567</a> <em class="jxr_javadoccomment">   * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term</em>
+<a class="jxr_linenumber" name="L568" href="#L568">568</a> <em class="jxr_javadoccomment">   * gets set to dc:identifier, but its rowType never gets set.</em>
+<a class="jxr_linenumber" name="L569" href="#L569">569</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L570" href="#L570">570</a>   @Test
+<a class="jxr_linenumber" name="L571" href="#L571">571</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testOpenArchiveForGenericCore() <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
+<a class="jxr_linenumber" name="L572" href="#L572">572</a>     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(<span class="jxr_string">"event-plus-id.txt"</span>));
+<a class="jxr_linenumber" name="L573" href="#L573">573</a>     assertNotNull(arch.getCore());
+<a class="jxr_linenumber" name="L574" href="#L574">574</a>     assertNotNull(arch.getCore().getId());
+<a class="jxr_linenumber" name="L575" href="#L575">575</a>     assertEquals(DcTerm.identifier, arch.getCore().getId().getTerm());
+<a class="jxr_linenumber" name="L576" href="#L576">576</a>     assertNull(arch.getCore().getRowType());
+<a class="jxr_linenumber" name="L577" href="#L577">577</a>     assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));
+<a class="jxr_linenumber" name="L578" href="#L578">578</a>     assertEquals(0, arch.getExtensions().size());
+<a class="jxr_linenumber" name="L579" href="#L579">579</a>     Iterator&lt;StarRecord&gt; dwci = arch.iterator();
+<a class="jxr_linenumber" name="L580" href="#L580">580</a>     StarRecord star = dwci.next();
+<a class="jxr_linenumber" name="L581" href="#L581">581</a>     assertEquals(<span class="jxr_string">"Aubach above Wiesthal"</span>, star.core().value(DwcTerm.locality));
+<a class="jxr_linenumber" name="L582" href="#L582">582</a>     assertNull(arch.getCore().getLocation());
+<a class="jxr_linenumber" name="L583" href="#L583">583</a>   }
+<a class="jxr_linenumber" name="L584" href="#L584">584</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2015 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>

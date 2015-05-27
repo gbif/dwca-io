@@ -539,55 +539,57 @@
 <span class="sourceLineNo">531</span>  @Test<a name="line.531"></a>
 <span class="sourceLineNo">532</span>  public void testNullCoreID() throws IOException {<a name="line.532"></a>
 <span class="sourceLineNo">533</span>    try {<a name="line.533"></a>
-<span class="sourceLineNo">534</span>      Archive archive = ArchiveFactory<a name="line.534"></a>
-<span class="sourceLineNo">535</span>        .openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), new File(System.getProperty("java.io.tmpdir")));<a name="line.535"></a>
-<span class="sourceLineNo">536</span>      Iterator&lt;StarRecord&gt; iter = archive.iterator();<a name="line.536"></a>
-<span class="sourceLineNo">537</span>      while (iter.hasNext()) {<a name="line.537"></a>
-<span class="sourceLineNo">538</span>        iter.next();<a name="line.538"></a>
-<span class="sourceLineNo">539</span>      }<a name="line.539"></a>
-<span class="sourceLineNo">540</span>    } catch (UnsupportedArchiveException e) {<a name="line.540"></a>
-<span class="sourceLineNo">541</span>      fail("Extensions with no core IDs should be ignored");<a name="line.541"></a>
-<span class="sourceLineNo">542</span>    }<a name="line.542"></a>
-<span class="sourceLineNo">543</span>  }<a name="line.543"></a>
-<span class="sourceLineNo">544</span><a name="line.544"></a>
-<span class="sourceLineNo">545</span>  /**<a name="line.545"></a>
-<span class="sourceLineNo">546</span>   * Test opening a single data file with both eventID column, meaning it has dwc:Event rowType.<a name="line.546"></a>
-<span class="sourceLineNo">547</span>   */<a name="line.547"></a>
-<span class="sourceLineNo">548</span>  @Test<a name="line.548"></a>
-<span class="sourceLineNo">549</span>  public void testOpenArchiveForEventCore() throws IOException, UnsupportedArchiveException {<a name="line.549"></a>
-<span class="sourceLineNo">550</span>    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event.txt"));<a name="line.550"></a>
-<span class="sourceLineNo">551</span>    assertNotNull(arch.getCore());<a name="line.551"></a>
-<span class="sourceLineNo">552</span>    assertNotNull(arch.getCore().getId());<a name="line.552"></a>
-<span class="sourceLineNo">553</span>    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());<a name="line.553"></a>
-<span class="sourceLineNo">554</span>    assertNotNull(arch.getCore().getRowType());<a name="line.554"></a>
-<span class="sourceLineNo">555</span>    assertEquals(DwcTerm.Event, arch.getCore().getRowType());<a name="line.555"></a>
-<span class="sourceLineNo">556</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.556"></a>
-<span class="sourceLineNo">557</span>    assertEquals(0, arch.getExtensions().size());<a name="line.557"></a>
-<span class="sourceLineNo">558</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.558"></a>
-<span class="sourceLineNo">559</span>    StarRecord star = dwci.next();<a name="line.559"></a>
-<span class="sourceLineNo">560</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.560"></a>
-<span class="sourceLineNo">561</span>    assertNull(arch.getCore().getLocation());<a name="line.561"></a>
-<span class="sourceLineNo">562</span>  }<a name="line.562"></a>
-<span class="sourceLineNo">563</span><a name="line.563"></a>
-<span class="sourceLineNo">564</span>  /**<a name="line.564"></a>
-<span class="sourceLineNo">565</span>   * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term<a name="line.565"></a>
-<span class="sourceLineNo">566</span>   * gets set to dc:identifier, but its rowType never gets set.<a name="line.566"></a>
-<span class="sourceLineNo">567</span>   */<a name="line.567"></a>
-<span class="sourceLineNo">568</span>  @Test<a name="line.568"></a>
-<span class="sourceLineNo">569</span>  public void testOpenArchiveForGenericCore() throws IOException, UnsupportedArchiveException {<a name="line.569"></a>
-<span class="sourceLineNo">570</span>    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event-plus-id.txt"));<a name="line.570"></a>
-<span class="sourceLineNo">571</span>    assertNotNull(arch.getCore());<a name="line.571"></a>
-<span class="sourceLineNo">572</span>    assertNotNull(arch.getCore().getId());<a name="line.572"></a>
-<span class="sourceLineNo">573</span>    assertEquals(DcTerm.identifier, arch.getCore().getId().getTerm());<a name="line.573"></a>
-<span class="sourceLineNo">574</span>    assertNull(arch.getCore().getRowType());<a name="line.574"></a>
-<span class="sourceLineNo">575</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.575"></a>
-<span class="sourceLineNo">576</span>    assertEquals(0, arch.getExtensions().size());<a name="line.576"></a>
-<span class="sourceLineNo">577</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.577"></a>
-<span class="sourceLineNo">578</span>    StarRecord star = dwci.next();<a name="line.578"></a>
-<span class="sourceLineNo">579</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.579"></a>
-<span class="sourceLineNo">580</span>    assertNull(arch.getCore().getLocation());<a name="line.580"></a>
-<span class="sourceLineNo">581</span>  }<a name="line.581"></a>
-<span class="sourceLineNo">582</span>}<a name="line.582"></a>
+<span class="sourceLineNo">534</span>      File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();<a name="line.534"></a>
+<span class="sourceLineNo">535</span>      tmpDir.deleteOnExit();<a name="line.535"></a>
+<span class="sourceLineNo">536</span><a name="line.536"></a>
+<span class="sourceLineNo">537</span>      Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), tmpDir);<a name="line.537"></a>
+<span class="sourceLineNo">538</span>      Iterator&lt;StarRecord&gt; iter = archive.iterator();<a name="line.538"></a>
+<span class="sourceLineNo">539</span>      while (iter.hasNext()) {<a name="line.539"></a>
+<span class="sourceLineNo">540</span>        iter.next();<a name="line.540"></a>
+<span class="sourceLineNo">541</span>      }<a name="line.541"></a>
+<span class="sourceLineNo">542</span>    } catch (UnsupportedArchiveException e) {<a name="line.542"></a>
+<span class="sourceLineNo">543</span>      fail("Extensions with no core IDs should be ignored");<a name="line.543"></a>
+<span class="sourceLineNo">544</span>    }<a name="line.544"></a>
+<span class="sourceLineNo">545</span>  }<a name="line.545"></a>
+<span class="sourceLineNo">546</span><a name="line.546"></a>
+<span class="sourceLineNo">547</span>  /**<a name="line.547"></a>
+<span class="sourceLineNo">548</span>   * Test opening a single data file with both eventID column, meaning it has dwc:Event rowType.<a name="line.548"></a>
+<span class="sourceLineNo">549</span>   */<a name="line.549"></a>
+<span class="sourceLineNo">550</span>  @Test<a name="line.550"></a>
+<span class="sourceLineNo">551</span>  public void testOpenArchiveForEventCore() throws IOException, UnsupportedArchiveException {<a name="line.551"></a>
+<span class="sourceLineNo">552</span>    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event.txt"));<a name="line.552"></a>
+<span class="sourceLineNo">553</span>    assertNotNull(arch.getCore());<a name="line.553"></a>
+<span class="sourceLineNo">554</span>    assertNotNull(arch.getCore().getId());<a name="line.554"></a>
+<span class="sourceLineNo">555</span>    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());<a name="line.555"></a>
+<span class="sourceLineNo">556</span>    assertNotNull(arch.getCore().getRowType());<a name="line.556"></a>
+<span class="sourceLineNo">557</span>    assertEquals(DwcTerm.Event, arch.getCore().getRowType());<a name="line.557"></a>
+<span class="sourceLineNo">558</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.558"></a>
+<span class="sourceLineNo">559</span>    assertEquals(0, arch.getExtensions().size());<a name="line.559"></a>
+<span class="sourceLineNo">560</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.560"></a>
+<span class="sourceLineNo">561</span>    StarRecord star = dwci.next();<a name="line.561"></a>
+<span class="sourceLineNo">562</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.562"></a>
+<span class="sourceLineNo">563</span>    assertNull(arch.getCore().getLocation());<a name="line.563"></a>
+<span class="sourceLineNo">564</span>  }<a name="line.564"></a>
+<span class="sourceLineNo">565</span><a name="line.565"></a>
+<span class="sourceLineNo">566</span>  /**<a name="line.566"></a>
+<span class="sourceLineNo">567</span>   * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term<a name="line.567"></a>
+<span class="sourceLineNo">568</span>   * gets set to dc:identifier, but its rowType never gets set.<a name="line.568"></a>
+<span class="sourceLineNo">569</span>   */<a name="line.569"></a>
+<span class="sourceLineNo">570</span>  @Test<a name="line.570"></a>
+<span class="sourceLineNo">571</span>  public void testOpenArchiveForGenericCore() throws IOException, UnsupportedArchiveException {<a name="line.571"></a>
+<span class="sourceLineNo">572</span>    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event-plus-id.txt"));<a name="line.572"></a>
+<span class="sourceLineNo">573</span>    assertNotNull(arch.getCore());<a name="line.573"></a>
+<span class="sourceLineNo">574</span>    assertNotNull(arch.getCore().getId());<a name="line.574"></a>
+<span class="sourceLineNo">575</span>    assertEquals(DcTerm.identifier, arch.getCore().getId().getTerm());<a name="line.575"></a>
+<span class="sourceLineNo">576</span>    assertNull(arch.getCore().getRowType());<a name="line.576"></a>
+<span class="sourceLineNo">577</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.577"></a>
+<span class="sourceLineNo">578</span>    assertEquals(0, arch.getExtensions().size());<a name="line.578"></a>
+<span class="sourceLineNo">579</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.579"></a>
+<span class="sourceLineNo">580</span>    StarRecord star = dwci.next();<a name="line.580"></a>
+<span class="sourceLineNo">581</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.581"></a>
+<span class="sourceLineNo">582</span>    assertNull(arch.getCore().getLocation());<a name="line.582"></a>
+<span class="sourceLineNo">583</span>  }<a name="line.583"></a>
+<span class="sourceLineNo">584</span>}<a name="line.584"></a>
 
 
 
