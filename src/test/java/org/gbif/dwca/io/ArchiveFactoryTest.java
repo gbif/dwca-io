@@ -2,9 +2,6 @@ package org.gbif.dwca.io;
 
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveFactory;
-import org.gbif.dwca.io.UnsupportedArchiveException;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.io.CSVReader;
@@ -21,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-
 import org.junit.Ignore;
 import org.junit.Test;
 

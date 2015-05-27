@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -33,6 +32,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -265,6 +265,19 @@ public class ArchiveFactory {
     // try to decompress archive
     try {
       CompressionUtil.decompressFile(archiveDir, archiveFile, true);
+      // we keep subfolder, but often the entire archive is within one subfolder. Remove that root folder if present
+      File[] rootFiles = archiveDir.listFiles((FileFilter) HiddenFileFilter.VISIBLE);
+      if (rootFiles.length == 1) {
+        File root = rootFiles[0];
+        if (root.isDirectory()) {
+          // single root dir, flatten structure
+          LOG.debug("Removing single root folder {} found in decompressed archive", root.getAbsoluteFile());
+          for (File f : FileUtils.listFiles(root, TrueFileFilter.TRUE, null)) {
+            File f2 = new File(archiveDir, f.getName());
+            f.renameTo(f2);
+          }
+        }
+      }
       // continue to read archive from the tmp dir
       return openArchive(archiveDir);
 
