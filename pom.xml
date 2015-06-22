@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.gbif</groupId>
     <artifactId>motherpom</artifactId>
-    <version>20</version>
+    <version>23-SNAPSHOT</version>
   </parent>
 
   <groupId>org.gbif</groupId>
@@ -28,7 +28,8 @@
     <mockito.version>1.9.5</mockito.version>
     <slf4j.version>1.7.10</slf4j.version>
 
-    <jdkLevel>1.7</jdkLevel>
+    <!-- The IPT depends on this project and so this must stay at java 6 until IPT is upgraded -->
+    <jdkLevel>1.6</jdkLevel>
   </properties>
 
   <scm>
