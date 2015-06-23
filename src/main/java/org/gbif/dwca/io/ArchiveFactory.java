@@ -8,7 +8,6 @@ import org.gbif.dwca.io.ArchiveField.DataType;
 import org.gbif.io.CSVReader;
 import org.gbif.io.CSVReaderFactory;
 import org.gbif.io.DownloadUtil;
-import org.gbif.utils.file.BomSafeInputStreamWrapper;
 import org.gbif.utils.file.CompressionUtil;
 
 import java.io.File;
@@ -25,6 +24,7 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -33,6 +33,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.input.BOMInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -341,7 +342,7 @@ public class ArchiveFactory {
     File mf = new File(dwcaFolder, "meta.xml");
     if (mf.exists()) {
       // read metafile
-      readMetaDescriptor(archive, new FileInputStream(mf), true);
+      readMetaDescriptor(archive, new FileInputStream(mf));
 
     } else {
       // meta.xml lacking.
@@ -438,15 +439,14 @@ public class ArchiveFactory {
     return dwcFile;
   }
 
-  private static void readMetaDescriptor(Archive archive, InputStream metaDescriptor, boolean normaliseTerms)
-    throws UnsupportedArchiveException {
+  @VisibleForTesting
+  protected static void readMetaDescriptor(Archive archive, InputStream metaDescriptor) throws UnsupportedArchiveException {
 
     try {
       SAXParser p = SAX_FACTORY.newSAXParser();
       MetaHandler mh = new MetaHandler(archive);
       LOG.debug("Reading archive metadata file");
-      //    p.parse(metaDescriptor, mh);
-      p.parse(new BomSafeInputStreamWrapper(metaDescriptor), mh);
+      p.parse(new BOMInputStream(metaDescriptor), mh);
     } catch (Exception e1) {
       LOG.warn("Exception caught", e1);
       throw new UnsupportedArchiveException(e1);

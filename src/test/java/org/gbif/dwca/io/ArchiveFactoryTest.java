@@ -12,12 +12,16 @@ import org.gbif.utils.file.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.parsers.SAXParser;
+
 import com.google.common.collect.Sets;
+import org.apache.commons.io.input.BOMInputStream;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -36,6 +40,15 @@ public class ArchiveFactoryTest {
       rows++;
     }
     assertEquals(expectedRecords, rows);
+  }
+
+  @Test
+  public void testMetaHandlerUtf16le() throws Exception {
+    for (String fn : new String[]{"/meta/meta.xml", "/meta-utf16le.xml","/xml-entity-meta/meta.xml"}) {
+      System.out.println(fn);
+      InputStream is = ClassLoader.class.getResourceAsStream(fn);
+      ArchiveFactory.readMetaDescriptor(new Archive(), is);
+    }
   }
 
   @Test
