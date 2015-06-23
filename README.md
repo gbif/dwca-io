@@ -12,11 +12,10 @@ File myArchiveFile = new File("myArchive.zip");
 File extractToFolder = new File("/tmp/myarchive");
 Archive dwcArchive = ArchiveFactory.openArchive(myArchiveFile, extractToFolder);
 
-Iterator<DarwinCoreRecord> it = dwcArchive.iteratorDwc();
-DarwinCoreRecord dwc;
 // loop over core darwin core records and display scientificName
+Iterator<DarwinCoreRecord> it = dwcArchive.iteratorDwc();
 while (it.hasNext()) {
-  dwc = it.next();
+  DarwinCoreRecord dwc = it.next();
   System.out.println(dwc.getScientificName());
 }
 ```
