@@ -41,3 +41,22 @@ for (StarRecord rec : dwcArchive) {
 The `ArchiveFactory.openArchive` method also supports the following file types:
  * Single meta.xml file
  * Single data file with terms as header
+ 
+## Maven
+Ensure you have the GBIF repository in your `pom.xml`
+```xml
+<repositories>
+  <repository>
+    <id>gbif-repository</id>
+    <url>http://repository.gbif.org/content/groups/gbif</url>
+  </repository>
+</repositories>
+```
+Add the dwca-io artifact
+```xml
+  <dependency>
+    <groupId>org.gbif</groupId>
+    <artifactId>dwca-io</artifactId>
+    <version>1.23</version>
+  </dependency>
+```
