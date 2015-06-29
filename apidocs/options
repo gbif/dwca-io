@@ -17,7 +17,7 @@
 'UTF-8'
 -docfilessubdirs
 -doctitle
-'Darwin Core Archive IO Library 1.24-SNAPSHOT API'
+'Darwin Core Archive IO Library 1.25-SNAPSHOT API'
 -link
 'http://freemarker.org/docs/api'
 -link
@@ -30,4 +30,4 @@
 -use
 -version
 -windowtitle
-'Darwin Core Archive IO Library 1.24-SNAPSHOT API'
+'Darwin Core Archive IO Library 1.25-SNAPSHOT API'
