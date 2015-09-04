@@ -1,3 +1,15 @@
+/*
+ * Copyright 2010-2015 Global Biodiversity Informatics Facility.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.gbif.dwca.io;
 
 import org.gbif.dwc.terms.DcTerm;
@@ -39,6 +51,12 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+/**
+ * Factory used to build {@link Archive} object from a DarwinCore Archive file.
+ * 
+ * @author mdoering
+ *
+ */
 public class ArchiveFactory {
 
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
@@ -136,6 +154,7 @@ public class ArchiveFactory {
       // build field
       Term term = TERM_FACTORY.findTerm(getAttr(attributes, "term"));
       String defaultValue = getAttr(attributes, "default");
+      String vocabulary = getAttr(attributes, "vocabulary");
       DataType type = DataType.findByXmlSchemaType(getAttr(attributes, "type"));
       if (type == null) {
         type = DataType.string;
@@ -151,7 +170,7 @@ public class ArchiveFactory {
         }
       }
       String delimiter = getAttr(attributes, "delimitedBy");
-      return new ArchiveField(index, term, defaultValue, type, delimiter);
+      return new ArchiveField(index, term, defaultValue, type, delimiter, vocabulary);
     }
 
     @Override
@@ -181,6 +200,13 @@ public class ArchiveFactory {
 
     }
 
+    /**
+     * Get attribute from a key
+     * 
+     * @param attributes
+     * @param key
+     * @return attributes value or null
+     */
     private String getAttr(Attributes attributes, String key) {
       String val = null;
       if (attributes != null) {
