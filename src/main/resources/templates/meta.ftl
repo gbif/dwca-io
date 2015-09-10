@@ -9,7 +9,7 @@
     </files>
     <id index="${core.id.index}" />
    <#list core.fieldsSorted as t>
-    <field<#if t.index??> index="${t.index}"</#if><#if t.defaultValue?has_content> default="${t.defaultValue}"</#if><#if t.delimitedBy?has_content> delimitedBy="${t.delimitedBy}"</#if> term="${t.term.qualifiedName()}"/>
+    <field<#if t.index??> index="${t.index}"</#if><#if t.defaultValue?has_content> default="${t.defaultValue}"</#if><#if t.delimitedBy?has_content> delimitedBy="${t.delimitedBy}"</#if> term="${t.term.qualifiedName()}"<#if t.vocabulary?has_content> vocabulary="${t.vocabulary}"</#if>/>
    </#list>
   </core>
  <#list extensions as ext>

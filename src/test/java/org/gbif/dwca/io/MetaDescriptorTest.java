@@ -1,21 +1,10 @@
 package org.gbif.dwca.io;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwca.tools.MetaValidator;
 import org.gbif.utils.file.FileUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Set;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -23,13 +12,28 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class MetaDescriptorWriterTest {
+/**
+ * Integration tests related to the MetaDescriptor operations.
+ *
+ * @author mdoering
+ * @author cgendreau
+ *
+ */
+public class MetaDescriptorTest {
 
   public class SAXExtractTerms extends DefaultHandler2 {
     private final List<String> terms;
@@ -172,4 +176,16 @@ public class MetaDescriptorWriterTest {
       fail();
     }
   }
+  
+  @Test
+  public void testMetaDescriptorReading() throws Exception {
+    // we can read only a meta.xml file as an Archive
+    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("meta"));
+
+    ArchiveField af = arch.getCore().getField(DwcTerm.nomenclaturalCode);
+    assertNotNull(af);
+    
+    assertEquals("http://rs.gbif.org/vocabulary/gbif/nomenclatural_code.xml", af.getVocabulary());
+  }
+
 }

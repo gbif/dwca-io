@@ -18,9 +18,9 @@ import org.gbif.dwc.terms.Term;
 
 /**
  * Container object representing a metafile content &lt;field&gt; tag as defined in the Darwin Core Text Guide.
- * 
+ *
  * @see <a href="http://rs.tdwg.org/dwc/terms/guides/text/#fieldTag">Darwin Core Text Guide - Field element</a>
- * 
+ *
  * @author mdoering
  * @author cgendreau
  *
@@ -67,8 +67,22 @@ public class ArchiveField {
 
   private DataType type = DataType.string;
 
+  /**
+   * Mainly available for bean support. Other constructors should be preferred over this one.
+   */
   public ArchiveField() {
+  }
 
+  public ArchiveField(Integer index, @NotNull Term term) {
+    this(index, term, null, null, null, null);
+  }
+
+  public ArchiveField(@NotNull Term term, String defaultValue) {
+    this(null, term, defaultValue, null, null, null);
+  }
+
+  public ArchiveField(Integer index, @NotNull Term term, DataType type) {
+    this(index, term, null, type, null, null);
   }
 
   public ArchiveField(Integer index, @NotNull Term term, String defaultValue, DataType type) {
@@ -78,7 +92,18 @@ public class ArchiveField {
   public ArchiveField(Integer index, @NotNull Term term, String defaultValue, DataType type, String delimitedBy) {
     this(index, term, defaultValue, type, delimitedBy, null);
   }
-  
+
+  /**
+   *
+   * Complete constructor to build a ArchiveField object.
+   *
+   * @param index Specifies the position of the column in the row. Starts at 0. Optional for field with defaultValue.
+   * @param term A Unified Resource Identifier (URI) for the term represented by this field. Required by DarwinCore specification.
+   * @param defaultValue Specifies value to use if one is not supplied for the field in a given row. (Optional)
+   * @param type
+   * @param delimitedBy separator used to handle multiple values. (Optional)
+   * @param vocabulary A Unified Resource Identifier (URI) for a vocabulary that the source values for this field are based on. (Optional)
+   */
   public ArchiveField(Integer index, @NotNull Term term, String defaultValue, DataType type, String delimitedBy, String vocabulary) {
     this.index = index;
     this.term = term;
@@ -119,7 +144,7 @@ public class ArchiveField {
   public String getDelimitedBy() {
     return delimitedBy;
   }
-  
+
   /**
    * @see <a href="http://rs.tdwg.org/dwc/terms/guides/text/#fieldTag">Darwin Core Text Guide</a>
    * @return
@@ -147,7 +172,7 @@ public class ArchiveField {
   public void setDelimitedBy(String delimitedBy) {
     this.delimitedBy = delimitedBy;
   }
-  
+
   public void setVocabulary(String vocabulary) {
     this.vocabulary = vocabulary;
   }

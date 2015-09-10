@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- Used by MetaDescriptorTest and ArchiveFactoryTest -->
 <archive xmlns="http://rs.tdwg.org/dwc/text/"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://rs.tdwg.org/dwc/text/ http://darwincore.googlecode.com/svn/trunk/text/tdwg_dwc_text.xsd"
@@ -14,8 +15,9 @@
         <field term="http://rs.tdwg.org/dwc/terms/TaxonRank" index="3"/>
         <!-- enumeration as defined by dwc -->
         <field term="http://rs.tdwg.org/dwc/terms/NomenclaturalCode" index="4"/>
-        <field term="http://rs.tdwg.org/dwc/terms/Kingdom" index="5"/>
-        <field term="http://purl.org/dc/terms/modified" index="6"/>
+        <field term="http://rs.tdwg.org/dwc/terms/Kingdom" default="Animalia"/>
+        <field term="http://purl.org/dc/terms/modified" index="5"/>
+        <field term="http://rs.tdwg.org/dwc/terms/nomenclaturalCode" vocabulary="http://rs.gbif.org/vocabulary/gbif/nomenclatural_code.xml" index="6"/>
     </core>
 
     <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" rowType="http://rs.tdwg.org/invented/Links">

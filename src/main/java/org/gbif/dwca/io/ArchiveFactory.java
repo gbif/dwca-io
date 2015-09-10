@@ -100,18 +100,6 @@ public class ArchiveFactory {
       return ' ';
     }
 
-    private static void makeLocationPathsAbsolute(ArchiveFile af, File root) {
-      // I know this is verbose and stupid, but its easy coded now without the hassle of deep copying lists, etc...
-      List<String> newLocs = new ArrayList<String>();
-      for (String loc : af.getLocations()) {
-        newLocs.add(new File(root, af.getLocation()).getAbsolutePath());
-      }
-      af.getLocations().clear();
-      for (String loc : newLocs) {
-        af.getLocations().add(loc);
-      }
-    }
-
     private static String unescapeBackslash(String x) {
       if (x == null || x.length() == 0) {
         return null;

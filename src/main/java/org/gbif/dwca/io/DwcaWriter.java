@@ -15,6 +15,8 @@ package org.gbif.dwca.io;
  * limitations under the License.
  */
 
+import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
@@ -29,14 +31,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.base.Optional;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -303,15 +302,6 @@ public class DwcaWriter {
   /**
    * Writes meta.xml and eml.xml to the archive and closes tab writers.
    *
-   * @deprecated Use {@link #close()} instead. This method will be removed in version 1.12.
-   */
-  @Deprecated
-  public void finalize() throws IOException {
-    close();
-  }
-
-  /**
-   * Writes meta.xml and eml.xml to the archive and closes tab writers.
    */
   public void close() throws IOException {
     addEml();
@@ -349,6 +339,14 @@ public class DwcaWriter {
     MetaDescriptorWriter.writeMetaFile(metaFile, arch);
   }
 
+  /**
+   * Build an ArchiveFile for core or extension(s).
+   *
+   * @param archive
+   * @param rowType
+   * @param idTerm the term of the id column, may be null
+   * @return
+   */
   private ArchiveFile buildArchiveFile(Archive archive, Term rowType, Term idTerm) {
     ArchiveFile af = ArchiveFile.buildTabFile();
     af.setArchive(archive);
@@ -361,41 +359,76 @@ public class DwcaWriter {
     ArchiveField id = new ArchiveField();
     id.setIndex(0);
     af.setId(id);
-    // id an idTerm is provided, always use the index 0
+    // always use the index 0 for idTerm
     if (idTerm != null) {
-      ArchiveField field = new ArchiveField();
-      field.setIndex(0);
-      field.setTerm(idTerm);
-      af.addField(field);
+      af.addField(buildArchiveField(0, idTerm));
     }
     
     Map<Term,String> termDefaultValueMap = defaultValues.get(rowType);
     List<Term> rowTypeTerms = terms.get(rowType);
     int idx = 0;
+    String defaultValue;
     for (Term c : rowTypeTerms) {
       idx++;
-      ArchiveField field = new ArchiveField();
-      field.setIndex(idx);
-      field.setTerm(c);
-      if(termDefaultValueMap !=null && termDefaultValueMap.containsKey(c)){
-        field.setDefaultValue(termDefaultValueMap.get(c));
-      }
-      af.addField(field);
+      defaultValue = (termDefaultValueMap !=null ? termDefaultValueMap.get(c) : null);
+      af.addField(buildArchiveField(idx, c, defaultValue));
     }
     
     // check if default values are provided for this rowType
     if(termDefaultValueMap != null){
-      ArchiveField field = null;
       for (Term t : termDefaultValueMap.keySet()) {
         if(!rowTypeTerms.contains(t)){
-          field = new ArchiveField();
-          field.setTerm(t);
-          field.setDefaultValue(termDefaultValueMap.get(t));
-          af.addField(field);
+          af.addField(buildArchiveFieldDefaultValue(t, termDefaultValueMap.get(t)));
         }
       }
     }
 
     return af;
+  }
+
+  /**
+   * Build an ArchiveField with a defaultValue and no index.
+   *
+   * @param term
+   * @param defaultValue
+   * @return
+   */
+  private ArchiveField buildArchiveFieldDefaultValue(Term term, String defaultValue){
+    Preconditions.checkNotNull(term, "Can't use a null term");
+    Preconditions.checkNotNull(defaultValue, "Can't use a null defaultValue");
+
+    return new ArchiveField(term, defaultValue);
+  }
+
+  /**
+   * Build an ArchiveField with no defaultValue.
+   *
+   * @param idx
+   * @param term
+   * @return
+   */
+  private ArchiveField buildArchiveField(Integer idx, Term term){
+    return buildArchiveField(idx, term, null);
+  }
+
+  /**
+   *
+   * Build an ArchiveField from optional parameters.
+   *
+   * @param idx index or null
+   * @param term term or null
+   * @param defaultValue default value or null
+   * @return
+   */
+  private ArchiveField buildArchiveField(Integer idx, Term term, String defaultValue){
+    Preconditions.checkNotNull(idx, "Can't use a null index");
+    Preconditions.checkNotNull(term, "Can't use a null term");
+
+    ArchiveField field = new ArchiveField(idx, term);
+
+    if (StringUtils.isNotBlank(defaultValue)){
+      field.setDefaultValue(defaultValue);
+    }
+    return field;
   }
 }

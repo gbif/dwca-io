@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A darwin core star archive allowing easy reading and iteration over a core record with all its extensions.
  *
- * @see <a href="http://darwincore.googlecode.com/svn/trunk/terms/guides/text/index.htm">Darwin Core Text Guide</a>
+ * @see <a href="http://tdwg.github.io/dwc/terms/guides/text/">Darwin Core Text Guide</a>
  */
 public class Archive implements Iterable<StarRecord> {
 
