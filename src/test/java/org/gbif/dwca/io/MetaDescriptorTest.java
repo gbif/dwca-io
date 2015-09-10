@@ -35,6 +35,9 @@ import static org.junit.Assert.fail;
  */
 public class MetaDescriptorTest {
 
+
+  private static final String NOMENCLATURAL_CODE_VOCABULARY = "http://rs.gbif.org/vocabulary/gbif/nomenclatural_code.xml";
+
   public class SAXExtractTerms extends DefaultHandler2 {
     private final List<String> terms;
     public SAXExtractTerms(List<String> terms) {
@@ -96,6 +99,7 @@ public class MetaDescriptorTest {
       assertEquals("\t", arch.getCore().getFieldsTerminatedBy());
       assertNull(arch.getCore().getField(DwcTerm.scientificName).getDelimitedBy());
       assertEquals(";", arch.getCore().getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
+      assertEquals(NOMENCLATURAL_CODE_VOCABULARY, arch.getCore().getField(DwcTerm.nomenclaturalCode).getVocabulary());
 
       // write meta.xml
       File tmpDwca = createTmpMeta(arch);
@@ -108,8 +112,10 @@ public class MetaDescriptorTest {
       assertTrue(core.hasTerm(DwcTerm.scientificName));
       assertEquals("DarwinCore.txt", core.getLocation());
       assertEquals("\t", core.getFieldsTerminatedBy());
-      assertNull(arch.getCore().getField(DwcTerm.scientificName).getDelimitedBy());
-      assertEquals(";", arch.getCore().getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
+      assertNull(core.getField(DwcTerm.scientificName).getDelimitedBy());
+      assertEquals(";", core.getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
+      assertEquals(NOMENCLATURAL_CODE_VOCABULARY, core.getField(DwcTerm.nomenclaturalCode).getVocabulary());
+
       for (ArchiveField f : arch.getCore().getFields().values()) {
         assertTrue(core.hasTerm(f.getTerm().qualifiedName()));
         assertEquals(core.getField(f.getTerm().qualifiedName()).getIndex(), f.getIndex());
@@ -176,16 +182,29 @@ public class MetaDescriptorTest {
       fail();
     }
   }
-  
+
+  /**
+   * Test the reading of a static meta.xml file.
+   *
+   * @throws Exception
+   */
   @Test
   public void testMetaDescriptorReading() throws Exception {
     // we can read only a meta.xml file as an Archive
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("meta"));
+    Archive arch = new Archive();
+    ArchiveFactory.readMetaDescriptor(arch, new FileInputStream(FileUtils.getClasspathFile("meta/meta.xml")));
 
-    ArchiveField af = arch.getCore().getField(DwcTerm.nomenclaturalCode);
-    assertNotNull(af);
-    
-    assertEquals("http://rs.gbif.org/vocabulary/gbif/nomenclatural_code.xml", af.getVocabulary());
+    //validate archive ID field
+    ArchiveField af = arch.getCore().getId();
+    assertEquals(Integer.valueOf(1), af.getIndex());
+
+    //validate default
+    af = arch.getCore().getField(DwcTerm.kingdom);
+    assertEquals("Animalia", af.getDefaultValue());
+
+    // validate vocabulary
+    af = arch.getCore().getField(DwcTerm.nomenclaturalCode);
+    assertEquals(NOMENCLATURAL_CODE_VOCABULARY, af.getVocabulary());
   }
 
 }
