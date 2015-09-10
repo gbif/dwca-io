@@ -16,6 +16,9 @@ package org.gbif.dwca.io;
  */
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DcTerm;
@@ -24,6 +27,8 @@ import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.io.TabWriter;
 import org.gbif.registry.metadata.EMLWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,15 +36,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.*;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.base.Optional;
-
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Simple writer class to create valid dwc archives using tab data files.
