@@ -1,10 +1,18 @@
-dwca-io
-===========
+# dwca-io
 
-Java library for reading and writing Darwin Core Archive files.
-Formerly know as dwca-reader
+*Formerly know as dwca-reader*
 
-## Example usage
+The dwca-oi library provides:
+ * Reader for [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/index.htm) file with or without extensions
+ * Writer for simple [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/index.htm) file with or without extensions
+
+
+## To build the project
+```
+mvn clean install
+```
+
+## Usage
 ### Reading DarwinCore archive
 Read an archive and display the scientific name of each records:
 ```java
@@ -59,3 +67,6 @@ Add the dwca-io artifact
     <version>1.23</version>
   </dependency>
 ```
+
+## Documentation
+[JavaDocs](http://gbif.github.io/dwca-io/apidocs/)
