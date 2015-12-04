@@ -24,6 +24,10 @@ public class TabWriter {
     }
   }
 
+  public TabWriter(Writer writer) {
+    this.writer = writer;
+  }
+
   public void write(String[] row) throws IOException {
     if (row == null || row.length == 0) {
       return;
