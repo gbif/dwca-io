@@ -2,13 +2,18 @@ package org.gbif.io;
 
 import org.gbif.utils.file.FileUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import com.google.common.base.Charsets;
+import org.apache.commons.lang3.text.StrTokenizer;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CSVReaderTest {
@@ -23,6 +28,69 @@ public class CSVReaderTest {
     assertEquals("18728553", rec[0]);
     assertEquals("-0.25864171259110291", rec[6]);
     assertEquals("Martins Wood, Ightham", rec[10]);
+  }
+
+  @Test
+  public void testStrTokenizerQuotedDelimiter() throws IOException {
+    StrTokenizer tokenizer = new StrTokenizer();
+    tokenizer.setDelimiterString(",");
+    tokenizer.setQuoteChar('"');
+    tokenizer.setIgnoreEmptyTokens(false);
+
+    tokenizer.reset("13,not \"real\"");
+    String[] rec = tokenizer.getTokenArray();
+    assertEquals(2, rec.length);
+    assertEquals("13", rec[0]);
+    assertEquals("not \"real\"", rec[1]);
+
+    String x = "15,\"not \"\"real\"\"\"";
+    System.out.println(x);
+    tokenizer.reset(x);
+    rec = tokenizer.getTokenArray();
+    assertEquals(2, rec.length);
+    assertEquals("15", rec[0]);
+    assertEquals("not \"real\"", rec[1]);
+  }
+
+  @Test
+  public void testCsvQuotedDelimiter() throws IOException {
+    String rows =
+        "12,\"not real\"\n"
+        + "13,not \"real\"\n"
+        + "\"14\",noting\n"
+        + "15,\"not \"\"real\"\"\"\n"
+        + "16,\"no, this is \"\"real\"\"\"\n";
+
+    System.out.println(rows);
+    InputStream stream = new ByteArrayInputStream(rows.getBytes(Charsets.UTF_8));
+    CSVReader reader = new CSVReader(stream, "utf8", ",", '"', 0);
+
+    String[] rec = reader.next();
+    assertEquals(2, rec.length);
+    assertEquals("12", rec[0]);
+    assertEquals("not real", rec[1]);
+
+    rec = reader.next();
+    assertEquals(2, rec.length);
+    assertEquals("13", rec[0]);
+    assertEquals("not \"real\"", rec[1]);
+
+    rec = reader.next();
+    assertEquals(2, rec.length);
+    assertEquals("14", rec[0]);
+    assertEquals("noting", rec[1]);
+
+    rec = reader.next();
+    assertEquals(2, rec.length);
+    assertEquals("15", rec[0]);
+    assertEquals("not \"real\"", rec[1]);
+
+    rec = reader.next();
+    assertEquals(2, rec.length);
+    assertEquals("16", rec[0]);
+    assertEquals("no, this is \"real\"", rec[1]);
+
+    assertFalse(reader.hasNext());
   }
 
   @Test
