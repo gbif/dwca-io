@@ -65,6 +65,14 @@ public class CSVReaderFactory {
     return new CSVReader(stream, encoding, delimiter, quotes, headerRows);
   }
 
+  public static CSVReader buildTabReader(InputStream stream, String encoding, Integer headerRows) throws IOException {
+    return new CSVReader(stream, encoding, "\t", null, headerRows);
+  }
+
+  public static CSVReader buildUtf8TabReader(InputStream stream) throws IOException {
+    return buildTabReader(stream, "utf8", 0);
+  }
+
   private static ArchiveFile buildArchiveFile(File source, String encoding) throws UnkownDelimitersException {
     ArchiveFile dwcFile = new ArchiveFile();
     // add file
