@@ -15,29 +15,23 @@
  */
 package org.gbif.dwca.tools;
 
-import org.gbif.dwc.terms.Term;
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.io.Archive;
 import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.dwca.io.ArchiveField;
 import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.dwca.record.DarwinCoreRecord;
-import org.gbif.io.CSVReader;
 import org.gbif.utils.file.ClosableIterator;
+import org.gbif.utils.file.csv.CSVReader;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Tool that takes a dwca file and renames its core ids according to some id generator.

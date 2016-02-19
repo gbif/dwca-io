@@ -1,20 +1,18 @@
 package org.gbif.io;
 
+import com.google.common.base.Charsets;
+import org.apache.commons.lang3.text.StrTokenizer;
 import org.gbif.utils.file.FileUtils;
+import org.gbif.utils.file.csv.CSVReader;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.google.common.base.Charsets;
-import org.apache.commons.lang3.text.StrTokenizer;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CSVReaderTest {
 

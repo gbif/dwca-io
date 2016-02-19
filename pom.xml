@@ -19,7 +19,7 @@
     <commons-lang.version>3.4</commons-lang.version>
     <dwc-api.version>1.13</dwc-api.version>
     <freemarker.version>2.3.22</freemarker.version>
-    <gbif-common.version>0.23</gbif-common.version>
+    <gbif-common.version>0.24-SNAPSHOT</gbif-common.version>
     <gbif-registry-metadata.version>2.46</gbif-registry-metadata.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.12</junit.version>

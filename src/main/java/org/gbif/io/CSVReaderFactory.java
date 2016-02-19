@@ -20,6 +20,9 @@ import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.dwca.io.UnkownCharsetException;
 import org.gbif.dwca.io.UnkownDelimitersException;
 import org.gbif.utils.file.CharsetDetection;
+import org.gbif.utils.file.csv.CSVReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,9 +30,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CSVReaderFactory {
 
@@ -96,7 +96,7 @@ public class CSVReaderFactory {
 
       CSVReader reader;
       try {
-        reader = CSVReader.build(source, encoding, delim, null, 1);
+        reader = build(source, encoding, delim, null, 1);
         Character firstChar = likelyQuoteChar(reader);
         reader.close();
         if (firstChar != null) {
@@ -117,7 +117,7 @@ public class CSVReaderFactory {
 
       for (Character quote : potentialQuotes) {
         try {
-          reader = CSVReader.build(source, encoding, delim, quote, 0);
+          reader = build(source, encoding, delim, quote, 0);
           int x = consistentRowSize(reader);
           //          System.out.println("Delim >>>"+delim+"<<<  Quote >>>"+quote+"<<<   rowSize="+x);
           if (x > maxColumns) {

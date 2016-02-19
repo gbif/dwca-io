@@ -12,26 +12,17 @@
  */
 package org.gbif.dwca.io;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.RecordIterator;
-import org.gbif.io.CSVReader;
 import org.gbif.io.CSVReaderFactory;
+import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.*;
 
 /**
  * This class can be used to encapsulate information about a file contained within a Darwin Core Archive. It generally

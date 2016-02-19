@@ -1,13 +1,16 @@
 package org.gbif.dwca.io;
 
+import com.google.common.collect.Sets;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
-import org.gbif.io.CSVReader;
 import org.gbif.io.CSVReaderFactory;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
+import org.gbif.utils.file.csv.CSVReader;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,18 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.SAXParser;
-
-import com.google.common.collect.Sets;
-import org.apache.commons.io.input.BOMInputStream;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ArchiveFactoryTest {
 

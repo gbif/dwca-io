@@ -16,21 +16,20 @@
 
 package org.gbif.dwca.record;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.io.ArchiveField;
 import org.gbif.dwca.io.ArchiveFile;
-import org.gbif.io.CSVReader;
+import org.gbif.io.CSVReaderFactory;
 import org.gbif.utils.file.ClosableIterator;
+import org.gbif.utils.file.csv.CSVReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-
-import com.google.common.collect.Iterators;
-import com.google.common.collect.PeekingIterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RecordIterator implements ClosableIterator<Record> {
 
@@ -71,7 +70,7 @@ public class RecordIterator implements ClosableIterator<Record> {
    */
   public static RecordIterator build(ArchiveFile source, boolean replaceNulls, boolean replaceEntities) {
     try {
-      CSVReader csvr = CSVReader.build(source);
+      CSVReader csvr = CSVReaderFactory.build(source);
       return new RecordIterator(csvr, source.getId(), source.getFields(), source.getRowType(), replaceNulls, replaceEntities);
     } catch (IOException e) {
       LOG.error("Can't open archive file " + source + " for building a record iterator", e);

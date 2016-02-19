@@ -3,20 +3,16 @@ package org.gbif.dwca.io;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveField;
-import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.dwca.record.DarwinCoreRecord;
-import org.gbif.io.CSVReader;
 import org.gbif.utils.file.FileUtils;
+import org.gbif.utils.file.csv.CSVReader;
+import org.junit.Test;
+import org.mockito.Matchers;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.junit.Test;
-import org.mockito.Matchers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
