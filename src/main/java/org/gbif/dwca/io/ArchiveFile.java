@@ -17,7 +17,6 @@ import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.RecordIterator;
-import org.gbif.io.CSVReaderFactory;
 import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.File;
@@ -109,7 +108,7 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   public CSVReader getCSVReader() throws IOException {
-    return CSVReaderFactory.build(this);
+    return org.gbif.io.CSVReaderFactory.build(this);
   }
 
   public String getDateFormat() {
