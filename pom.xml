@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.gbif</groupId>
     <artifactId>motherpom</artifactId>
-    <version>23</version>
+    <version>37</version>
   </parent>
 
   <artifactId>dwca-io</artifactId>
@@ -13,6 +13,20 @@
 
   <name>Darwin Core Archive IO Library</name>
   <url>http://github.com/gbif/dwca-io</url>
+  
+  <scm>
+	  <connection>scm:git:git@github.com:gbif/dwca-io.git</connection>
+	  <url>https://github.com/gbif/dwca-io</url>
+	  <developerConnection>scm:git:git@github.com:gbif/dwca-io.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  
+  <distributionManagement>
+    <site>
+      <id>gh-pages</id>
+      <url>http://gbif.github.io/${project.artifactId}/</url>
+    </site>
+  </distributionManagement>
 
   <properties>
     <commons-io.version>2.4</commons-io.version>
@@ -30,13 +44,6 @@
     <!-- The IPT depends on this project and so this must stay at java 6 until IPT is upgraded -->
     <jdkLevel>1.6</jdkLevel>
   </properties>
-
-  <scm>
-	  <connection>scm:git:git@github.com:gbif/dwca-io.git</connection>
-	  <url>https://github.com/gbif/dwca-io</url>
-	  <developerConnection>scm:git:git@github.com:gbif/dwca-io.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
 
   <repositories>
     <repository>
