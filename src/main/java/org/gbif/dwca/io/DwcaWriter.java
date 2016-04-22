@@ -15,11 +15,6 @@ package org.gbif.dwca.io;
  * limitations under the License.
  */
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
@@ -27,8 +22,6 @@ import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.io.TabWriter;
 import org.gbif.registry.metadata.EMLWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,6 +34,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple writer class to create valid dwc archives using tab data files.
@@ -298,6 +300,23 @@ public class DwcaWriter {
 
   public void setEml(Dataset eml) {
     this.eml = eml;
+  }
+
+  /**
+   * @return the set of available rowTypes in this archive
+   */
+  public Set<Term> getRowTypes() {
+    return terms.keySet();
+  }
+
+  /**
+   * @return the list of term columns as used for the given row type
+   */
+  public List<Term> getTerms(Term rowType) {
+    if (terms.containsKey(rowType)) {
+      return terms.get(rowType);
+    }
+    return Lists.newArrayList();
   }
 
   /**
