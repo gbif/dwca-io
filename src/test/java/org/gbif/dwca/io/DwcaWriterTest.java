@@ -5,10 +5,6 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveFactory;
-import org.gbif.dwca.io.ArchiveFile;
-import org.gbif.dwca.io.DwcaWriter;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.FileUtils;
@@ -22,7 +18,6 @@ import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +44,11 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
 
     writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.parentNameUsageID);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
     writer.newRecord("dummy2");
-    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.parentNameUsageID);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
   }
 
   @Test(expected = IllegalStateException.class)
@@ -63,10 +58,10 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
 
     writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.parentNameUsageID);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
     writer.newRecord("dummy2");
-    writer.addCoreColumn(DwcTerm.scientificName, null);
+    writer.addCoreColumn(DwcTerm.scientificName);
   }
 
   @Test(expected = IllegalStateException.class)
@@ -76,8 +71,8 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
 
     writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.parentNameUsageID);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
 
     // define extension columns
     Map<Term, String> eData = Maps.newHashMap();
@@ -99,25 +94,25 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, dwcaDir, true);
 
     writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.scientificName, null);
-    writer.addCoreColumn(GbifTerm.canonicalName, null);
+    writer.addCoreColumn(DwcTerm.parentNameUsageID);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
+    writer.addCoreColumn(DwcTerm.scientificName);
+    writer.addCoreColumn(GbifTerm.canonicalName);
     writer.addCoreColumn(DwcTerm.taxonRank, "species");
-    writer.addCoreColumn(DwcTerm.taxonomicStatus, null);
-    writer.addCoreColumn(DwcTerm.kingdom, null);
-    writer.addCoreColumn(DwcTerm.phylum, null);
-    writer.addCoreColumn(DwcTerm.class_, null);
-    writer.addCoreColumn(DwcTerm.order, null);
-    writer.addCoreColumn(DwcTerm.family, null);
-    writer.addCoreColumn(GbifTerm.depth, null);
-    writer.addCoreColumn(GbifTerm.depthAccuracy, null);
+    writer.addCoreColumn(DwcTerm.taxonomicStatus);
+    writer.addCoreColumn(DwcTerm.kingdom);
+    writer.addCoreColumn(DwcTerm.phylum);
+    writer.addCoreColumn(DwcTerm.class_);
+    writer.addCoreColumn(DwcTerm.order);
+    writer.addCoreColumn(DwcTerm.family);
+    writer.addCoreColumn(GbifTerm.depth);
+    writer.addCoreColumn(GbifTerm.depthAccuracy);
 
     writer.newRecord("dummy2");
     writer.addCoreColumn(DwcTerm.kingdom, "Plantae");
-    writer.addCoreColumn(DwcTerm.phylum, null);
-    writer.addCoreColumn(DwcTerm.class_, null);
-    writer.addCoreColumn(DwcTerm.order, null);
+    writer.addCoreColumn(DwcTerm.phylum);
+    writer.addCoreColumn(DwcTerm.class_);
+    writer.addCoreColumn(DwcTerm.order);
     writer.addCoreColumn(DwcTerm.family, "Asteraceae");
 
     writer.newRecord("dummy3");
@@ -227,8 +222,8 @@ public class DwcaWriterTest {
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
 
     writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.parentNameUsageID, null);
-    writer.addCoreColumn(DwcTerm.acceptedNameUsageID, null);
+    writer.addCoreColumn(DwcTerm.parentNameUsageID);
+    writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
     writer.close();
 
     Archive arch = ArchiveFactory.openArchive(dwcaDir);
@@ -254,7 +249,7 @@ public class DwcaWriterTest {
     writer.newRecord("dummy1");
     writer.addCoreColumn(DwcTerm.parentNameUsageID, "1");
     writer.addCoreColumn(DwcTerm.acceptedNameUsageID, "2");
-    writer.addCoreColumn(DwcTerm.countryCode, null);
+    writer.addCoreColumn(DwcTerm.countryCode);
     
     // add a VernacularName extension record
     Map<Term,String> extensionRecord = new HashMap<Term, String>();

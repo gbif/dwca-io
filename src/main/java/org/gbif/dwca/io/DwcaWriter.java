@@ -235,6 +235,13 @@ public class DwcaWriter {
   }
 
   /**
+   * Convenience method to add an empty core column.
+   */
+  public void addCoreColumn(Term term) {
+    addCoreColumn(term, (String) null);
+  }
+
+  /**
    * Null safe convenience method to write integers.
    * See addCoreColumn(Term term, String value) for docs
    */
