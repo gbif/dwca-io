@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -232,10 +233,42 @@ public class DwcaWriter {
       throw new IllegalStateException("No core record has been created yet. Call newRecord() at least once");
     }
   }
-  
+
+  /**
+   * Null safe convenience method to write integers.
+   * See addCoreColumn(Term term, String value) for docs
+   */
+  public void addCoreColumn(Term term, @Nullable Integer value) {
+    addCoreColumn(term, value == null ? null : value.toString());
+  }
+
+  /**
+   * Null safe convenience method to write booleans.
+   * See addCoreColumn(Term term, String value) for docs
+   */
+  public void addCoreColumn(Term term, @Nullable Boolean value) {
+    addCoreColumn(term, value == null ? null : value.toString());
+  }
+
+  /**
+   * Null safe convenience method to write enumeration values.
+   * See addCoreColumn(Term term, String value) for docs
+   */
+  public void addCoreColumn(Term term, @Nullable Enum value) {
+    addCoreColumn(term, value == null ? null : value.name().toLowerCase().replaceAll("_", " "));
+  }
+
+  /**
+   * Null safe convenience method to write object values using the toString method.
+   * See addCoreColumn(Term term, String value) for docs
+   */
+  public void addCoreColumn(Term term, @Nullable Object value) {
+    addCoreColumn(term, value == null ? null : value.toString());
+  }
+
   /**
    * Add a default value to a term of the core.
-   * 
+   *
    * @param term
    * @param defaultValue
    */
