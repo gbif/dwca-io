@@ -347,7 +347,7 @@ public class ArchiveFactory {
     }
 
     // read metadata
-    File mf = new File(dwcaFolder, "meta.xml");
+    File mf = new File(dwcaFolder, Archive.META_FN);
     if (mf.exists()) {
       // read metafile
       readMetaDescriptor(archive, new FileInputStream(mf));

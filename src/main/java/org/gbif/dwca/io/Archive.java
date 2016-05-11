@@ -1,27 +1,38 @@
 package org.gbif.dwca.io;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Maps;
-import com.google.common.collect.PeekingIterator;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.record.*;
+import org.gbif.dwca.record.DarwinCoreRecord;
+import org.gbif.dwca.record.Record;
+import org.gbif.dwca.record.RecordImpl;
+import org.gbif.dwca.record.RecordIterator;
+import org.gbif.dwca.record.StarRecord;
+import org.gbif.dwca.record.StarRecordImpl;
 import org.gbif.registry.metadata.parse.DatasetParser;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.csv.CSVReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Maps;
+import com.google.common.collect.PeekingIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A darwin core star archive allowing easy reading and iteration over a core record with all its extensions.
@@ -29,6 +40,8 @@ import java.util.*;
  * @see <a href="http://tdwg.github.io/dwc/terms/guides/text/">Darwin Core Text Guide</a>
  */
 public class Archive implements Iterable<StarRecord> {
+  public static final String CONSTITUENT_DIR = "dataset";
+  public static final String META_FN = "meta.xml";
 
   /**
    * An iterator of fixed DarwinCoreRecords over the core file only. This iterator doesn't need any sorted data files
@@ -306,7 +319,7 @@ public class Archive implements Iterable<StarRecord> {
    */
   public Map<String, File> getConstituentMetadata() {
     Map<String, File> constituents = Maps.newHashMap();
-    File constDir = new File(location, "dataset");
+    File constDir = new File(location, CONSTITUENT_DIR);
     if (constDir.exists()) {
       File[] files = constDir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String filename) { return filename.endsWith(".xml"); }

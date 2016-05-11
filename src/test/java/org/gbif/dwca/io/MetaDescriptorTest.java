@@ -1,19 +1,9 @@
 package org.gbif.dwca.io;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwca.tools.MetaValidator;
 import org.gbif.utils.file.FileUtils;
-import org.junit.Test;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.DefaultHandler2;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,8 +11,21 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import static org.junit.Assert.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.junit.Test;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DefaultHandler2;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -139,7 +142,7 @@ public class MetaDescriptorTest {
   private File createTmpMeta(Archive arch) throws IOException {
     File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     tmpDir.deleteOnExit();
-    File tmpMeta = new File(tmpDir, "meta.xml");
+    File tmpMeta = new File(tmpDir, Archive.META_FN);
     System.out.println("Writing temporary test meta file to " + tmpMeta.getAbsolutePath());
     MetaDescriptorWriter.writeMetaFile(tmpMeta, arch);
     return tmpDir;

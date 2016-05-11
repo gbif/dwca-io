@@ -40,6 +40,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.io.Closeables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -68,7 +69,8 @@ public class DwcaWriter {
   // key=rowType, value=default values per column
   private final Map<Term, Map<Term, String>> defaultValues = Maps.newHashMap();
   private Dataset eml;
-  
+  private Map<String, Dataset> constituents = Maps.newHashMap();
+
   /**
    * Creates a new writer without header rows.
    * @param coreRowType the core row type.
@@ -343,6 +345,21 @@ public class DwcaWriter {
   }
 
   /**
+   * Adds a constituent dataset using the dataset key as the datasetID
+   */
+  public void addConstituent(Dataset eml) {
+    addConstituent(eml.getKey().toString(), eml);
+  }
+
+  /**
+   * Adds a constituent dataset.
+   * The eml file will be called as the datasetID which has to be unique.
+   */
+  public void addConstituent(String datasetID, Dataset eml) {
+    this.constituents.put(datasetID, eml);
+  }
+
+  /**
    * @return the set of available rowTypes in this archive
    */
   public Set<Term> getRowTypes() {
@@ -365,6 +382,7 @@ public class DwcaWriter {
    */
   public void close() throws IOException {
     addEml();
+    addConstituents();
     addMeta();
     // flush last record
     flushLastCoreRecord();
@@ -376,15 +394,34 @@ public class DwcaWriter {
     }
   }
 
+  private static void writeEml(Dataset d, File f) throws IOException {
+    if (d != null) {
+      Writer writer = null;
+      try {
+        writer = new FileWriter(f);
+        EMLWriter.write(d, writer);
+      } finally {
+        Closeables.close(writer, true);
+      }
+    }
+  }
+
   private void addEml() throws IOException {
-    if (eml != null) {
-      Writer writer = new FileWriter(new File(dir, "eml.xml"));
-      EMLWriter.write(eml, writer);
+    writeEml(eml, new File(dir, "eml.xml"));
+  }
+
+  private void addConstituents() throws IOException {
+    if (!constituents.isEmpty()) {
+      File ddir = new File(dir, Archive.CONSTITUENT_DIR);
+      ddir.mkdirs();
+      for (Map.Entry<String, Dataset> de : constituents.entrySet()) {
+        writeEml(de.getValue(), new File(ddir, de.getKey()+".xml"));
+      }
     }
   }
 
   private void addMeta() throws IOException {
-    File metaFile = new File(dir, "meta.xml");
+    File metaFile = new File(dir, Archive.META_FN);
 
     Archive arch = new Archive();
     if (eml != null) {
