@@ -32,12 +32,22 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
     return tabularDataFileReader.getHeaderLine();
   }
 
-  public Map<T, String> read() throws IOException {
+  /**
+   *
+   * @return
+   * @throws TabularLineSizeException
+   * @throws IOException
+   */
+  public Map<T, String> read() throws TabularLineSizeException, IOException {
     List<String> tabularLine = tabularDataFileReader.read();
 
     // check for end of file
     if(tabularLine == null){
       return null;
+    }
+
+    if(tabularLine.size() != columnMapping.length){
+      throw new TabularLineSizeException("Declared size: " + columnMapping.length + ", line size: " + tabularLine.size());
     }
 
     Map<T, String> line = Maps.newHashMapWithExpectedSize(columnMapping.length);
