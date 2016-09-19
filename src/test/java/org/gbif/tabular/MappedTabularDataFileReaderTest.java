@@ -11,11 +11,14 @@ import java.util.Map;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
  */
 public class MappedTabularDataFileReaderTest {
+
+    private static int LOOP_LIMIT = 1000;
 
     @Test
     public void testCsvAllwaysQuotes() throws Exception {
@@ -23,7 +26,6 @@ public class MappedTabularDataFileReaderTest {
 
         Term[] columnsMapping = new Term[]{DwcTerm.occurrenceID,
                 DwcTerm.scientificName, DwcTerm.locality};
-
 
         MappedTabularDataFileReader<Term> mappedReader =
                 MappedTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
@@ -34,6 +36,12 @@ public class MappedTabularDataFileReaderTest {
 
         mappedLine = mappedReader.read();
         assertEquals("I say this is only a \"quote\"", mappedLine.get(DwcTerm.locality));
+
+        int recordCount = 0;
+        while(mappedReader.read() != null && recordCount < LOOP_LIMIT){
+            recordCount++;
+        }
+        assertTrue("Reader loop terminate before LOOP_LIMIT",recordCount < LOOP_LIMIT);
 
         mappedReader.close();
     }

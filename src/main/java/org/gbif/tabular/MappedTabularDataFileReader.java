@@ -34,8 +34,13 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
 
   public Map<T, String> read() throws IOException {
     List<String> tabularLine = tabularDataFileReader.read();
-    Map<T, String> line = Maps.newHashMapWithExpectedSize(columnMapping.length);
 
+    // check for end of file
+    if(tabularLine == null){
+      return null;
+    }
+
+    Map<T, String> line = Maps.newHashMapWithExpectedSize(columnMapping.length);
     for (int i = 0; i < columnMapping.length; i++) {
       line.put(columnMapping[i], tabularLine.get(i));
     }
