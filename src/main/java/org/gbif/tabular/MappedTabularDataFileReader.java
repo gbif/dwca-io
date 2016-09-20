@@ -12,10 +12,11 @@ import com.google.common.collect.Maps;
  * Decorator of {@link TabularDataFileReader} to map elements of a line to a key of type <T>.
  *
  */
-public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map<T, String>>{
+public class MappedTabularDataFileReader<T> implements TabularDataFileReader<MappedTabularDataLine<T>> {
 
   private final TabularDataFileReader<List<String>> tabularDataFileReader;
   private final T[] columnMapping;
+  private int lineNumber = 0;
 
   /**
    *
@@ -35,10 +36,9 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
   /**
    *
    * @return
-   * @throws TabularLineSizeException
    * @throws IOException
    */
-  public Map<T, String> read() throws TabularLineSizeException, IOException {
+  public MappedTabularDataLine<T> read() throws IOException {
     List<String> tabularLine = tabularDataFileReader.read();
 
     // check for end of file
@@ -46,15 +46,13 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
       return null;
     }
 
-    if(tabularLine.size() != columnMapping.length){
-      throw new TabularLineSizeException("Declared size: " + columnMapping.length + ", line size: " + tabularLine.size());
-    }
-
     Map<T, String> line = Maps.newHashMapWithExpectedSize(columnMapping.length);
     for (int i = 0; i < columnMapping.length; i++) {
       line.put(columnMapping[i], tabularLine.get(i));
     }
-    return line;
+
+    lineNumber++;
+    return new MappedTabularDataLine(lineNumber, line, tabularLine.size());
   }
 
   @Override

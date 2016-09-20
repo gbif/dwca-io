@@ -6,7 +6,6 @@ import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Map;
 
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ public class MappedTabularDataFileReaderTest {
   private static int LOOP_SAFEGUARD = 1000;
 
   @Test
-  public void testMappedTabularDataFileReaderAllwaysQuotes() throws Exception {
+  public void testMappedTabularDataFileReaderAlwaysQuotes() throws Exception {
     File csv = FileUtils.getClasspathFile("csv_optional_quotes_excel2008CSV.csv");
 
     Term[] columnsMapping = new Term[]{DwcTerm.occurrenceID,
@@ -31,12 +30,14 @@ public class MappedTabularDataFileReaderTest {
     MappedTabularDataFileReader<Term> mappedReader =
             MappedTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
 
-    Map<Term, String> mappedLine = mappedReader.read();
-    assertEquals("1", mappedLine.get(DwcTerm.occurrenceID));
-    assertEquals("This has a, comma", mappedLine.get(DwcTerm.locality));
+    MappedTabularDataLine<Term> mappedLine = mappedReader.read();
+    assertEquals(1, mappedLine.getLineNumber());
+    assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
+    assertEquals("This has a, comma", mappedLine.getMappedData().get(DwcTerm.locality));
+
 
     mappedLine = mappedReader.read();
-    assertEquals("I say this is only a \"quote\"", mappedLine.get(DwcTerm.locality));
+    assertEquals("I say this is only a \"quote\"", mappedLine.getMappedData().get(DwcTerm.locality));
 
     int recordCount = 0;
     while (mappedReader.read() != null && recordCount < LOOP_SAFEGUARD) {
@@ -57,13 +58,10 @@ public class MappedTabularDataFileReaderTest {
     MappedTabularDataFileReader<Term> mappedReader =
             MappedTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
 
-    boolean exceptionTriggered = false;
-    try {
-      mappedReader.read();
-    } catch (TabularLineSizeException tlsEx) {
-      exceptionTriggered = true;
-    }
-    assertTrue("TabularLineSizeException is triggered", exceptionTriggered);
+    MappedTabularDataLine<Term> mappedLine = mappedReader.read();
+    assertEquals(1, mappedLine.getLineNumber());
+    assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
+    assertEquals("Returned number of column matches the content of the file", 3, mappedLine.getNumberOfColumn());
     mappedReader.close();
   }
 }
