@@ -45,9 +45,9 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
     if(tabularLine == null){
       return null;
     }
-
-    Map<T, String> line = Maps.newHashMapWithExpectedSize(columnMapping.length);
-    for (int i = 0; i < columnMapping.length; i++) {
+    int numOfColumns = Math.min(columnMapping.length, tabularLine.size());
+    Map<T, String> line = Maps.newHashMapWithExpectedSize(numOfColumns);
+    for (int i = 0; i < numOfColumns; i++) {
       line.put(columnMapping[i], tabularLine.get(i));
     }
 

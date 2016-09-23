@@ -63,5 +63,16 @@ public class MappedTabularDataFileReaderTest {
     assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
     assertEquals("Returned number of column matches the content of the file", 3, mappedLine.getNumberOfColumn());
     mappedReader.close();
+
+    //declare 1 field more
+    columnsMapping = new Term[]{DwcTerm.occurrenceID, DwcTerm.scientificName, DwcTerm.locality, DwcTerm.country};
+    mappedReader =
+            MappedTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
+
+    mappedLine = mappedReader.read();
+    assertEquals(1, mappedLine.getLineNumber());
+    assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
+    assertEquals("Returned number of column matches the content of the file", 3, mappedLine.getNumberOfColumn());
+    mappedReader.close();
   }
 }
