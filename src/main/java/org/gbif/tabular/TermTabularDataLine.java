@@ -1,5 +1,7 @@
 package org.gbif.tabular;
 
+import org.gbif.dwc.terms.Term;
+
 import java.util.Map;
 
 /**
@@ -7,10 +9,10 @@ import java.util.Map;
  * This class is immutable but the provided Map is not guarantee to be immutable.
  *
  */
-public class MappedTabularDataLine<T> {
+public class TermTabularDataLine {
 
   private final long lineNumber;
-  private final Map<T, String> mappedData;
+  private final Map<Term, String> mappedData;
   private final int numberOfColumn;
 
   /**
@@ -19,13 +21,13 @@ public class MappedTabularDataLine<T> {
    * @param mappedData content of the line mapped to instance of T
    * @param numberOfColumn number of column used by the line (can potentially be different from the mapped data keys)
    */
-  public MappedTabularDataLine(long lineNumber, Map<T, String> mappedData, int numberOfColumn) {
+  public TermTabularDataLine(long lineNumber, Map<Term, String> mappedData, int numberOfColumn) {
     this.lineNumber = lineNumber;
     this.mappedData = mappedData;
     this.numberOfColumn = numberOfColumn;
   }
 
-  public Map<T, String> getMappedData() {
+  public Map<Term, String> getMappedData() {
     return mappedData;
   }
 

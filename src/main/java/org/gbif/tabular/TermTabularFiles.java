@@ -10,12 +10,12 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 /**
- * Static utility methods related to {@link MappedTabularDataFileReader} instances.
+ * Static utility methods related to {@link TermTabularDataFileReader} instances.
  */
-public class MappedTabularFiles {
+public class TermTabularFiles {
 
   /**
-   * Get a new MappedTabularDataFileReader for {@link Term}.
+   * Get a new TermTabularDataFileReader for {@link Term}.
    *
    * @param in
    * @param delimiterChar
@@ -23,13 +23,13 @@ public class MappedTabularFiles {
    * @param columnMapping
    * @return
    */
-  public static MappedTabularDataFileReader<Term> newTermMappedTabularFileReader(InputStream in, char delimiterChar,
+  public static TermTabularDataFileReader newTermMappedTabularFileReader(InputStream in, char delimiterChar,
                                                                                  boolean headerLine,
                                                                                  Term[] columnMapping){
     Preconditions.checkNotNull(columnMapping, "columnMapping must be provided");
 
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles
             .newTabularFileReader(in, delimiterChar, headerLine);
-    return new MappedTabularDataFileReader<Term>(tabularFileReader, columnMapping);
+    return new TermTabularDataFileReader(tabularFileReader, columnMapping);
   }
 }

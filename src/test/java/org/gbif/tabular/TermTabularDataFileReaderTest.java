@@ -13,9 +13,9 @@ import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Unit tests for {@link MappedTabularDataFileReader}
+ * Unit tests for {@link TermTabularDataFileReader}
  */
-public class MappedTabularDataFileReaderTest {
+public class TermTabularDataFileReaderTest {
 
   //simply used to avoid infinite loop
   private static int LOOP_SAFEGUARD = 1000;
@@ -27,10 +27,10 @@ public class MappedTabularDataFileReaderTest {
     Term[] columnsMapping = new Term[]{DwcTerm.occurrenceID,
             DwcTerm.scientificName, DwcTerm.locality};
 
-    MappedTabularDataFileReader<Term> mappedReader =
-            MappedTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
+    TermTabularDataFileReader mappedReader =
+            TermTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
 
-    MappedTabularDataLine<Term> mappedLine = mappedReader.read();
+    TermTabularDataLine mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());
     assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
     assertEquals("This has a, comma", mappedLine.getMappedData().get(DwcTerm.locality));
@@ -55,10 +55,10 @@ public class MappedTabularDataFileReaderTest {
     //only declare 2 mapping (the file includes 3 columns)
     Term[] columnsMapping = new Term[]{DwcTerm.occurrenceID, DwcTerm.scientificName};
 
-    MappedTabularDataFileReader<Term> mappedReader =
-            MappedTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
+    TermTabularDataFileReader mappedReader =
+            TermTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
 
-    MappedTabularDataLine<Term> mappedLine = mappedReader.read();
+    TermTabularDataLine mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());
     assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
     assertEquals("Returned number of column matches the content of the file", 3, mappedLine.getNumberOfColumn());
@@ -67,7 +67,7 @@ public class MappedTabularDataFileReaderTest {
     //declare 1 field more
     columnsMapping = new Term[]{DwcTerm.occurrenceID, DwcTerm.scientificName, DwcTerm.locality, DwcTerm.country};
     mappedReader =
-            MappedTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
+            TermTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
 
     mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());

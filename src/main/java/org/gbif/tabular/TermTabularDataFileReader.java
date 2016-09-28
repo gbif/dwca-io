@@ -1,5 +1,6 @@
 package org.gbif.tabular;
 
+import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 
 import java.io.IOException;
@@ -9,13 +10,14 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 /**
- * Decorator of {@link TabularDataFileReader} to map elements of a line to a key of type <T>.
+ * Decorator of {@link TabularDataFileReader} to map elements of a line to a TermTabularDataLine.
+ * Supports the reading of lines smaller or larger than the declared set of columns.
  *
  */
-public class MappedTabularDataFileReader<T> implements TabularDataFileReader<MappedTabularDataLine<T>> {
+public class TermTabularDataFileReader implements TabularDataFileReader<TermTabularDataLine> {
 
   private final TabularDataFileReader<List<String>> tabularDataFileReader;
-  private final T[] columnMapping;
+  private final Term[] columnMapping;
   private int lineNumber = 0;
 
   /**
@@ -23,7 +25,7 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
    * @param tabularDataFileReader a TabularDataFileReader implementation to read lines as List of String
    * @param columnMapping mapping of the columns. Index of the array matched the index of the element in the data line
    */
-  public MappedTabularDataFileReader(TabularDataFileReader<List<String>> tabularDataFileReader, T[] columnMapping){
+  public TermTabularDataFileReader(TabularDataFileReader<List<String>> tabularDataFileReader, Term[] columnMapping){
     this.tabularDataFileReader = tabularDataFileReader;
     this.columnMapping = columnMapping;
   }
@@ -38,7 +40,7 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
    * @return
    * @throws IOException
    */
-  public MappedTabularDataLine<T> read() throws IOException {
+  public TermTabularDataLine read() throws IOException {
     List<String> tabularLine = tabularDataFileReader.read();
 
     // check for end of file
@@ -46,13 +48,13 @@ public class MappedTabularDataFileReader<T> implements TabularDataFileReader<Map
       return null;
     }
     int numOfColumns = Math.min(columnMapping.length, tabularLine.size());
-    Map<T, String> line = Maps.newHashMapWithExpectedSize(numOfColumns);
+    Map<Term, String> line = Maps.newHashMapWithExpectedSize(numOfColumns);
     for (int i = 0; i < numOfColumns; i++) {
       line.put(columnMapping[i], tabularLine.get(i));
     }
 
     lineNumber++;
-    return new MappedTabularDataLine(lineNumber, line, tabularLine.size());
+    return new TermTabularDataLine(lineNumber, line, tabularLine.size());
   }
 
   @Override
