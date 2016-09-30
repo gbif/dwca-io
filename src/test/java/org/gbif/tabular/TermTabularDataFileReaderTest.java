@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -61,7 +62,10 @@ public class TermTabularDataFileReaderTest {
     TermTabularDataLine mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());
     assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
+    assertEquals("Got 2 mapped", 2, mappedLine.getMappedData().size());
+    assertEquals("Got 1 unmapped ", 1, mappedLine.getUnmappedData().size());
     assertEquals("Returned number of column matches the content of the file", 3, mappedLine.getNumberOfColumn());
+
     mappedReader.close();
 
     //declare 1 field more
@@ -72,6 +76,8 @@ public class TermTabularDataFileReaderTest {
     mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());
     assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
+    assertEquals("Got 3 mapped", 3, mappedLine.getMappedData().size());
+    assertNull("Got no unmapped ", mappedLine.getUnmappedData());
     assertEquals("Returned number of column matches the content of the file", 3, mappedLine.getNumberOfColumn());
     mappedReader.close();
   }

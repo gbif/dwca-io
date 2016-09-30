@@ -52,8 +52,13 @@ public class TermTabularDataFileReader implements TabularDataFileReader<TermTabu
     for (int i = 0; i < numOfColumns; i++) {
       line.put(columnMapping[i], tabularLine.get(i));
     }
-
     lineNumber++;
+
+    //if the line contains more data than the number of declared column, set it as unamppedData
+    if(tabularLine.size() > columnMapping.length) {
+      return new TermTabularDataLine(lineNumber, line, tabularLine.size() ,
+              tabularLine.subList(columnMapping.length, tabularLine.size()));
+    }
     return new TermTabularDataLine(lineNumber, line, tabularLine.size());
   }
 
