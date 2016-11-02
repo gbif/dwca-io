@@ -21,7 +21,7 @@
     </files>
     <coreid index="${ext.id.index}" />
    <#list ext.fieldsSorted as t>
-    <field<#if t.index??> index="${t.index}"</#if><#if t.defaultValue?has_content> default="${t.defaultValue}"</#if> term="${t.term.qualifiedName()}"/>
+    <field<#if t.index??> index="${t.index}"</#if><#if t.defaultValue?has_content> default="${t.defaultValue}"</#if> term="${t.term.qualifiedName()}"<#if t.vocabulary?has_content> vocabulary="${t.vocabulary}"</#if>/>
    </#list>
   </extension>
  </#list>

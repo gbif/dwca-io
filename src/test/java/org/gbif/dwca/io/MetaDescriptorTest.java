@@ -1,6 +1,8 @@
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwca.tools.MetaValidator;
 import org.gbif.utils.file.FileUtils;
 
@@ -40,6 +42,8 @@ public class MetaDescriptorTest {
 
 
   private static final String NOMENCLATURAL_CODE_VOCABULARY = "http://rs.gbif.org/vocabulary/gbif/nomenclatural_code.xml";
+  //for testing only, language vocabulary doesn't exist at rs.gbif.org
+  private static final String LANGUAGE_VOCABULARY = "http://rs.gbif.org/vocabulary/gbif/language.xml";
 
   public class SAXExtractTerms extends DefaultHandler2 {
     private final List<String> terms;
@@ -103,6 +107,7 @@ public class MetaDescriptorTest {
       assertNull(arch.getCore().getField(DwcTerm.scientificName).getDelimitedBy());
       assertEquals(";", arch.getCore().getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
       assertEquals(NOMENCLATURAL_CODE_VOCABULARY, arch.getCore().getField(DwcTerm.nomenclaturalCode).getVocabulary());
+      assertEquals(LANGUAGE_VOCABULARY, arch.getExtension(GbifTerm.VernacularName).getField(DcTerm.language).getVocabulary());
 
       // write meta.xml
       File tmpDwca = createTmpMeta(arch);

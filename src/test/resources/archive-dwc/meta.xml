@@ -20,17 +20,17 @@
 
   </core>
   <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy='' ignoreHeaderLines="1"
-             rowType="http://rs.gbif.org/ipt/terms/1.0/VernacularName">
+             rowType="http://rs.gbif.org/terms/1.0/VernacularName">
     <files>
       <location>VernacularName.txt</location>
     </files>
     <coreid index="0"/>
     <field index="1" term="http://rs.tdwg.org/dwc/terms/vernacularName"/>
-    <field index="2" term="http://purl.org/dc/terms/language"/>
+    <field index="2" term="http://purl.org/dc/terms/language" vocabulary="http://rs.gbif.org/vocabulary/gbif/language.xml"/>
   </extension>
 
   <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy='' ignoreHeaderLines="1"
-             rowType="http://rs.gbif.org/ipt/terms/1.0/Multimedia">
+             rowType="http://rs.gbif.org/terms/1.0/Multimedia">
     <files>
       <location>media.txt</location>
     </files>
