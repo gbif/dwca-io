@@ -12,7 +12,6 @@
  */
 package org.gbif.dwca.io;
 
-import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.record.Record;
@@ -21,7 +20,17 @@ import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class can be used to encapsulate information about a file contained within a Darwin Core Archive. It generally
@@ -163,8 +172,12 @@ public class ArchiveFile implements Iterable<Record> {
   /**
    * Get the first file location.
    * TODO: check if we got more than 1 file and implement some unix concat into a single file first before sorting that
+   * @return first location or null if none
    */
   public String getLocation() {
+    if(locations.isEmpty()){
+      return null;
+    }
     return locations.getFirst();
   }
 
