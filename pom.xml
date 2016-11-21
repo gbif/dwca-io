@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>dwca-io</artifactId>
-  <version>1.28-SNAPSHOT</version>
+  <version>1.28</version>
   <packaging>jar</packaging>
 
   <name>Darwin Core Archive IO Library</name>
@@ -18,7 +18,7 @@
 	  <connection>scm:git:git@github.com:gbif/dwca-io.git</connection>
 	  <url>https://github.com/gbif/dwca-io</url>
 	  <developerConnection>scm:git:git@github.com:gbif/dwca-io.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>dwca-io-1.28</tag>
   </scm>
   
   <distributionManagement>
