@@ -12,16 +12,6 @@
  */
 package org.gbif.dwca.io;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.io.Files;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.io.input.BOMInputStream;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -31,19 +21,36 @@ import org.gbif.io.DownloadUtil;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.csv.CSVReader;
 import org.gbif.utils.file.csv.CSVReaderFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.input.BOMInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
  * Factory used to build {@link Archive} object from a DarwinCore Archive file.
@@ -56,6 +63,7 @@ public class ArchiveFactory {
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
 
   private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);
+  private static final List<String> DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
 
   /**
    * SAX handler to parse a meta.xml descriptor for dwc archives. It populates a given archive instance and ignores
@@ -64,7 +72,8 @@ public class ArchiveFactory {
   static class MetaHandler extends SimpleSaxHandler {
 
     private static final String NS_DWCA = "http://rs.tdwg.org/dwc/text/";
-    private Archive archive;
+
+      private Archive archive;
     private ArchiveFile af;
 
     protected MetaHandler(Archive archive) {
@@ -357,9 +366,10 @@ public class ArchiveFactory {
       // Try to detect data files ourselves as best as we can.
       // look for a single, visible text data file
       List<File> dataFiles = new ArrayList<File>();
-      for (String suffix : Lists.newArrayList(".csv", ".txt", ".tab", ".text", ".data")) {
-        FileFilter ff =
-          FileFilterUtils.and(FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE), HiddenFileFilter.VISIBLE);
+      for (String suffix : DATA_FILE_SUFFICES) {
+        FileFilter ff = FileFilterUtils.and(
+            FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE), HiddenFileFilter.VISIBLE
+        );
         dataFiles.addAll(Arrays.asList(dwcaFolder.listFiles(ff)));
       }
 
