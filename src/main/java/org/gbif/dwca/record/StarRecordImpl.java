@@ -37,7 +37,7 @@ public class StarRecordImpl implements StarRecord {
   }
 
   public boolean hasExtension(Term rowType) {
-    return extensions.containsKey(rowType);
+    return extensions.containsKey(rowType) && !extensions.get(rowType).isEmpty();
   }
 
   /**
