@@ -421,6 +421,7 @@ public class ArchiveFactory {
 
     // detect dwc terms as good as we can based on header row
     String[] headers = reader.header;
+    reader.close();
     int index = 0;
     for (String head : headers) {
       // there are never any quotes in term names - remove them just in case the csvreader didnt recognize them
