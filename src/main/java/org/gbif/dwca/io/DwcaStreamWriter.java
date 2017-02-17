@@ -121,6 +121,9 @@ public class DwcaStreamWriter implements AutoCloseable {
             mapping.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach((e)->{
                 header[e.getValue()] = e.getKey().simpleName();
             });
+            if (coreIdTerm != null) {
+                header[0] = coreIdTerm.simpleName();
+            }
             writer.write(header);
         }
 
