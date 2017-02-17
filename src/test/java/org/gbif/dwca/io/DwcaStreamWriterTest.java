@@ -22,7 +22,7 @@ public class DwcaStreamWriterTest {
     @Test(expected = IllegalStateException.class)
     public void writeEmpty() throws Exception {
         File dwca = FileUtils.createTempDir();
-        try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, true)){
+        try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true)){
 
         } finally {
             org.apache.commons.io.FileUtils.deleteQuietly(dwca);
@@ -36,7 +36,7 @@ public class DwcaStreamWriterTest {
                 DwcTerm.taxonID, 0,
                 DwcTerm.scientificName, 1,
                 DwcTerm.taxonRank, 2);
-        try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, true)){
+        try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true)){
             Dataset d = new Dataset();
             d.setTitle("Abies of the Alps");
             d.setDescription("Abies of the Alps excl Switzerland.");

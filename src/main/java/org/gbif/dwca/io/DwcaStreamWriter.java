@@ -12,6 +12,7 @@ import org.gbif.io.TabWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,6 +28,7 @@ public class DwcaStreamWriter implements AutoCloseable {
 
     private final File dir;
     private final Term core;
+    private final Term coreIdTerm;
     private final boolean useHeaders;
     private final Archive archive = new Archive();
     private Dataset metadata;
@@ -35,11 +37,13 @@ public class DwcaStreamWriter implements AutoCloseable {
     /**
      * @param dir the directory to use as the archive
      * @param coreRowType the archives core row type
+     * @param coreIdTerm if given used to map the id column of the core
      * @param useHeaders if true write a single header row for each data file
      */
-    public DwcaStreamWriter(File dir, Term coreRowType, boolean useHeaders) {
+    public DwcaStreamWriter(File dir, Term coreRowType, @Nullable Term coreIdTerm, boolean useHeaders) {
         this.dir = dir;
         this.core = coreRowType;
+        this.coreIdTerm = coreIdTerm;
         this.useHeaders = useHeaders;
         archive.setLocation(dir);
     }
@@ -102,6 +106,9 @@ public class DwcaStreamWriter implements AutoCloseable {
             af.addField(field);
         }
         if (core.equals(rowType)) {
+            if (coreIdTerm != null) {
+                af.getId().setTerm(coreIdTerm);
+            }
             archive.setCore(af);
         } else {
             archive.addExtension(af);
