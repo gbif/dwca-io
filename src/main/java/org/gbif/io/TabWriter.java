@@ -1,20 +1,19 @@
 package org.gbif.io;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.io.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class TabWriter {
+public class TabWriter implements AutoCloseable {
 
   private static final Pattern escapeChars = Pattern.compile("[\t\n\r]");
   private int records = 0;
   private Writer writer;
+
+  public static TabWriter fromFile(File file) throws FileNotFoundException {
+    return new TabWriter(new FileOutputStream(file));
+  }
 
   public TabWriter(OutputStream stream) {
     try {
@@ -54,6 +53,7 @@ public class TabWriter {
     return StringUtils.join(columns, '\t') + "\n";
   }
 
+  @Override
   public void close() throws IOException {
     writer.close();
   }

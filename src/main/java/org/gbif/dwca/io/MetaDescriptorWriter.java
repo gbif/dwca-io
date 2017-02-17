@@ -40,6 +40,13 @@ public class MetaDescriptorWriter {
   private MetaDescriptorWriter() {
   }
 
+  /**
+   * Writes the archive descriptor to meta.xml within the archive location
+   */
+  public static void writeMetaFile(Archive archive) throws IOException {
+    writeMetaFile(new File(archive.getLocation(), Archive.META_FN), archive);
+  }
+
   public static void writeMetaFile(File f, Archive archive) throws IOException {
     Writer writer = new FileWriter(f);
     try {

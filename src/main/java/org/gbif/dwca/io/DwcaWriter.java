@@ -394,14 +394,10 @@ public class DwcaWriter {
     }
   }
 
-  private static void writeEml(Dataset d, File f) throws IOException {
+  protected static void writeEml(Dataset d, File f) throws IOException {
     if (d != null) {
-      Writer writer = null;
-      try {
-        writer = new FileWriter(f);
-        EMLWriter.write(d, writer);
-      } finally {
-        Closeables.close(writer, true);
+      try (Writer writer = new FileWriter(f)){
+        EMLWriter.newInstance().writeTo(d, writer);
       }
     }
   }
