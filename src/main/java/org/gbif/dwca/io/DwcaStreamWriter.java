@@ -3,18 +3,20 @@ package org.gbif.dwca.io;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import com.google.common.io.Closeables;
+import com.google.common.io.Closer;
+import org.apache.commons.io.IOUtils;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.Term;
 import org.gbif.io.TabWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * An archive writer that writes entire data files at once and does not check integrity of coreids.
@@ -56,58 +58,134 @@ public class DwcaStreamWriter implements AutoCloseable {
      * @param mapping zero based indexed of the rows
      */
     public void write(Term rowType, int coreIdColumn, Map<Term, Integer> mapping, Iterable<String[]> rows) {
-        Preconditions.checkNotNull(rowType);
-        Preconditions.checkNotNull(mapping);
         Preconditions.checkNotNull(rows);
-        Preconditions.checkArgument(!mapping.isEmpty());
-        Preconditions.checkArgument(coreIdColumn >= 0);
 
-        final File df = dataFile(rowType);
-        final int maxMapping = mapping.values().stream().max(Integer::compareTo).get();
-        try (TabWriter writer = TabWriter.fromFile(df) ) {
-            ArchiveFile af = ArchiveFile.buildTabFile();
-            af.setEncoding("UTF8");
-            af.setRowType(rowType);
-            af.addLocation(df.getName());
-            af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
-            af.setId(idField(coreIdColumn));
-            for (Map.Entry<Term, Integer> entry : mapping.entrySet()) {
-                ArchiveField field = new ArchiveField();
-                field.setTerm(entry.getKey());
-                field.setIndex(entry.getValue());
-                af.addField(field);
-            }
-            if (core.equals(rowType)) {
-                archive.setCore(af);
-            } else {
-                archive.addExtension(af);
-            }
-            // write data
-            if (useHeaders){
-                String[] header = new String[maxMapping+1];
-                mapping.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach((e)->{
-                    header[e.getValue()] = e.getKey().simpleName();
-                });
-                writer.write(header);
-            }
+        final int maxMapping = maxMappingColumn(mapping);
+        try (TabWriter writer = addArchiveFile(rowType, coreIdColumn, mapping, maxMapping) ) {
             // write data
             for (String[] row : rows) {
-                if (row != null && row.length < maxMapping) {
-                    throw new IllegalArgumentException("Input rows are smaller than the defined mapping of " + maxMapping + " columns.");
-                }
-                writer.write(row);
+                write(writer, row, maxMapping);
             }
-
-        } catch (FileNotFoundException e) {
-            Throwables.propagate(e);
-
         } catch (IOException e) {
             Throwables.propagate(e);
         }
     }
 
+    private static void write(TabWriter writer, String[] row, int maxMapping) throws IOException {
+        if (row != null && row.length < maxMapping) {
+            throw new IllegalArgumentException("Input rows are smaller than the defined mapping of " + maxMapping + " columns.");
+        }
+        writer.write(row);
+    }
+
+    private int maxMappingColumn(Map<Term, Integer> mapping) {
+        return mapping.values().stream().max(Integer::compareTo).get();
+    }
+
+    private TabWriter addArchiveFile(Term rowType, int coreIdColumn, Map<Term, Integer> mapping, int maxMapping) throws IOException {
+        Preconditions.checkNotNull(rowType);
+        Preconditions.checkNotNull(mapping);
+        Preconditions.checkArgument(!mapping.isEmpty());
+        Preconditions.checkArgument(coreIdColumn >= 0);
+
+        final File dataFile = dataFile(rowType);
+        ArchiveFile af = ArchiveFile.buildTabFile();
+        af.setEncoding("UTF8");
+        af.setRowType(rowType);
+        af.addLocation(dataFile.getName());
+        af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
+        af.setId(idField(coreIdColumn));
+        for (Map.Entry<Term, Integer> entry : mapping.entrySet()) {
+            ArchiveField field = new ArchiveField();
+            field.setTerm(entry.getKey());
+            field.setIndex(entry.getValue());
+            af.addField(field);
+        }
+        if (core.equals(rowType)) {
+            archive.setCore(af);
+        } else {
+            archive.addExtension(af);
+        }
+
+        // write headers
+        TabWriter writer = TabWriter.fromFile(dataFile);
+        if (useHeaders){
+            String[] header = new String[maxMapping+1];
+            mapping.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach((e)->{
+                header[e.getValue()] = e.getKey().simpleName();
+            });
+            writer.write(header);
+        }
+
+        return writer;
+    }
+
+    public interface RowWriteHandler extends AutoCloseable {
+        void write(String[] row);
+    }
+
+    private class RowWriteHandlerImpl implements RowWriteHandler {
+        private final TabWriter writer;
+        private final int minColumns;
+
+        RowWriteHandlerImpl(TabWriter writer, int minColumns) {
+            this.writer = writer;
+            this.minColumns = minColumns;
+        }
+
+        public void write(String[] row) {
+            if (row != null && row.length < minColumns) {
+                throw new IllegalArgumentException("Input rows are smaller than the defined mapping of " + minColumns + " columns.");
+            }
+            try {
+                writer.write(row);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            writer.close();
+        }
+    }
+
+    /**
+     * Useful for glueing mybatis result handlers directly into the dwca writer.
+     * Make sure to close the write handler properly!
+     * @param rowType
+     * @param coreIdColumn
+     * @param mapping
+     * @return a handler accepting single rows to write into the data file
+     */
+    public RowWriteHandler writeHandler(Term rowType, int coreIdColumn, Map<Term, Integer> mapping) {
+        try {
+            final int maxMapping = maxMappingColumn(mapping);
+            TabWriter writer = addArchiveFile(rowType, coreIdColumn, mapping, maxMapping);
+            return new RowWriteHandlerImpl(writer, maxMapping);
+
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     public void setMetadata(Dataset d) {
         metadata = d;
+    }
+
+    /**
+     * Adds a constituent dataset using the dataset key as the datasetID
+     */
+    public void addConstituent(Dataset eml) {
+        addConstituent(eml.getKey().toString(), eml);
+    }
+
+    /**
+     * Adds a constituent dataset.
+     * The eml file will be called as the datasetID which has to be unique.
+     */
+    public void addConstituent(String datasetID, Dataset eml) {
+        this.constituents.put(datasetID, eml);
     }
 
     /**
