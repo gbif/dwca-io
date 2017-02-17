@@ -402,143 +402,139 @@
 <a class="jxr_linenumber" name="L394" href="#L394">394</a>     }
 <a class="jxr_linenumber" name="L395" href="#L395">395</a>   }
 <a class="jxr_linenumber" name="L396" href="#L396">396</a> 
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> writeEml(Dataset d, File f) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>   <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> writeEml(Dataset d, File f) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L398" href="#L398">398</a>     <strong class="jxr_keyword">if</strong> (d != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>       Writer writer = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>       <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>         writer = <strong class="jxr_keyword">new</strong> FileWriter(f);
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>         EMLWriter.write(d, writer);
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>       } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>         Closeables.close(writer, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>       }
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>     }
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>       <strong class="jxr_keyword">try</strong> (Writer writer = <strong class="jxr_keyword">new</strong> FileWriter(f)){
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>         EMLWriter.newInstance().writeTo(d, writer);
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>       }
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>     }
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>   }
+<a class="jxr_linenumber" name="L404" href="#L404">404</a> 
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addEml() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>     writeEml(eml, <strong class="jxr_keyword">new</strong> File(dir, <span class="jxr_string">"eml.xml"</span>));
 <a class="jxr_linenumber" name="L407" href="#L407">407</a>   }
 <a class="jxr_linenumber" name="L408" href="#L408">408</a> 
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addEml() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>     writeEml(eml, <strong class="jxr_keyword">new</strong> File(dir, <span class="jxr_string">"eml.xml"</span>));
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>   }
-<a class="jxr_linenumber" name="L412" href="#L412">412</a> 
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addConstituents() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>     <strong class="jxr_keyword">if</strong> (!constituents.isEmpty()) {
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>       File ddir = <strong class="jxr_keyword">new</strong> File(dir, Archive.CONSTITUENT_DIR);
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>       ddir.mkdirs();
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>       <strong class="jxr_keyword">for</strong> (Map.Entry&lt;String, Dataset&gt; de : constituents.entrySet()) {
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>         writeEml(de.getValue(), <strong class="jxr_keyword">new</strong> File(ddir, de.getKey()+<span class="jxr_string">".xml"</span>));
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>       }
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>     }
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>   }
-<a class="jxr_linenumber" name="L422" href="#L422">422</a> 
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addMeta() <strong class="jxr_keyword">throws</strong> IOException {
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>     File metaFile = <strong class="jxr_keyword">new</strong> File(dir, Archive.META_FN);
-<a class="jxr_linenumber" name="L425" href="#L425">425</a> 
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>     <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> arch = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a>();
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>     <strong class="jxr_keyword">if</strong> (eml != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>       arch.setMetadataLocation(<span class="jxr_string">"eml.xml"</span>);
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>     }
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>     arch.setCore(buildArchiveFile(arch, coreRowType, coreIdTerm));
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>     <strong class="jxr_keyword">for</strong> (Term rowType : <strong class="jxr_keyword">this</strong>.terms.keySet()) {
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>       <strong class="jxr_keyword">if</strong> (!coreRowType.equals(rowType)) {
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>         arch.addExtension(buildArchiveFile(arch, rowType, <strong class="jxr_keyword">null</strong>));
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>       }
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>     }
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>     MetaDescriptorWriter.writeMetaFile(metaFile, arch);
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>   }
-<a class="jxr_linenumber" name="L438" href="#L438">438</a> 
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L440" href="#L440">440</a> <em class="jxr_javadoccomment">   * Build an ArchiveFile for core or extension(s).</em>
-<a class="jxr_linenumber" name="L441" href="#L441">441</a> <em class="jxr_javadoccomment">   *</em>
-<a class="jxr_linenumber" name="L442" href="#L442">442</a> <em class="jxr_javadoccomment">   * @param archive</em>
-<a class="jxr_linenumber" name="L443" href="#L443">443</a> <em class="jxr_javadoccomment">   * @param rowType</em>
-<a class="jxr_linenumber" name="L444" href="#L444">444</a> <em class="jxr_javadoccomment">   * @param idTerm the term of the id column, may be null</em>
-<a class="jxr_linenumber" name="L445" href="#L445">445</a> <em class="jxr_javadoccomment">   * @return</em>
-<a class="jxr_linenumber" name="L446" href="#L446">446</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> buildArchiveFile(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive, Term rowType, Term idTerm) {
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> af = ArchiveFile.buildTabFile();
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>     af.setArchive(archive);
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>     af.addLocation(dataFileNames.get(rowType));
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addConstituents() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>     <strong class="jxr_keyword">if</strong> (!constituents.isEmpty()) {
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>       File ddir = <strong class="jxr_keyword">new</strong> File(dir, Archive.CONSTITUENT_DIR);
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>       ddir.mkdirs();
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>       <strong class="jxr_keyword">for</strong> (Map.Entry&lt;String, Dataset&gt; de : constituents.entrySet()) {
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         writeEml(de.getValue(), <strong class="jxr_keyword">new</strong> File(ddir, de.getKey()+<span class="jxr_string">".xml"</span>));
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>       }
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>     }
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>   }
+<a class="jxr_linenumber" name="L418" href="#L418">418</a> 
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>   <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addMeta() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>     File metaFile = <strong class="jxr_keyword">new</strong> File(dir, Archive.META_FN);
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> 
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>     <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> arch = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a>();
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>     <strong class="jxr_keyword">if</strong> (eml != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>       arch.setMetadataLocation(<span class="jxr_string">"eml.xml"</span>);
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>     }
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>     arch.setCore(buildArchiveFile(arch, coreRowType, coreIdTerm));
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>     <strong class="jxr_keyword">for</strong> (Term rowType : <strong class="jxr_keyword">this</strong>.terms.keySet()) {
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>       <strong class="jxr_keyword">if</strong> (!coreRowType.equals(rowType)) {
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>         arch.addExtension(buildArchiveFile(arch, rowType, <strong class="jxr_keyword">null</strong>));
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>       }
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>     }
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>     MetaDescriptorWriter.writeMetaFile(metaFile, arch);
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>   }
+<a class="jxr_linenumber" name="L434" href="#L434">434</a> 
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L436" href="#L436">436</a> <em class="jxr_javadoccomment">   * Build an ArchiveFile for core or extension(s).</em>
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L438" href="#L438">438</a> <em class="jxr_javadoccomment">   * @param archive</em>
+<a class="jxr_linenumber" name="L439" href="#L439">439</a> <em class="jxr_javadoccomment">   * @param rowType</em>
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> <em class="jxr_javadoccomment">   * @param idTerm the term of the id column, may be null</em>
+<a class="jxr_linenumber" name="L441" href="#L441">441</a> <em class="jxr_javadoccomment">   * @return</em>
+<a class="jxr_linenumber" name="L442" href="#L442">442</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> buildArchiveFile(<a href="../../../../org/gbif/dwca/io/Archive.html">Archive</a> archive, Term rowType, Term idTerm) {
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>     <a href="../../../../org/gbif/dwca/io/ArchiveFile.html">ArchiveFile</a> af = ArchiveFile.buildTabFile();
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>     af.setArchive(archive);
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     af.addLocation(dataFileNames.get(rowType));
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> 
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>     af.setEncoding(<span class="jxr_string">"utf-8"</span>);
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>     af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>     af.setRowType(rowType);
 <a class="jxr_linenumber" name="L451" href="#L451">451</a> 
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>     af.setEncoding(<span class="jxr_string">"utf-8"</span>);
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>     af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>     af.setRowType(rowType);
-<a class="jxr_linenumber" name="L455" href="#L455">455</a> 
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>     <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>();
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>     id.setIndex(0);
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>     af.setId(id);
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>     <em class="jxr_comment">// always use the index 0 for idTerm</em>
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>     <strong class="jxr_keyword">if</strong> (idTerm != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>       af.addField(buildArchiveField(0, idTerm));
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>     }
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>     
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>     Map&lt;Term,String&gt; termDefaultValueMap = defaultValues.get(rowType);
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>     List&lt;Term&gt; rowTypeTerms = terms.get(rowType);
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>     <strong class="jxr_keyword">int</strong> idx = 0;
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>     String defaultValue;
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>     <strong class="jxr_keyword">for</strong> (Term c : rowTypeTerms) {
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>       idx++;
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>       defaultValue = (termDefaultValueMap !=<strong class="jxr_keyword">null</strong> ? termDefaultValueMap.get(c) : <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>       af.addField(buildArchiveField(idx, c, defaultValue));
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>     }
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>     
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>     <em class="jxr_comment">// check if default values are provided for this rowType</em>
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>     <strong class="jxr_keyword">if</strong>(termDefaultValueMap != <strong class="jxr_keyword">null</strong>){
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>       <strong class="jxr_keyword">for</strong> (Term t : termDefaultValueMap.keySet()) {
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>         <strong class="jxr_keyword">if</strong>(!rowTypeTerms.contains(t)){
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>           af.addField(buildArchiveFieldDefaultValue(t, termDefaultValueMap.get(t)));
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>         }
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>       }
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>     }
-<a class="jxr_linenumber" name="L482" href="#L482">482</a> 
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>     <strong class="jxr_keyword">return</strong> af;
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>   }
-<a class="jxr_linenumber" name="L485" href="#L485">485</a> 
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L487" href="#L487">487</a> <em class="jxr_javadoccomment">   * Build an ArchiveField with a defaultValue and no index.</em>
-<a class="jxr_linenumber" name="L488" href="#L488">488</a> <em class="jxr_javadoccomment">   *</em>
-<a class="jxr_linenumber" name="L489" href="#L489">489</a> <em class="jxr_javadoccomment">   * @param term</em>
-<a class="jxr_linenumber" name="L490" href="#L490">490</a> <em class="jxr_javadoccomment">   * @param defaultValue</em>
-<a class="jxr_linenumber" name="L491" href="#L491">491</a> <em class="jxr_javadoccomment">   * @return</em>
-<a class="jxr_linenumber" name="L492" href="#L492">492</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> buildArchiveFieldDefaultValue(Term term, String defaultValue){
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>     Preconditions.checkNotNull(term, <span class="jxr_string">"Can't use a null term"</span>);
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>     Preconditions.checkNotNull(defaultValue, <span class="jxr_string">"Can't use a null defaultValue"</span>);
-<a class="jxr_linenumber" name="L496" href="#L496">496</a> 
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>(term, defaultValue);
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>   }
-<a class="jxr_linenumber" name="L499" href="#L499">499</a> 
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L501" href="#L501">501</a> <em class="jxr_javadoccomment">   * Build an ArchiveField with no defaultValue.</em>
-<a class="jxr_linenumber" name="L502" href="#L502">502</a> <em class="jxr_javadoccomment">   *</em>
-<a class="jxr_linenumber" name="L503" href="#L503">503</a> <em class="jxr_javadoccomment">   * @param idx</em>
-<a class="jxr_linenumber" name="L504" href="#L504">504</a> <em class="jxr_javadoccomment">   * @param term</em>
-<a class="jxr_linenumber" name="L505" href="#L505">505</a> <em class="jxr_javadoccomment">   * @return</em>
-<a class="jxr_linenumber" name="L506" href="#L506">506</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L507" href="#L507">507</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> buildArchiveField(Integer idx, Term term){
-<a class="jxr_linenumber" name="L508" href="#L508">508</a>     <strong class="jxr_keyword">return</strong> buildArchiveField(idx, term, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L509" href="#L509">509</a>   }
-<a class="jxr_linenumber" name="L510" href="#L510">510</a> 
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>   <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L512" href="#L512">512</a> <em class="jxr_javadoccomment">   *</em>
-<a class="jxr_linenumber" name="L513" href="#L513">513</a> <em class="jxr_javadoccomment">   * Build an ArchiveField from optional parameters.</em>
-<a class="jxr_linenumber" name="L514" href="#L514">514</a> <em class="jxr_javadoccomment">   *</em>
-<a class="jxr_linenumber" name="L515" href="#L515">515</a> <em class="jxr_javadoccomment">   * @param idx index or null</em>
-<a class="jxr_linenumber" name="L516" href="#L516">516</a> <em class="jxr_javadoccomment">   * @param term term or null</em>
-<a class="jxr_linenumber" name="L517" href="#L517">517</a> <em class="jxr_javadoccomment">   * @param defaultValue default value or null</em>
-<a class="jxr_linenumber" name="L518" href="#L518">518</a> <em class="jxr_javadoccomment">   * @return</em>
-<a class="jxr_linenumber" name="L519" href="#L519">519</a> <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> buildArchiveField(Integer idx, Term term, String defaultValue){
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>     Preconditions.checkNotNull(idx, <span class="jxr_string">"Can't use a null index"</span>);
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>     Preconditions.checkNotNull(term, <span class="jxr_string">"Can't use a null term"</span>);
-<a class="jxr_linenumber" name="L523" href="#L523">523</a> 
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>     <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>(idx, term);
-<a class="jxr_linenumber" name="L525" href="#L525">525</a> 
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>     <strong class="jxr_keyword">if</strong> (StringUtils.isNotBlank(defaultValue)){
-<a class="jxr_linenumber" name="L527" href="#L527">527</a>       field.setDefaultValue(defaultValue);
-<a class="jxr_linenumber" name="L528" href="#L528">528</a>     }
-<a class="jxr_linenumber" name="L529" href="#L529">529</a>     <strong class="jxr_keyword">return</strong> field;
-<a class="jxr_linenumber" name="L530" href="#L530">530</a>   }
-<a class="jxr_linenumber" name="L531" href="#L531">531</a> }
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>     <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>();
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>     id.setIndex(0);
+<a class="jxr_linenumber" name="L454" href="#L454">454</a>     af.setId(id);
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>     <em class="jxr_comment">// always use the index 0 for idTerm</em>
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>     <strong class="jxr_keyword">if</strong> (idTerm != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>       af.addField(buildArchiveField(0, idTerm));
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>     }
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>     
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>     Map&lt;Term,String&gt; termDefaultValueMap = defaultValues.get(rowType);
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>     List&lt;Term&gt; rowTypeTerms = terms.get(rowType);
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>     <strong class="jxr_keyword">int</strong> idx = 0;
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>     String defaultValue;
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>     <strong class="jxr_keyword">for</strong> (Term c : rowTypeTerms) {
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>       idx++;
+<a class="jxr_linenumber" name="L466" href="#L466">466</a>       defaultValue = (termDefaultValueMap !=<strong class="jxr_keyword">null</strong> ? termDefaultValueMap.get(c) : <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>       af.addField(buildArchiveField(idx, c, defaultValue));
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>     }
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>     
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>     <em class="jxr_comment">// check if default values are provided for this rowType</em>
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>     <strong class="jxr_keyword">if</strong>(termDefaultValueMap != <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>       <strong class="jxr_keyword">for</strong> (Term t : termDefaultValueMap.keySet()) {
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>         <strong class="jxr_keyword">if</strong>(!rowTypeTerms.contains(t)){
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>           af.addField(buildArchiveFieldDefaultValue(t, termDefaultValueMap.get(t)));
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>         }
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>       }
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>     }
+<a class="jxr_linenumber" name="L478" href="#L478">478</a> 
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>     <strong class="jxr_keyword">return</strong> af;
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>   }
+<a class="jxr_linenumber" name="L481" href="#L481">481</a> 
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L483" href="#L483">483</a> <em class="jxr_javadoccomment">   * Build an ArchiveField with a defaultValue and no index.</em>
+<a class="jxr_linenumber" name="L484" href="#L484">484</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L485" href="#L485">485</a> <em class="jxr_javadoccomment">   * @param term</em>
+<a class="jxr_linenumber" name="L486" href="#L486">486</a> <em class="jxr_javadoccomment">   * @param defaultValue</em>
+<a class="jxr_linenumber" name="L487" href="#L487">487</a> <em class="jxr_javadoccomment">   * @return</em>
+<a class="jxr_linenumber" name="L488" href="#L488">488</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> buildArchiveFieldDefaultValue(Term term, String defaultValue){
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>     Preconditions.checkNotNull(term, <span class="jxr_string">"Can't use a null term"</span>);
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>     Preconditions.checkNotNull(defaultValue, <span class="jxr_string">"Can't use a null defaultValue"</span>);
+<a class="jxr_linenumber" name="L492" href="#L492">492</a> 
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>     <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>(term, defaultValue);
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>   }
+<a class="jxr_linenumber" name="L495" href="#L495">495</a> 
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L497" href="#L497">497</a> <em class="jxr_javadoccomment">   * Build an ArchiveField with no defaultValue.</em>
+<a class="jxr_linenumber" name="L498" href="#L498">498</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L499" href="#L499">499</a> <em class="jxr_javadoccomment">   * @param idx</em>
+<a class="jxr_linenumber" name="L500" href="#L500">500</a> <em class="jxr_javadoccomment">   * @param term</em>
+<a class="jxr_linenumber" name="L501" href="#L501">501</a> <em class="jxr_javadoccomment">   * @return</em>
+<a class="jxr_linenumber" name="L502" href="#L502">502</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> buildArchiveField(Integer idx, Term term){
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>     <strong class="jxr_keyword">return</strong> buildArchiveField(idx, term, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>   }
+<a class="jxr_linenumber" name="L506" href="#L506">506</a> 
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>   <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L508" href="#L508">508</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L509" href="#L509">509</a> <em class="jxr_javadoccomment">   * Build an ArchiveField from optional parameters.</em>
+<a class="jxr_linenumber" name="L510" href="#L510">510</a> <em class="jxr_javadoccomment">   *</em>
+<a class="jxr_linenumber" name="L511" href="#L511">511</a> <em class="jxr_javadoccomment">   * @param idx index or null</em>
+<a class="jxr_linenumber" name="L512" href="#L512">512</a> <em class="jxr_javadoccomment">   * @param term term or null</em>
+<a class="jxr_linenumber" name="L513" href="#L513">513</a> <em class="jxr_javadoccomment">   * @param defaultValue default value or null</em>
+<a class="jxr_linenumber" name="L514" href="#L514">514</a> <em class="jxr_javadoccomment">   * @return</em>
+<a class="jxr_linenumber" name="L515" href="#L515">515</a> <em class="jxr_javadoccomment">   */</em>
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>   <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> buildArchiveField(Integer idx, Term term, String defaultValue){
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>     Preconditions.checkNotNull(idx, <span class="jxr_string">"Can't use a null index"</span>);
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>     Preconditions.checkNotNull(term, <span class="jxr_string">"Can't use a null term"</span>);
+<a class="jxr_linenumber" name="L519" href="#L519">519</a> 
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>     <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a> field = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwca/io/ArchiveField.html">ArchiveField</a>(idx, term);
+<a class="jxr_linenumber" name="L521" href="#L521">521</a> 
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>     <strong class="jxr_keyword">if</strong> (StringUtils.isNotBlank(defaultValue)){
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>       field.setDefaultValue(defaultValue);
+<a class="jxr_linenumber" name="L524" href="#L524">524</a>     }
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>     <strong class="jxr_keyword">return</strong> field;
+<a class="jxr_linenumber" name="L526" href="#L526">526</a>   }
+<a class="jxr_linenumber" name="L527" href="#L527">527</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2016 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2017 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>
 </body>
 </html>

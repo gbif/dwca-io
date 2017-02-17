@@ -48,31 +48,38 @@
 <span class="sourceLineNo">040</span>  private MetaDescriptorWriter() {<a name="line.40"></a>
 <span class="sourceLineNo">041</span>  }<a name="line.41"></a>
 <span class="sourceLineNo">042</span><a name="line.42"></a>
-<span class="sourceLineNo">043</span>  public static void writeMetaFile(File f, Archive archive) throws IOException {<a name="line.43"></a>
-<span class="sourceLineNo">044</span>    Writer writer = new FileWriter(f);<a name="line.44"></a>
-<span class="sourceLineNo">045</span>    try {<a name="line.45"></a>
-<span class="sourceLineNo">046</span>      FTL.getTemplate(META_TEMPLATE).process(archive, writer);<a name="line.46"></a>
-<span class="sourceLineNo">047</span>    } catch (TemplateException e) {<a name="line.47"></a>
-<span class="sourceLineNo">048</span>      throw new IOException("Error while processing the meta.xml template", e);<a name="line.48"></a>
-<span class="sourceLineNo">049</span>    }<a name="line.49"></a>
-<span class="sourceLineNo">050</span>    writer.close();<a name="line.50"></a>
-<span class="sourceLineNo">051</span>  }<a name="line.51"></a>
-<span class="sourceLineNo">052</span><a name="line.52"></a>
-<span class="sourceLineNo">053</span>  /**<a name="line.53"></a>
-<span class="sourceLineNo">054</span>   * Provides a freemarker template loader. It is configured to access the utf8 templates folder on the classpath, i.e.<a name="line.54"></a>
-<span class="sourceLineNo">055</span>   * /src/resources/templates<a name="line.55"></a>
-<span class="sourceLineNo">056</span>   */<a name="line.56"></a>
-<span class="sourceLineNo">057</span>  private static Configuration provideFreemarker() {<a name="line.57"></a>
-<span class="sourceLineNo">058</span>    // load templates from classpath by prefixing /templates<a name="line.58"></a>
-<span class="sourceLineNo">059</span>    TemplateLoader tl = new ClassTemplateLoader(EMLWriter.class, TEMPLATE_PATH);<a name="line.59"></a>
-<span class="sourceLineNo">060</span><a name="line.60"></a>
-<span class="sourceLineNo">061</span>    Configuration fm = new Configuration();<a name="line.61"></a>
-<span class="sourceLineNo">062</span>    fm.setDefaultEncoding("utf8");<a name="line.62"></a>
-<span class="sourceLineNo">063</span>    fm.setTemplateLoader(tl);<a name="line.63"></a>
-<span class="sourceLineNo">064</span><a name="line.64"></a>
-<span class="sourceLineNo">065</span>    return fm;<a name="line.65"></a>
-<span class="sourceLineNo">066</span>  }<a name="line.66"></a>
-<span class="sourceLineNo">067</span>}<a name="line.67"></a>
+<span class="sourceLineNo">043</span>  /**<a name="line.43"></a>
+<span class="sourceLineNo">044</span>   * Writes the archive descriptor to meta.xml within the archive location<a name="line.44"></a>
+<span class="sourceLineNo">045</span>   */<a name="line.45"></a>
+<span class="sourceLineNo">046</span>  public static void writeMetaFile(Archive archive) throws IOException {<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    writeMetaFile(new File(archive.getLocation(), Archive.META_FN), archive);<a name="line.47"></a>
+<span class="sourceLineNo">048</span>  }<a name="line.48"></a>
+<span class="sourceLineNo">049</span><a name="line.49"></a>
+<span class="sourceLineNo">050</span>  public static void writeMetaFile(File f, Archive archive) throws IOException {<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    Writer writer = new FileWriter(f);<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    try {<a name="line.52"></a>
+<span class="sourceLineNo">053</span>      FTL.getTemplate(META_TEMPLATE).process(archive, writer);<a name="line.53"></a>
+<span class="sourceLineNo">054</span>    } catch (TemplateException e) {<a name="line.54"></a>
+<span class="sourceLineNo">055</span>      throw new IOException("Error while processing the meta.xml template", e);<a name="line.55"></a>
+<span class="sourceLineNo">056</span>    }<a name="line.56"></a>
+<span class="sourceLineNo">057</span>    writer.close();<a name="line.57"></a>
+<span class="sourceLineNo">058</span>  }<a name="line.58"></a>
+<span class="sourceLineNo">059</span><a name="line.59"></a>
+<span class="sourceLineNo">060</span>  /**<a name="line.60"></a>
+<span class="sourceLineNo">061</span>   * Provides a freemarker template loader. It is configured to access the utf8 templates folder on the classpath, i.e.<a name="line.61"></a>
+<span class="sourceLineNo">062</span>   * /src/resources/templates<a name="line.62"></a>
+<span class="sourceLineNo">063</span>   */<a name="line.63"></a>
+<span class="sourceLineNo">064</span>  private static Configuration provideFreemarker() {<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    // load templates from classpath by prefixing /templates<a name="line.65"></a>
+<span class="sourceLineNo">066</span>    TemplateLoader tl = new ClassTemplateLoader(EMLWriter.class, TEMPLATE_PATH);<a name="line.66"></a>
+<span class="sourceLineNo">067</span><a name="line.67"></a>
+<span class="sourceLineNo">068</span>    Configuration fm = new Configuration();<a name="line.68"></a>
+<span class="sourceLineNo">069</span>    fm.setDefaultEncoding("utf8");<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    fm.setTemplateLoader(tl);<a name="line.70"></a>
+<span class="sourceLineNo">071</span><a name="line.71"></a>
+<span class="sourceLineNo">072</span>    return fm;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>  }<a name="line.73"></a>
+<span class="sourceLineNo">074</span>}<a name="line.74"></a>
 
 
 

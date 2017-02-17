@@ -45,7 +45,7 @@
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>    }
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> hasExtension(Term rowType) {
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">return</strong> extensions.containsKey(rowType);
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">return</strong> extensions.containsKey(rowType) &amp;&amp; !extensions.get(rowType).isEmpty();
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>    }
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    <em class="jxr_javadoccomment">/**</em>
@@ -107,6 +107,6 @@
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2016 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2017 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>
 </body>
 </html>
