@@ -16,20 +16,21 @@
 
 package org.gbif.dwca.record;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.PeekingIterator;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.io.ArchiveField;
 import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.io.CSVReaderFactory;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.csv.CSVReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RecordIterator implements ClosableIterator<Record> {
 
@@ -78,8 +79,13 @@ public class RecordIterator implements ClosableIterator<Record> {
     return null;
   }
 
+  @Override
   public void close() {
-    closable.close();
+    try {
+      closable.close();
+    } catch (Exception e) {
+      LOG.debug("Can't close ClosableIterator", e);
+    }
   }
 
   public boolean hasNext() {

@@ -18,13 +18,8 @@ package org.gbif.io;
 
 import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.utils.file.csv.CSVReader;
-import org.gbif.utils.file.csv.UnkownDelimitersException;
 
-import java.io.File;
 import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Available for backward compatibility only.
@@ -33,44 +28,9 @@ import org.slf4j.LoggerFactory;
  */
 public class CSVReaderFactory {
 
-  private static final Logger LOG = LoggerFactory.getLogger(CSVReaderFactory.class);
-
   public static CSVReader build(ArchiveFile source) throws IOException {
     return new CSVReader(source.getLocationFile(), source.getEncoding(), source.getFieldsTerminatedBy(),
             source.getFieldsEnclosedBy(), source.getIgnoreHeaderLines());
-  }
-
-  /**
-   * Available for backward compatibility
-   * @param source
-   * @param encoding
-   * @return
-   * @throws UnkownDelimitersException
-   */
-  private static ArchiveFile buildArchiveFile(File source, String encoding) throws UnkownDelimitersException {
-    ArchiveFile dwcFile = new ArchiveFile();
-    // add file
-    dwcFile.addLocation(source.getAbsolutePath());
-
-    // detect character encoding
-    dwcFile.setEncoding(encoding);
-
-    // set header row to 1
-    dwcFile.setIgnoreHeaderLines(1);
-
-    org.gbif.utils.file.csv.CSVReaderFactory.CSVMetadata csvMetadata = org.gbif.utils.file.csv.CSVReaderFactory.extractCsvMetadata(source, encoding);
-
-    dwcFile.setFieldsTerminatedBy(csvMetadata.getDelimiter());
-    dwcFile.setFieldsEnclosedBy(csvMetadata.getQuotedBy());
-
-
-    String msg = "Detected field delimiter >>>" + dwcFile.getFieldsTerminatedBy() + "<<<";
-    if (dwcFile.getFieldsEnclosedBy() != null) {
-      msg += " and quoted by >>>" + dwcFile.getFieldsEnclosedBy() + "<<<";
-    }
-    LOG.debug(msg);
-
-    return dwcFile;
   }
 
 }

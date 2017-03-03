@@ -28,7 +28,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ArchiveFile implements Iterable<Record> {
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
+  public static final Term DEFAULT_ID_TERM = TermFactory.instance().findTerm("ARCHIVE_RECORD_ID");
 
   public class ArchiveFieldIndexComparator implements Comparator<ArchiveField> {
 
@@ -147,10 +150,37 @@ public class ArchiveFile implements Iterable<Record> {
     return fieldsEnclosedBy;
   }
 
+  /**
+   *
+   * @return
+   */
   public List<ArchiveField> getFieldsSorted() {
     List<ArchiveField> list = new ArrayList<ArchiveField>(fields.values());
     Collections.sort(list, new ArchiveFieldIndexComparator());
     return list;
+  }
+
+  /**
+   * Generates an ordered array representing all the {@link Term} matching the position in the underlying file.
+   * The array can contain {@code null} if no {@link Term} is mapped at a specific position.
+   * The size of the array is defined by the maximum index used within {@link ArchiveField} + 1 (since indices are 0 based).
+   * @return
+   */
+  public Term[] getHeader() {
+    List<ArchiveField> archiveFieldsWithIndex = getFieldsSorted()
+            .stream().filter(af -> af.getIndex() != null)
+            .collect(Collectors.toList());
+
+    Optional<Integer> idIndex = id != null ? Optional.of(id.getIndex()) : Optional.empty();
+    int maxIndex = archiveFieldsWithIndex.stream()
+            .mapToInt(ArchiveField::getIndex).max().getAsInt();
+    maxIndex = Math.max(maxIndex, idIndex.orElse(-1));
+
+    Term[] terms = new Term[maxIndex + 1];
+    // handle id column, assign default Term, it will be rewritten below if assigned to a term
+    idIndex.ifPresent( idx -> terms[idx] = DEFAULT_ID_TERM);
+    archiveFieldsWithIndex.stream().forEach(af -> terms[af.getIndex()] = af.getTerm());
+    return terms;
   }
 
   public String getFieldsTerminatedBy() {

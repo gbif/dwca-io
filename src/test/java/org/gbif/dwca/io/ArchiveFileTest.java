@@ -17,10 +17,7 @@
 package org.gbif.dwca.io;
 
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveFactory;
-import org.gbif.dwca.io.ArchiveFile;
-import org.gbif.dwca.io.UnsupportedArchiveException;
+import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.utils.file.FileUtils;
 
@@ -30,6 +27,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ArchiveFileTest {
@@ -66,4 +64,26 @@ public class ArchiveFileTest {
     assertTrue(af.getRowType().equals(DwcTerm.Occurrence));
     assertTrue(af.getRowType().qualifiedName().equals(DwcTerm.Occurrence.qualifiedName()));
   }
+
+  @Test
+  public void testGetHeader() throws UnsupportedArchiveException, IOException {
+    Term[] header = extractCoreHeader("archive-dwc/DarwinCore.txt");
+    assertEquals(12, header.length);
+    assertEquals(DwcTerm.scientificName, header[2]);
+  }
+
+  @Test
+  public void testIdWithTermAssociated() throws UnsupportedArchiveException, IOException {
+    Term[] header = extractCoreHeader("meta-xml-variants/dwca-id-with-term");
+    assertEquals(5, header.length);
+    assertEquals(DwcTerm.occurrenceID, header[0]);
+    assertNull(header[3]);
+  }
+
+  private Term[] extractCoreHeader(String testFilePath) throws IOException {
+    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(testFilePath));
+    ArchiveFile core = arch.getCore();
+    return core.getHeader();
+  }
+
 }

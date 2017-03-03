@@ -182,10 +182,15 @@ public class Archive implements Iterable<StarRecord> {
       return iter;
     }
 
+    @Override
     public void close() {
       coreIter.close();
       for (ClosableIterator<Record> it : closables) {
-        it.close();
+        try {
+          it.close();
+        } catch (Exception e) {
+          LOG.debug("Can't close ClosableIterator", e);
+        }
       }
       for (Map.Entry<Term, Integer> stringIntegerEntry : extensionRecordsSkipped.entrySet()) {
         Integer skipped = stringIntegerEntry.getValue();
@@ -259,6 +264,11 @@ public class Archive implements Iterable<StarRecord> {
     return core;
   }
 
+  /**
+   * Get an extension by its rowType.
+   * @param rowType
+   * @return ArchiveFile or {@code null} is not found
+   */
   public ArchiveFile getExtension(Term rowType) {
     for (ArchiveFile af : extensions) {
       if (af.getRowType() != null && af.getRowType().equals(rowType)) {

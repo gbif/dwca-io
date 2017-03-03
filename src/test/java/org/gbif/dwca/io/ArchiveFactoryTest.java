@@ -1,16 +1,14 @@
 package org.gbif.dwca.io;
 
-import com.google.common.collect.Sets;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.io.CSVReaderFactory;
+import org.gbif.utils.collection.IterableUtils;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.csv.CSVReader;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,7 +19,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import com.google.common.collect.Sets;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ArchiveFactoryTest {
 
@@ -252,7 +258,7 @@ public class ArchiveFactoryTest {
     // read extension file on its own and extract core ids to be cross checked with core id set
     CSVReader occReader = CSVReaderFactory.build(arch.getExtension(DwcTerm.Occurrence));
     int occCounter2 = 0;
-    for (String[] rec : occReader) {
+    for (String[] rec : IterableUtils.iterable(occReader)) {
       String id = rec[1];
       occCounter2++;
       assertTrue("Occurrence coreid " + id + " not existing", ids.contains(id));
