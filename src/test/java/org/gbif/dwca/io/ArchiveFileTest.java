@@ -22,14 +22,20 @@ import org.gbif.dwca.record.Record;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * Unit test related to {@link ArchiveFile}.
+ */
 public class ArchiveFileTest {
 
   @Test
@@ -67,23 +73,40 @@ public class ArchiveFileTest {
 
   @Test
   public void testGetHeader() throws UnsupportedArchiveException, IOException {
-    Term[] header = extractCoreHeader("archive-dwc/DarwinCore.txt");
+    ArchiveFile core = getCore("archive-dwc/DarwinCore.txt");
+    Term[] header = core.getHeader();
     assertEquals(12, header.length);
     assertEquals(DwcTerm.scientificName, header[2]);
   }
 
   @Test
   public void testIdWithTermAssociated() throws UnsupportedArchiveException, IOException {
-    Term[] header = extractCoreHeader("meta-xml-variants/dwca-id-with-term");
+    ArchiveFile core = getCore("meta-xml-variants/dwca-id-with-term");
+    Term[] header = core.getHeader();
     assertEquals(5, header.length);
     assertEquals(DwcTerm.occurrenceID, header[0]);
     assertNull(header[3]);
   }
 
-  private Term[] extractCoreHeader(String testFilePath) throws IOException {
+  @Test
+  public void testDefaultValues() throws UnsupportedArchiveException, IOException {
+    ArchiveFile core = getCore("meta-xml-variants/dwca-id-with-term");
+    Optional<Map<Term, String>> defaultValues = core.getDefaultValues();
+    assertTrue(defaultValues.isPresent());
+    assertEquals("Plantae", defaultValues.get().get(DwcTerm.kingdom));
+  }
+
+  @Test
+  public void testEmptyArchiveFile() {
+    ArchiveFile archiveFile = new ArchiveFile();
+    Term[] header = archiveFile.getHeader();
+    assertNotNull(header);
+    assertFalse(archiveFile.getDefaultValues().isPresent());
+  }
+
+  private ArchiveFile getCore(String testFilePath) throws IOException {
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(testFilePath));
-    ArchiveFile core = arch.getCore();
-    return core.getHeader();
+    return arch.getCore();
   }
 
 }

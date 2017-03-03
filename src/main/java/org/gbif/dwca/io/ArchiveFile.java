@@ -76,7 +76,7 @@ public class ArchiveFile implements Iterable<Record> {
 
   private String dateFormat = "YYYY-MM-DD";
 
-  private Map<Term, ArchiveField> fields = new HashMap<Term, ArchiveField>();
+  private final Map<Term, ArchiveField> fields = new HashMap<Term, ArchiveField>();
 
   public static ArchiveFile buildCsvFile() {
     ArchiveFile af = new ArchiveFile();
@@ -163,8 +163,10 @@ public class ArchiveFile implements Iterable<Record> {
   /**
    * Generates an ordered array representing all the {@link Term} matching the position in the underlying file.
    * The array can contain {@code null} if no {@link Term} is mapped at a specific position.
-   * The size of the array is defined by the maximum index used within {@link ArchiveField} + 1 (since indices are 0 based).
-   * @return
+   * The size of the array is defined by the maximum index used within {@link ArchiveField} + 1 (since indices are 0
+   * based).
+   *
+   * @return Array of {@link Term} representing the header or an empty Array if no headers are present.
    */
   public Term[] getHeader() {
     List<ArchiveField> archiveFieldsWithIndex = getFieldsSorted()
@@ -172,15 +174,33 @@ public class ArchiveFile implements Iterable<Record> {
             .collect(Collectors.toList());
 
     Optional<Integer> idIndex = id != null ? Optional.of(id.getIndex()) : Optional.empty();
+
+    if(archiveFieldsWithIndex.isEmpty() && !idIndex.isPresent()){
+      return new Term[0];
+    }
+
     int maxIndex = archiveFieldsWithIndex.stream()
             .mapToInt(ArchiveField::getIndex).max().getAsInt();
     maxIndex = Math.max(maxIndex, idIndex.orElse(-1));
 
     Term[] terms = new Term[maxIndex + 1];
     // handle id column, assign default Term, it will be rewritten below if assigned to a term
-    idIndex.ifPresent( idx -> terms[idx] = DEFAULT_ID_TERM);
+    idIndex.ifPresent(idx -> terms[idx] = DEFAULT_ID_TERM);
     archiveFieldsWithIndex.stream().forEach(af -> terms[af.getIndex()] = af.getTerm());
     return terms;
+  }
+
+  /**
+   * Get default values mapped to their {@link Term} (if any).
+   *
+   * @return default values or {@code Optional.empty()} if none
+   */
+  public Optional<Map<Term, String>> getDefaultValues() {
+    //check if there is default value(s) defined by the absence of index
+    Map<Term, String> defaultValues = fields.values().stream()
+            .filter(af -> af.getIndex() == null)
+            .collect(Collectors.toMap(k -> k.getTerm(), v -> v.getDefaultValue()));
+    return defaultValues.isEmpty() ? Optional.empty() : Optional.of(defaultValues);
   }
 
   public String getFieldsTerminatedBy() {
