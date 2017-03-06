@@ -1,5 +1,7 @@
 package org.gbif.io;
 
+import org.gbif.util.DownloadUtil;
+
 import java.io.File;
 
 import org.junit.Test;

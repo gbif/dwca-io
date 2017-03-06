@@ -5,7 +5,7 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
-import org.gbif.io.CSVReaderFactory;
+import org.gbif.util.CSVReaderHelper;
 import org.gbif.utils.collection.IterableUtils;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
@@ -260,7 +260,7 @@ public class ArchiveFactoryTest {
     assertEquals("Core taxon file has 356 unique ids", 356, ids.size());
 
     // read extension file on its own and extract core ids to be cross checked with core id set
-    CSVReader occReader = CSVReaderFactory.build(arch.getExtension(DwcTerm.Occurrence));
+    CSVReader occReader = CSVReaderHelper.build(arch.getExtension(DwcTerm.Occurrence));
     int occCounter2 = 0;
     for (String[] rec : IterableUtils.iterable(occReader)) {
       String id = rec[1];

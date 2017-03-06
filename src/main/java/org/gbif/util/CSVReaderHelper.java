@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright 2010 Global Biodiversity Information Facility Secretariat
+ * Copyright 2010-2017 Global Biodiversity Information Facility Secretariat
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -14,7 +14,7 @@
  * the License.
  ***************************************************************************/
 
-package org.gbif.io;
+package org.gbif.util;
 
 import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.utils.file.csv.CSVReader;
@@ -22,11 +22,10 @@ import org.gbif.utils.file.csv.CSVReader;
 import java.io.IOException;
 
 /**
- * Available for backward compatibility only.
+ * Helper class to get {@link CSVReader} instances from {@link ArchiveFile}.
  *
- * Use org.gbif.utils.file.csv.CSVReaderFactory instead
  */
-public class CSVReaderFactory {
+public class CSVReaderHelper {
 
   public static CSVReader build(ArchiveFile source) throws IOException {
     return new CSVReader(source.getLocationFile(), source.getEncoding(), source.getFieldsTerminatedBy(),

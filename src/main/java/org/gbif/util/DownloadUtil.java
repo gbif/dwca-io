@@ -1,4 +1,4 @@
-package org.gbif.io;
+package org.gbif.util;
 
 import java.io.File;
 import java.io.FileOutputStream;

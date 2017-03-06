@@ -17,7 +17,7 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.io.ArchiveField.DataType;
-import org.gbif.io.DownloadUtil;
+import org.gbif.util.DownloadUtil;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.csv.CSVReader;
 import org.gbif.utils.file.csv.CSVReaderFactory;
