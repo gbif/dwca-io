@@ -31,13 +31,17 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
@@ -49,8 +53,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.input.BOMInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 /**
  * Factory used to build {@link Archive} object from a DarwinCore Archive file.
@@ -66,182 +68,24 @@ public class ArchiveFactory {
   private static final List<String> DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
 
   /**
-   * SAX handler to parse a meta.xml descriptor for dwc archives. It populates a given archive instance and ignores
-   * namespaces. The parser needs to be namespace aware!
+   * Predefined mapping between {@link Term} and its rowType.
+   * Ordering is important since the first found will be used.
    */
-  static class MetaHandler extends SimpleSaxHandler {
-
-    private static final String NS_DWCA = "http://rs.tdwg.org/dwc/text/";
-
-      private Archive archive;
-    private ArchiveFile af;
-
-    protected MetaHandler(Archive archive) {
-      this.archive = archive;
-    }
-
-    private static Character getFirstChar(String x) throws UnsupportedArchiveException {
-      if (x == null || x.length() == 0) {
-        return null;
-      }
-      if (x.length() == 1) {
-        return x.charAt(0);
-      }
-      if (x.equalsIgnoreCase("\\t")) {
-        return '\t';
-      }
-      if (x.equalsIgnoreCase("\\n")) {
-        return '\n';
-      }
-      if (x.equalsIgnoreCase("\\r")) {
-        return '\r';
-      }
-      if (x.length() > 1) {
-        throw new UnsupportedArchiveException(
-          "Only darwin core archives with a single quotation character are supported, but found >>>" + x + "<<<");
-      }
-      return ' ';
-    }
-
-    private static String unescapeBackslash(String x) {
-      if (x == null || x.length() == 0) {
-        return null;
-      }
-      return x.replaceAll("\\\\t", String.valueOf('\t')).replaceAll("\\\\n", String.valueOf('\n'))
-        .replaceAll("\\\\r", String.valueOf('\r')).replaceAll("\\\\f", String.valueOf('\f'));
-    }
-
-    private ArchiveFile buildArchiveFile(Attributes attr) throws UnsupportedArchiveException {
-      ArchiveFile dwcFile = new ArchiveFile();
-
-      // extract the File attributes
-      if (getAttr(attr, "encoding") != null) {
-        dwcFile.setEncoding(getAttr(attr, "encoding"));
-      }
-      if (getAttr(attr, "fieldsTerminatedBy") != null) {
-        dwcFile.setFieldsTerminatedBy(unescapeBackslash(getAttr(attr, "fieldsTerminatedBy")));
-      }
-      if (getAttr(attr, "fieldsEnclosedBy") != null) {
-        dwcFile.setFieldsEnclosedBy(getFirstChar(getAttr(attr, "fieldsEnclosedBy")));
-      }
-      if (getAttr(attr, "linesTerminatedBy") != null) {
-        dwcFile.setLinesTerminatedBy(unescapeBackslash(getAttr(attr, "linesTerminatedBy")));
-      }
-      if (getAttr(attr, "rowType") != null) {
-        dwcFile.setRowType(TERM_FACTORY.findTerm(getAttr(attr, "rowType")));
-      }
-      String ignoreHeaderLines = getAttr(attr, "ignoreHeaderLines");
-      try {
-        dwcFile.setIgnoreHeaderLines(Integer.parseInt(ignoreHeaderLines));
-      } catch (NumberFormatException ignored) { // swallow null or bad value
-      }
-      return dwcFile;
-    }
-
-    /**
-     * Build an ArchiveField object based on xml attributes.
-     */
-    private ArchiveField buildField(Attributes attributes) {
-      // build field
-      Term term = TERM_FACTORY.findTerm(getAttr(attributes, "term"));
-      String defaultValue = getAttr(attributes, "default");
-      String vocabulary = getAttr(attributes, "vocabulary");
-      DataType type = DataType.findByXmlSchemaType(getAttr(attributes, "type"));
-      if (type == null) {
-        type = DataType.string;
-      }
-      String indexAsString = getAttr(attributes, "index");
-      Integer index = null;
-      if (indexAsString != null) {
-        // let bad errors be thrown up
-        try {
-          index = Integer.parseInt(indexAsString);
-        } catch (NumberFormatException e) {
-          throw new UnsupportedArchiveException(e);
-        }
-      }
-      String delimiter = getAttr(attributes, "delimitedBy");
-      return new ArchiveField(index, term, defaultValue, type, delimiter, vocabulary);
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-      // calling the super method to stringify the character buffer
-      super.endElement(uri, localName, qName);
-
-      if (localName.equalsIgnoreCase("archive")) {
-        // archive
-      } else if (localName.equalsIgnoreCase("core")) {
-        // update location to absolute path incl archive path
-        //      makeLocationPathsAbsolute(af, archive.getLocation());
-        archive.setCore(af);
-      } else if (localName.equalsIgnoreCase("extension")) {
-        // update location to absolute path incl archive path
-        //      makeLocationPathsAbsolute(af, archive.getLocation());
-
-        if (af.getId() != null && af.getId().getIndex() != null) {
-          archive.addExtension(af);
-        } else {
-          log.warn("Skipping extension [" + af.getRowType() + "] with no index attribute");
-        }
-      } else if (localName.equalsIgnoreCase("location")) {
-        // a file location
-        af.addLocation(content);
-      }
-
-    }
-
-    /**
-     * Get attribute from a key
-     * 
-     * @param attributes
-     * @param key
-     * @return attributes value or null
-     */
-    private String getAttr(Attributes attributes, String key) {
-      String val = null;
-      if (attributes != null) {
-        // try without NS
-        val = attributes.getValue("", key);
-        if (val == null) {
-          // try with dwca NS if nothing found
-          val = attributes.getValue(NS_DWCA, key);
-        }
-      }
-      return Strings.isNullOrEmpty(val) ? null : val;
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      super.startElement(uri, localName, qName, attributes);
-      if (localName.equalsIgnoreCase("archive") || localName.equalsIgnoreCase("stararchive")) {
-        // metadata location
-        archive.setMetadataLocation(getAttr(attributes, "metadata"));
-      } else if (localName.equalsIgnoreCase("core") || localName.equalsIgnoreCase("extension")) {
-        // archive/extension
-        af = new ArchiveFile();
-        if (localName.equalsIgnoreCase("core") || localName.equalsIgnoreCase("extension")) {
-          // archive/core or archive/extension
-          af = buildArchiveFile(attributes);
-        }
-      } else if (localName.equalsIgnoreCase("coreid") || localName.equalsIgnoreCase("id")) {
-        ArchiveField field = buildField(attributes);
-        if (af != null) {
-          af.setId(field);
-        } else {
-          log.warn(localName + " field found outside of an archive file");
-        }
-      } else if (localName.equalsIgnoreCase("field")) {
-        ArchiveField field = buildField(attributes);
-        if (af != null) {
-          af.addField(field);
-        } else {
-          log.warn("field found outside of an archive file");
-        }
-      }
-    }
-
+  private static final Map<Term, Term> TERM_TO_ROW_TYPE;
+  static {
+    Map<Term, Term> idToRowType = new LinkedHashMap<>();
+    idToRowType.put(DwcTerm.occurrenceID, DwcTerm.Occurrence);
+    idToRowType.put(DwcTerm.taxonID, DwcTerm.Taxon);
+    idToRowType.put(DwcTerm.eventID, DwcTerm.Event);
+    TERM_TO_ROW_TYPE = Collections.unmodifiableMap(idToRowType);
   }
+
+  /**
+   * Terms that can represent an identifier within a file
+   */
+  private static final List<Term> ID_TERMS = Collections.unmodifiableList(
+          Arrays.asList(DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.eventID, DcTerm.identifier));
+
 
   private static final SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();
 
@@ -412,16 +256,16 @@ public class ArchiveFactory {
     dwcFile.addLocation(null);
     dwcFile.setIgnoreHeaderLines(1);
 
-    CSVReader reader = CSVReaderFactory.build(dataFile);
-
-    // copy found delimiters & encoding
-    dwcFile.setEncoding(reader.encoding);
-    dwcFile.setFieldsTerminatedBy(reader.delimiter);
-    dwcFile.setFieldsEnclosedBy(reader.quoteChar);
+    String[] headers;
+    try (CSVReader reader = CSVReaderFactory.build(dataFile)) {
+      // copy found delimiters & encoding
+      dwcFile.setEncoding(reader.encoding);
+      dwcFile.setFieldsTerminatedBy(reader.delimiter);
+      dwcFile.setFieldsEnclosedBy(reader.quoteChar);
+      headers = reader.getHeader();
+    }
 
     // detect dwc terms as good as we can based on header row
-    String[] headers = reader.header;
-    reader.close();
     int index = 0;
     for (String head : headers) {
       // there are never any quotes in term names - remove them just in case the csvreader didnt recognize them
@@ -429,24 +273,6 @@ public class ArchiveFactory {
         try {
           Term dt = TERM_FACTORY.findTerm(head);
           ArchiveField field = new ArchiveField(index, dt, null, DataType.string);
-          if (dwcFile.getId() == null && (dt.equals(DwcTerm.occurrenceID) || dt.equals(DwcTerm.taxonID) || dt
-            .equals(DwcTerm.eventID) || dt.equals(DcTerm.identifier))) {
-            dwcFile.setId(field);
-
-            // Set the rowType corresponding to the type of id encountered (e.g. dwc:Taxon for taxonID).
-            // Please note the ordering of ids is important, and the first id encountered will be used
-            // unless the generic id (dc:identifier) was encountered first.
-            // Ideally only one id will be used per rowType anyways.
-            if (dwcFile.getRowType() == null && dwcFile.getId().getTerm() != DcTerm.identifier) {
-              if (dt.equals(DwcTerm.occurrenceID)) {
-                dwcFile.setRowType(DwcTerm.Occurrence);
-              } else if (dt.equals(DwcTerm.taxonID)) {
-                dwcFile.setRowType(DwcTerm.Taxon);
-              } else if (dt.equals(DwcTerm.eventID)) {
-                dwcFile.setRowType(DwcTerm.Event);
-              }
-            }
-          }
           dwcFile.addField(field);
         } catch (IllegalArgumentException e) {
           LOG.warn("Illegal term name >>{}<< found in header, ignore column {}", head, index);
@@ -455,6 +281,17 @@ public class ArchiveFactory {
       index++;
     }
 
+    List<Term> headerAsTerm = dwcFile.getFields().keySet()
+            .stream()
+            .collect(Collectors.toList());
+
+    determineRecordIdentifier(headerAsTerm).ifPresent(
+            t -> dwcFile.setId(dwcFile.getField(t))
+    );
+
+    determineRowType(headerAsTerm).ifPresent(
+            t -> dwcFile.setRowType(t)
+    );
     return dwcFile;
   }
 
@@ -463,7 +300,7 @@ public class ArchiveFactory {
 
     try {
       SAXParser p = SAX_FACTORY.newSAXParser();
-      MetaHandler mh = new MetaHandler(archive);
+      MetaXMLSaxHandler mh = new MetaXMLSaxHandler(archive);
       LOG.debug("Reading archive metadata file");
       p.parse(new BOMInputStream(metaDescriptor), mh);
     } catch (Exception e1) {
@@ -511,7 +348,33 @@ public class ArchiveFactory {
     if (f.getEncoding() == null) {
       throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a character encoding");
     }
+  }
 
+  /**
+   * Tries to determine the rowType of a file based on its headers.
+   *
+   * @param headers
+   *
+   * @return
+   */
+  static Optional<Term> determineRowType(List<Term> headers) {
+    return TERM_TO_ROW_TYPE.entrySet().stream()
+            .filter(ke -> headers.contains(ke.getKey()))
+            .map(Map.Entry::getValue).findFirst();
+  }
+
+  /**
+   * Tries to determine the record identifier of a file based on its headers.
+   *
+   * @param headers the list can contain null value when a column is used but the Term is undefined
+   *
+   * @return
+   */
+  static Optional<Term> determineRecordIdentifier(List<Term> headers) {
+    //try to find the first matching term respecting the order defined by ID_TERMS
+    return ID_TERMS.stream()
+            .filter(t -> headers.contains(t))
+            .findFirst();
   }
 
 }

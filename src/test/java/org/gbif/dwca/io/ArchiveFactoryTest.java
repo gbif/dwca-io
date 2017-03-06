@@ -2,6 +2,7 @@ package org.gbif.dwca.io;
 
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.io.CSVReaderFactory;
@@ -15,14 +16,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -97,7 +101,7 @@ public class ArchiveFactoryTest {
 
     boolean found = false;
     for (Record rec : arch.getCore()) {
-      if ("18728553".equals(rec.id())) {
+      if ("ENNH0192".equals(rec.id())) {
         found = true;
         assertEquals("Martins Wood, Ightham", rec.value(DwcTerm.locality));
       }
@@ -576,20 +580,48 @@ public class ArchiveFactoryTest {
 
   /**
    * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term
-   * gets set to dc:identifier, but its rowType never gets set.
+   * gets set to (DwcTerm.eventID and its rowType gets set to DwcTerm.Event.
    */
   @Test
   public void testOpenArchiveForGenericCore() throws IOException, UnsupportedArchiveException {
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event-plus-id.txt"));
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
-    assertEquals(DcTerm.identifier, arch.getCore().getId().getTerm());
-    assertNull(arch.getCore().getRowType());
+    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());
+    assertEquals(DwcTerm.Event, arch.getCore().getRowType());
     assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));
     assertEquals(0, arch.getExtensions().size());
     Iterator<StarRecord> dwci = arch.iterator();
     StarRecord star = dwci.next();
     assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));
     assertNull(arch.getCore().getLocation());
+  }
+
+  @Test
+  public void testDetermineRowType() {
+    Optional<Term> rowType = ArchiveFactory
+            .determineRowType(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
+    assertEquals(DwcTerm.Occurrence, rowType.get());
+  }
+
+  @Test
+  public void testDetermineRecordIdentifier() {
+    Optional<Term> id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
+    assertEquals(DwcTerm.occurrenceID, id.get());
+
+    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.taxonID, DwcTerm.scientificName));
+    assertEquals(DwcTerm.taxonID, id.get());
+
+    //eventId should be picked even if taxonID is there
+    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.eventID, DwcTerm.scientificName, DwcTerm.taxonID));
+    assertEquals(DwcTerm.taxonID, id.get());
+
+    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName,
+            DcTerm.identifier));
+    assertEquals(DcTerm.identifier, id.get());
+
+    //eventId should be picked even if taxonID is there
+    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName, DwcTerm.decimalLatitude));
+    assertFalse(id.isPresent());
   }
 }
