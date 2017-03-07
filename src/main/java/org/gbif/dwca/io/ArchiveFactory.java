@@ -351,29 +351,29 @@ public class ArchiveFactory {
   }
 
   /**
-   * Tries to determine the rowType of a file based on its headers.
+   * Tries to determine the rowType based on a list of {@link Term}.
    *
-   * @param headers
+   * @param terms the list can contain null values
    *
-   * @return
+   * @return {@link Term} as {@code Optional} or {@code Optional.empty()} if can not be determined
    */
-  static Optional<Term> determineRowType(List<Term> headers) {
+  static Optional<Term> determineRowType(List<Term> terms) {
     return TERM_TO_ROW_TYPE.entrySet().stream()
-            .filter(ke -> headers.contains(ke.getKey()))
+            .filter(ke -> terms.contains(ke.getKey()))
             .map(Map.Entry::getValue).findFirst();
   }
 
   /**
-   * Tries to determine the record identifier of a file based on its headers.
+   * Tries to determine the record identifier based on a list of {@link Term}.
    *
-   * @param headers the list can contain null value when a column is used but the Term is undefined
+   * @param terms the list can contain null values
    *
-   * @return
+   * @return {@link Term} as {@code Optional} or {@code Optional.empty()} if can not be determined
    */
-  static Optional<Term> determineRecordIdentifier(List<Term> headers) {
+  static Optional<Term> determineRecordIdentifier(List<Term> terms) {
     //try to find the first matching term respecting the order defined by ID_TERMS
     return ID_TERMS.stream()
-            .filter(t -> headers.contains(t))
+            .filter(t -> terms.contains(t))
             .findFirst();
   }
 
