@@ -197,9 +197,9 @@ public class ArchiveFile implements Iterable<Record> {
    * @return default values or {@code Optional.empty()} if none
    */
   public Optional<Map<Term, String>> getDefaultValues() {
-    //check if there is default value(s) defined by the absence of index
+    //check if there is default value(s) defined (look for absence of index)
     Map<Term, String> defaultValues = fields.values().stream()
-            .filter(af -> af.getIndex() == null)
+            .filter(af -> af.getIndex() == null && af.getDefaultValue() != null)
             .collect(Collectors.toMap(k -> k.getTerm(), v -> v.getDefaultValue()));
     return defaultValues.isEmpty() ? Optional.empty() : Optional.of(defaultValues);
   }

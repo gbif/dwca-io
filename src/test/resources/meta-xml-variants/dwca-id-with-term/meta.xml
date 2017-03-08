@@ -4,6 +4,9 @@
       <location>data.txt</location>
     </files>
     <id index="0" />
+
+    <!-- That means nothing but it's valid according to the schema-->
+    <field term="http://purl.org/dc/terms/rights"/>
     <!-- calculated MD5 hash of all values -->
     <field index="0" term="http://rs.tdwg.org/dwc/terms/occurrenceID" />
     <field index="1" term="http://rs.tdwg.org/dwc/terms/decimalLatitude" />
