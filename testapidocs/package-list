@@ -8,6 +8,7 @@ org.gbif.io
 org.gbif.tabular
 org.gbif.utils
 org.gbif.utils.collection
+org.gbif.utils.concurrent
 org.gbif.utils.file
 org.gbif.utils.file.csv
 org.gbif.utils.file.tabular
