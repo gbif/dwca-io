@@ -83,7 +83,7 @@ public class ArchiveFileTest {
   public void testIdWithTermAssociated() throws UnsupportedArchiveException, IOException {
     ArchiveFile core = getCore("meta-xml-variants/dwca-id-with-term");
     Term[] header = core.getHeader();
-    assertEquals(5, header.length);
+    assertEquals(6, header.length);
     assertEquals(DwcTerm.occurrenceID, header[0]);
     assertNull(header[3]);
   }
@@ -94,6 +94,8 @@ public class ArchiveFileTest {
     Optional<Map<Term, String>> defaultValues = core.getDefaultValues();
     assertTrue(defaultValues.isPresent());
     assertEquals("Plantae", defaultValues.get().get(DwcTerm.kingdom));
+    //declared with an index
+    assertEquals("XYZ", defaultValues.get().get(DwcTerm.nomenclaturalCode));
   }
 
   @Test
@@ -108,5 +110,5 @@ public class ArchiveFileTest {
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(testFilePath));
     return arch.getCore();
   }
-
+  
 }

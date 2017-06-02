@@ -18,6 +18,7 @@
     <field index="4" term="http://rs.tdwg.org/dwc/terms/scientificName"/>
     <field term="http://rs.tdwg.org/dwc/terms/kingdom"       default="Plantae"/>
     <field term="http://rs.tdwg.org/dwc/terms/basisOfRecord" default="OBSERVATION"/>
+    <field index="5" term="http://rs.tdwg.org/dwc/terms/NomenclaturalCode" default="XYZ"/>
   </core>
 </archive>
  
