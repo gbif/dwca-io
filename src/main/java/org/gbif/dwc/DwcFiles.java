@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Collections of static methods to work with Darwin Core (archive) files.
@@ -27,29 +28,81 @@ public class DwcFiles {
   private static FileUtils F_UTILS = new FileUtils();
 
   /**
+   * Collections of static methods, no constructors.
+   */
+  private DwcFiles(){ }
+
+  /**
    * @param replaceNulls    if true record values will have literal nulls replaced with NULL.
    * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
   public static ClosableIterator<Record> iterator(ArchiveFile source, boolean replaceNulls, boolean replaceEntities) throws IOException {
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(
             Files.newBufferedReader(source.getLocationFile() != null ? source.getLocationFile().toPath() : source.getArchive().getLocation().toPath()),
-            source.getFieldsTerminatedBy().charAt(0), source.getLinesTerminatedBy(), source.getFieldsEnclosedBy(),
-            source.getIgnoreHeaderLines() != 0);
+            getFieldsTerminatedBy(source.getFieldsTerminatedBy()), source.getLinesTerminatedBy(), source.getFieldsEnclosedBy(),
+            isHeaderLineIncluded(source.getIgnoreHeaderLines()), getLineToSkipBeforeHeader(source.getIgnoreHeaderLines()));
     return new DwcRecordIterator(tabularFileReader, source.getId(), source.getFields(), source.getRowType(), replaceNulls, replaceEntities);
   }
 
   /**
-   * Prepare an {@link Archive} into a {@link NormalizedDwcArchive} which allows to get {@link StarRecord} {@link ClosableIterator}.
+   * Get the fieldsTerminatedBy as char or throw exception.
+   *
+   * @param fieldsTerminatedBy
+   *
+   * @return
+   */
+  private static char getFieldsTerminatedBy(String fieldsTerminatedBy) {
+    Objects.requireNonNull(fieldsTerminatedBy, "fieldsTerminatedBy shall be provided");
+    if (fieldsTerminatedBy.length() != 1) {
+      throw new IllegalArgumentException();
+    }
+    return fieldsTerminatedBy.charAt(0);
+  }
+
+  /**
+   * Determines if a header line is included based on an optional integer.
+   *
+   * @param ignoreHeaderLines
+   *
+   * @return
+   */
+  private static boolean isHeaderLineIncluded(Integer ignoreHeaderLines) {
+    return ignoreHeaderLines != null && ignoreHeaderLines > 0;
+  }
+
+  /**
+   * Determines the number of line to skip before the header line or return null.
+   *
+   * @param ignoreHeaderLines
+   *
+   * @return
+   */
+  private static Integer getLineToSkipBeforeHeader(Integer ignoreHeaderLines) {
+    if(ignoreHeaderLines != null && ignoreHeaderLines > 1){
+      return ignoreHeaderLines - 1;
+    }
+    return null;
+  }
+
+  /**
+   * Prepare an {@link Archive} into a {@link NormalizedDwcArchive} which allows to get {@link StarRecord} {@link
+   * ClosableIterator}.
+   * This method will initiate the normalization process. This process can take some times depending on the size of
+   * files and number
+   * of extension.
+   *
    * @param archive
    * @param replaceNulls
    * @param replaceEntities
+   *
+   * @return new {@link NormalizedDwcArchive} instance
+   *
    * @throws IOException
-   * @return
    */
   public static NormalizedDwcArchive prepareArchive(final Archive archive, boolean replaceNulls, boolean replaceEntities) throws IOException {
 
     //if no extensions are provided we can simply use a normal iterator
-    if(archive.getExtensions().isEmpty()) {
+    if (archive.getExtensions().isEmpty()) {
       return new NormalizedDwcArchive(() -> iterator(archive.getCore(), replaceNulls, replaceEntities));
     }
 
@@ -57,7 +110,7 @@ public class DwcFiles {
     sortFiles(archive);
 
     return new NormalizedDwcArchive(() -> buildSortedIterator(archive.getCore(), replaceNulls, replaceEntities),
-            () ->  buildSortedIteratorExt(archive, replaceNulls, replaceEntities));
+            () -> buildSortedIteratorExt(archive, replaceNulls, replaceEntities));
   }
 
   /**
@@ -81,7 +134,7 @@ public class DwcFiles {
     File locationFileNormalized = getLocationFileNormalized(archiveFile.getLocationFile());
 
     TabularFileNormalizer.normalizeFile(archiveFile.getLocationFile().toPath(), locationFileNormalized.toPath(),
-            Charset.forName(archiveFile.getEncoding()), archiveFile.getFieldsTerminatedBy().charAt(0),
+            Charset.forName(archiveFile.getEncoding()), getFieldsTerminatedBy(archiveFile.getFieldsTerminatedBy()),
             archiveFile.getLinesTerminatedBy(), archiveFile.getFieldsEnclosedBy());
 
     F_UTILS.sort(locationFileNormalized, ArchiveFile.getLocationFileSorted(archiveFile.getLocationFile()), archiveFile.getEncoding(),
@@ -125,9 +178,9 @@ public class DwcFiles {
                                                               boolean replaceNulls, boolean replaceEntities) throws IOException {
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(
             Files.newBufferedReader(ArchiveFile.getLocationFileSorted(af.getLocationFile()).toPath()),
-            af.getFieldsTerminatedBy().charAt(0),
+            getFieldsTerminatedBy(af.getFieldsTerminatedBy()),
             TabularFileNormalizer.NORMALIZED_END_OF_LINE, af.getFieldsEnclosedBy(),
-            af.getIgnoreHeaderLines() != 0);
+            isHeaderLineIncluded(af.getIgnoreHeaderLines()), getLineToSkipBeforeHeader(af.getIgnoreHeaderLines()));
     return new DwcRecordIterator(tabularFileReader, af.getId(), af.getFields(), af.getRowType(), replaceNulls, replaceEntities);
   }
 
