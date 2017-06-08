@@ -5,13 +5,14 @@ import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.TestCase.assertNull;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Unit tests for {@link TermTabularDataFileReader}
@@ -29,13 +30,13 @@ public class TermTabularDataFileReaderTest {
             DwcTerm.scientificName, DwcTerm.locality};
 
     TermTabularDataFileReader mappedReader =
-            TermTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
+            TermTabularFiles.newTermMappedTabularFileReader(Files.newBufferedReader(csv.toPath(), StandardCharsets.UTF_8),
+                    ',', true, columnsMapping);
 
     TermTabularDataLine mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());
     assertEquals("1", mappedLine.getMappedData().get(DwcTerm.occurrenceID));
     assertEquals("This has a, comma", mappedLine.getMappedData().get(DwcTerm.locality));
-
 
     mappedLine = mappedReader.read();
     assertEquals("I say this is only a \"quote\"", mappedLine.getMappedData().get(DwcTerm.locality));
@@ -57,7 +58,8 @@ public class TermTabularDataFileReaderTest {
     Term[] columnsMapping = new Term[]{DwcTerm.occurrenceID, DwcTerm.scientificName};
 
     TermTabularDataFileReader mappedReader =
-            TermTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
+            TermTabularFiles.newTermMappedTabularFileReader(Files.newBufferedReader(csv.toPath(), StandardCharsets.UTF_8),
+                    ',', true, columnsMapping);
 
     TermTabularDataLine mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());
@@ -71,7 +73,8 @@ public class TermTabularDataFileReaderTest {
     //declare 1 field more
     columnsMapping = new Term[]{DwcTerm.occurrenceID, DwcTerm.scientificName, DwcTerm.locality, DwcTerm.country};
     mappedReader =
-            TermTabularFiles.newTermMappedTabularFileReader(new FileInputStream(csv), ',', true, columnsMapping);
+            TermTabularFiles.newTermMappedTabularFileReader(Files.newBufferedReader(csv.toPath(), StandardCharsets.UTF_8),
+                    ',', true, columnsMapping);
 
     mappedLine = mappedReader.read();
     assertEquals(1, mappedLine.getLineNumber());

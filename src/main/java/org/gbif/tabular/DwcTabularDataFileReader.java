@@ -13,6 +13,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
+ * Warning: this class will probably be removed shortly
+ *
  * Specialized TermTabularDataFileReader for DarwinCore archive file.
  * In addition of reading the underlying csv file this class will handle id field and default values that can
  * be provided in DarwinCore.

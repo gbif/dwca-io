@@ -10,6 +10,8 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 /**
+ * Warning: this class will probably be removed shortly
+ *
  * Decorator of {@link TabularDataFileReader} to map elements of a line to a TermTabularDataLine.
  * Supports the reading of lines smaller or larger than the declared set of columns.
  *
@@ -63,7 +65,17 @@ public class TermTabularDataFileReader implements TabularDataFileReader<TermTabu
   }
 
   @Override
-  public void close() {
+  public long getLastRecordLineNumber() {
+    return tabularDataFileReader.getLastRecordLineNumber();
+  }
+
+  @Override
+  public long getLastRecordNumber() {
+    return tabularDataFileReader.getLastRecordNumber();
+  }
+
+  @Override
+  public void close() throws IOException {
     tabularDataFileReader.close();
   }
 

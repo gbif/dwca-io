@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Warning: this class will probably be removed shortly
+ *
  * Container class for a line in a tabular data files.
  * This class is immutable but the provided Map is not guarantee to be immutable.
  *
