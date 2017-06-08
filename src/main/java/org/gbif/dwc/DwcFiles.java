@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import static org.gbif.dwca.io.ArchiveFile.getLocationFileSorted;
+
 /**
  * Collections of static methods to work with Darwin Core (archive) files.
  */
@@ -30,7 +34,8 @@ public class DwcFiles {
   /**
    * Collections of static methods, no constructors.
    */
-  private DwcFiles(){ }
+  private DwcFiles() {
+  }
 
   /**
    * @param replaceNulls    if true record values will have literal nulls replaced with NULL.
@@ -78,7 +83,7 @@ public class DwcFiles {
    * @return
    */
   private static Integer getLineToSkipBeforeHeader(Integer ignoreHeaderLines) {
-    if(ignoreHeaderLines != null && ignoreHeaderLines > 1){
+    if (ignoreHeaderLines != null && ignoreHeaderLines > 1) {
       return ignoreHeaderLines - 1;
     }
     return null;
@@ -107,7 +112,7 @@ public class DwcFiles {
     }
 
     //otherwise, we need to sort core + extensions
-    sortFiles(archive);
+    normalizeAndSortArchiveFiles(archive);
 
     return new NormalizedDwcArchive(() -> buildSortedIterator(archive.getCore(), replaceNulls, replaceEntities),
             () -> buildSortedIteratorExt(archive, replaceNulls, replaceEntities));
@@ -116,32 +121,56 @@ public class DwcFiles {
   /**
    * Sorts all files according in the {@link Archive} so that we can easily iterate over all files at once.
    */
-  private static void sortFiles(Archive archive) throws IOException {
-    sort(archive.getCore());
-    for(ArchiveFile archiveFile : archive.getExtensions()){
-      sort(archiveFile);
+  private static void normalizeAndSortArchiveFiles(Archive archive) throws IOException {
+    normalizeAndSort(archive.getCore());
+    for (ArchiveFile archiveFile : archive.getExtensions()) {
+      normalizeAndSort(archiveFile);
     }
   }
 
   /**
    * Sort a single {@link ArchiveFile}. Sorting implies a normalization phase to ensure we sort the file properly.
+   * Note that the file will not be sorted if the sorted file is already there and its date is later than the file
+   * we want to sort.
    *
    * @param archiveFile
+   * @return the file was sorted or not. If the file was not sorted it simply means it was not required.
+   *
    * @throws IOException
    */
-  private static void sort(ArchiveFile archiveFile) throws IOException {
+  @VisibleForTesting
+  protected static boolean normalizeAndSort(ArchiveFile archiveFile) throws IOException {
 
-    File locationFileNormalized = getLocationFileNormalized(archiveFile.getLocationFile());
+    File fileToSort = archiveFile.getLocationFile();
+    File sortedFile = ArchiveFile.getLocationFileSorted(archiveFile.getLocationFile());
+    File normalizedFile = getLocationFileNormalized(archiveFile.getLocationFile());
+    String linesTerminatedBy = archiveFile.getLinesTerminatedBy();
 
-    TabularFileNormalizer.normalizeFile(archiveFile.getLocationFile().toPath(), locationFileNormalized.toPath(),
-            Charset.forName(archiveFile.getEncoding()), getFieldsTerminatedBy(archiveFile.getFieldsTerminatedBy()),
-            archiveFile.getLinesTerminatedBy(), archiveFile.getFieldsEnclosedBy());
+    //if we already sorted the file and its source didn't change we can avoid doing it again
+    if (sortedFile.exists() && Files.getLastModifiedTime(sortedFile.toPath()).toInstant().isAfter(
+            Files.getLastModifiedTime(fileToSort.toPath()).toInstant())) {
+      return false;
+    }
 
-    F_UTILS.sort(locationFileNormalized, ArchiveFile.getLocationFileSorted(archiveFile.getLocationFile()), archiveFile.getEncoding(),
+    //if the linesTerminatedBy used is the same as TabularFileNormalizer and no quoted cells are used
+    //we can skip normalization
+    boolean normalizationRequired = TabularFileNormalizer.NORMALIZED_END_OF_LINE.equals(linesTerminatedBy) &&
+            archiveFile.getFieldsEnclosedBy() == null;
+
+    if (normalizationRequired) {
+      TabularFileNormalizer.normalizeFile(archiveFile.getLocationFile().toPath(), normalizedFile.toPath(),
+              Charset.forName(archiveFile.getEncoding()), getFieldsTerminatedBy(archiveFile.getFieldsTerminatedBy()),
+              linesTerminatedBy, archiveFile.getFieldsEnclosedBy());
+      fileToSort = normalizedFile;
+    }
+
+    F_UTILS.sort(fileToSort, ArchiveFile.getLocationFileSorted(archiveFile.getLocationFile()), archiveFile.getEncoding(),
             archiveFile.getId().getIndex(), archiveFile.getFieldsTerminatedBy(), archiveFile.getFieldsEnclosedBy(),
             TabularFileNormalizer.NORMALIZED_END_OF_LINE, archiveFile.getIgnoreHeaderLines());
 
-    locationFileNormalized.delete();
+    Files.deleteIfExists(normalizedFile.toPath());
+
+    return true;
   }
 
   private static File getLocationFileNormalized(File location) {
@@ -150,16 +179,19 @@ public class DwcFiles {
 
   /**
    * Build an iterator (pointing to the sorted tabular file) for each extensions of the {@link Archive}.
+   *
    * @param archive
    * @param replaceNulls
    * @param replaceEntities
+   *
    * @return
+   *
    * @throws IOException
    */
   private static Map<Term, ClosableIterator<Record>> buildSortedIteratorExt(Archive archive,
                                                                             boolean replaceNulls, boolean replaceEntities) throws IOException {
     Map<Term, ClosableIterator<Record>> extensionIts = new HashMap<>();
-    for(ArchiveFile ext : archive.getExtensions()){
+    for (ArchiveFile ext : archive.getExtensions()) {
       extensionIts.put(ext.getRowType(), buildSortedIterator(ext, replaceNulls, replaceEntities));
     }
     return extensionIts;
@@ -168,16 +200,19 @@ public class DwcFiles {
   /**
    * Build an iterator on top of the provided {@link ArchiveFile} pointing to the sorted tabular file.
    * The sorted tabular file is also assumed to have been normalized.
+   *
    * @param af
    * @param replaceNulls
    * @param replaceEntities
+   *
    * @return
+   *
    * @throws IOException
    */
   private static ClosableIterator<Record> buildSortedIterator(ArchiveFile af,
                                                               boolean replaceNulls, boolean replaceEntities) throws IOException {
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(
-            Files.newBufferedReader(ArchiveFile.getLocationFileSorted(af.getLocationFile()).toPath()),
+            Files.newBufferedReader(getLocationFileSorted(af.getLocationFile()).toPath()),
             getFieldsTerminatedBy(af.getFieldsTerminatedBy()),
             TabularFileNormalizer.NORMALIZED_END_OF_LINE, af.getFieldsEnclosedBy(),
             isHeaderLineIncluded(af.getIgnoreHeaderLines()), getLineToSkipBeforeHeader(af.getIgnoreHeaderLines()));
