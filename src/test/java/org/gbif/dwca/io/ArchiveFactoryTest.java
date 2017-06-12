@@ -48,7 +48,7 @@ public class ArchiveFactoryTest {
   public void testMetaHandlerUtf16le() throws Exception {
     for (String fn : new String[]{"/meta/meta.xml", "/meta-utf16le.xml","/xml-entity-meta/meta.xml"}) {
       System.out.println(fn);
-      InputStream is = ClassLoader.class.getResourceAsStream(fn);
+      InputStream is = getClass().getResourceAsStream(fn);
       ArchiveFactory.readMetaDescriptor(new Archive(), is);
     }
   }

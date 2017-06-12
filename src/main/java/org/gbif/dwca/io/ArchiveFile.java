@@ -67,8 +67,8 @@ public class ArchiveFile implements Iterable<Record> {
   private Archive archive;
   private final LinkedList<String> locations = new LinkedList<String>();
   private String title;
-  private String fieldsTerminatedBy;
-  private Character fieldsEnclosedBy;
+  private String fieldsTerminatedBy = ",";
+  private Character fieldsEnclosedBy = '"';
   // this is actually ignored by the CSVReader and any of \n, \r or \n\r is used
   private String linesTerminatedBy = "\n";
   private String encoding = "utf8";
