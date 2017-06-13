@@ -11,7 +11,7 @@ public class CleanUtils {
   }
 
   /**
-   * Does basic entity replacments if requested to string values.
+   * Does basic entity replacements if requested to string values.
    * @param value the original string
    * @param nulls if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
    * @param entities if true replaces html4, xml and numerical entities with their unicode character

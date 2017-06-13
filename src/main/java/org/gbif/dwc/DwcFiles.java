@@ -93,8 +93,7 @@ public class DwcFiles {
    * Prepare an {@link Archive} into a {@link NormalizedDwcArchive} which allows to get {@link StarRecord} {@link
    * ClosableIterator}.
    * This method will initiate the normalization process. This process can take some times depending on the size of
-   * files and number
-   * of extension.
+   * files and number of extension.
    *
    * @param archive
    * @param replaceNulls

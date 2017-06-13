@@ -65,8 +65,12 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
     if (getAttr(attr, "fieldsTerminatedBy") != null) {
       dwcFile.setFieldsTerminatedBy(unescapeBackslash(getAttr(attr, "fieldsTerminatedBy")));
     }
+    // for fieldsEnclosedBy there is a distinction between not provided and provided with an empty string
     if (getAttr(attr, "fieldsEnclosedBy") != null) {
       dwcFile.setFieldsEnclosedBy(getFirstChar(getAttr(attr, "fieldsEnclosedBy")));
+    }
+    else if (getAttrRaw(attr, "fieldsEnclosedBy") != null) {
+      dwcFile.setFieldsEnclosedBy(null);
     }
     if (getAttr(attr, "linesTerminatedBy") != null) {
       dwcFile.setLinesTerminatedBy(unescapeBackslash(getAttr(attr, "linesTerminatedBy")));
@@ -136,13 +140,29 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
   }
 
   /**
-   * Get attribute from a key
+   * Get attribute for the provided key.
+   * This method will return null if the attribute is not found
+   * or its value is an empty string.
    *
    * @param attributes
    * @param key
+   *
    * @return attributes value or null
    */
-  private String getAttr(Attributes attributes, String key) {
+  private static String getAttr(Attributes attributes, String key) {
+    return Strings.emptyToNull(getAttrRaw(attributes, key));
+  }
+
+  /**
+   * Get attribute "raw" value for the provided key.
+   * If the attribute is not found, null is returned.
+   *
+   * @param attributes
+   * @param key
+   *
+   * @return attribute value or null if not found
+   */
+  private static String getAttrRaw(Attributes attributes, String key) {
     String val = null;
     if (attributes != null) {
       // try without NS
@@ -152,7 +172,7 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
         val = attributes.getValue(NS_DWCA, key);
       }
     }
-    return Strings.isNullOrEmpty(val) ? null : val;
+    return val;
   }
 
   @Override

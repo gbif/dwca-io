@@ -20,7 +20,7 @@
         <field term="http://rs.tdwg.org/dwc/terms/nomenclaturalCode" vocabulary="http://rs.gbif.org/vocabulary/gbif/nomenclatural_code.xml" index="6"/>
     </core>
 
-    <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" rowType="http://rs.tdwg.org/invented/Links">
+    <extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy="" rowType="http://rs.tdwg.org/invented/Links">
         <files>
             <location>links.txt</location>
         </files>

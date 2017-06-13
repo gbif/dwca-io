@@ -43,7 +43,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ArchiveFile implements Iterable<Record> {
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
+
   public static final Term DEFAULT_ID_TERM = TermFactory.instance().findTerm("ARCHIVE_RECORD_ID");
+  public static final Character DEFAULT_FIELDS_ENCLOSED_BY = '"';
+  public static final String DEFAULT_FIELDS_TERMINATED_BY = ",";
+  public static final String DEFAULT_LINES_TERMINATED_BY = "\n";
 
   public class ArchiveFieldIndexComparator implements Comparator<ArchiveField> {
 
@@ -67,10 +71,9 @@ public class ArchiveFile implements Iterable<Record> {
   private Archive archive;
   private final LinkedList<String> locations = new LinkedList<String>();
   private String title;
-  private String fieldsTerminatedBy = ",";
-  private Character fieldsEnclosedBy = '"';
-  // this is actually ignored by the CSVReader and any of \n, \r or \n\r is used
-  private String linesTerminatedBy = "\n";
+  private String fieldsTerminatedBy = DEFAULT_FIELDS_TERMINATED_BY;
+  private Character fieldsEnclosedBy = DEFAULT_FIELDS_ENCLOSED_BY;
+  private String linesTerminatedBy = DEFAULT_LINES_TERMINATED_BY;
   private String encoding = "utf8";
   private Term rowType;
   private Integer ignoreHeaderLines = 0;
@@ -81,8 +84,8 @@ public class ArchiveFile implements Iterable<Record> {
 
   public static ArchiveFile buildCsvFile() {
     ArchiveFile af = new ArchiveFile();
-    af.setFieldsEnclosedBy('"');
-    af.setFieldsTerminatedBy(",");
+    af.setFieldsEnclosedBy(DEFAULT_FIELDS_ENCLOSED_BY);
+    af.setFieldsTerminatedBy(DEFAULT_FIELDS_TERMINATED_BY);
     return af;
   }
 

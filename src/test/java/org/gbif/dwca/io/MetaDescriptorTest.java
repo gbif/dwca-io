@@ -25,6 +25,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
+import static org.gbif.TestUtils.TERM_FACTORY;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -205,6 +207,8 @@ public class MetaDescriptorTest {
     //validate archive ID field
     ArchiveField af = arch.getCore().getId();
     assertEquals(Integer.valueOf(1), af.getIndex());
+    //not specified, should be set to the default value
+    assertEquals(ArchiveFile.DEFAULT_FIELDS_ENCLOSED_BY, arch.getCore().getFieldsEnclosedBy());
 
     //validate default
     af = arch.getCore().getField(DwcTerm.kingdom);
@@ -213,6 +217,10 @@ public class MetaDescriptorTest {
     // validate vocabulary
     af = arch.getCore().getField(DwcTerm.nomenclaturalCode);
     assertEquals(NOMENCLATURAL_CODE_VOCABULARY, af.getVocabulary());
+
+    //explicitly set to empty string which means we should not use a fieldsEnclosedBy (value == null)
+    assertNull(arch.getExtension(TERM_FACTORY
+            .findTerm("http://rs.tdwg.org/invented/Links")).getFieldsEnclosedBy());
   }
 
 }

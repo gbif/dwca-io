@@ -4,7 +4,6 @@ import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.FileUtils;
@@ -159,8 +158,6 @@ public class DwcaWriterTest {
   @Test
   public void testRoundtrip() throws Exception {
     try {
-      TermFactory termFactory = TermFactory.instance();
-
       // read taxon archive
       Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
       assertEquals(2, arch.getExtensions().size());

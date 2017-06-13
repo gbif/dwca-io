@@ -1,18 +1,16 @@
 package org.gbif.dwca.io;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.io.FilenameUtils;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.FileUtils;
-import org.junit.Test;
 
 import java.io.File;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.junit.Test;
 
 /**
  * Created by markus on 17/02/2017.
