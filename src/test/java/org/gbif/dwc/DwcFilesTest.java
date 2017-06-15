@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
  * Tests related to {@link DwcFiles}.
  */
 public class DwcFilesTest {
-  
+
   @Test
   public void testNormalizeIfRequired() throws Exception {
     ArchiveFile testArchiveFile = new ArchiveFile();

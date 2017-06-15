@@ -1,6 +1,7 @@
 package org.gbif.dwca.io;
 
 import org.gbif.api.model.registry.Dataset;
+import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -118,6 +119,8 @@ public class Archive implements Iterable<StarRecord> {
   }
 
   /**
+   * This class is kept for legacy reason, See {@link DwcFiles} for new usage.
+   *
    * An iterator over core records of the archive that returns StarRecords, i.e. a single core record with all its
    * related extension records attached. This is a convenient way to iterate over an entire archive accessing all
    * information including all extensions.
@@ -345,6 +348,8 @@ public class Archive implements Iterable<StarRecord> {
   }
 
   /**
+   * This method is kept for legacy reason, See {@link DwcFiles} for new usage.
+   *
    * @return a complete iterator using star records with all extension records that replace literal null values and
    * html entities.
    */
@@ -353,6 +358,8 @@ public class Archive implements Iterable<StarRecord> {
   }
 
   /**
+   * This method is kept for legacy reason, See {@link DwcFiles} for new usage.
+   *
    * @return a complete iterator using star records with all extension records that are not replacing literal null
    *         values or html entities.
    */

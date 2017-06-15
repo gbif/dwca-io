@@ -289,20 +289,17 @@ public class ArchiveFactory {
             t -> dwcFile.setId(dwcFile.getField(t))
     );
 
-    determineRowType(headerAsTerm).ifPresent(
-            t -> dwcFile.setRowType(t)
-    );
+    determineRowType(headerAsTerm).ifPresent(dwcFile::setRowType);
     return dwcFile;
   }
 
   @VisibleForTesting
   protected static void readMetaDescriptor(Archive archive, InputStream metaDescriptor) throws UnsupportedArchiveException {
-
-    try {
+    try (BOMInputStream bomInputStream = new BOMInputStream(metaDescriptor)){
       SAXParser p = SAX_FACTORY.newSAXParser();
       MetaXMLSaxHandler mh = new MetaXMLSaxHandler(archive);
       LOG.debug("Reading archive metadata file");
-      p.parse(new BOMInputStream(metaDescriptor), mh);
+      p.parse(bomInputStream, mh);
     } catch (Exception e1) {
       LOG.warn("Exception caught", e1);
       throw new UnsupportedArchiveException(e1);
@@ -373,7 +370,7 @@ public class ArchiveFactory {
   static Optional<Term> determineRecordIdentifier(List<Term> terms) {
     //try to find the first matching term respecting the order defined by ID_TERMS
     return ID_TERMS.stream()
-            .filter(t -> terms.contains(t))
+            .filter(terms::contains)
             .findFirst();
   }
 
