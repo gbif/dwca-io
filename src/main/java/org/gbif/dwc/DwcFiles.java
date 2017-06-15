@@ -38,10 +38,14 @@ public class DwcFiles {
   }
 
   /**
+   * Get a {@link ClosableIterator} on the provided {@link ArchiveFile}.
+   *
+   * @param source
    * @param replaceNulls    if true record values will have literal nulls replaced with NULL.
    * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
   public static ClosableIterator<Record> iterator(ArchiveFile source, boolean replaceNulls, boolean replaceEntities) throws IOException {
+    Objects.requireNonNull(source, "source ArchiveFile shall be provided");
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(
             Files.newBufferedReader(source.getLocationFile() != null ? source.getLocationFile().toPath() : source.getArchive().getLocation().toPath()),
             getFieldsTerminatedBy(source.getFieldsTerminatedBy()), source.getLinesTerminatedBy(), source.getFieldsEnclosedBy(),
@@ -105,7 +109,7 @@ public class DwcFiles {
    */
   public static NormalizedDwcArchive prepareArchive(final Archive archive, boolean replaceNulls, boolean replaceEntities) throws IOException {
 
-    //if no extensions are provided we can simply use a normal iterator
+    //if no extensions are provided we don't need to sort the file
     if (archive.getExtensions().isEmpty()) {
       return new NormalizedDwcArchive(() -> iterator(archive.getCore(), replaceNulls, replaceEntities));
     }
@@ -142,7 +146,6 @@ public class DwcFiles {
 
     File fileToSort = archiveFile.getLocationFile();
     File sortedFile = ArchiveFile.getLocationFileSorted(archiveFile.getLocationFile());
-    File normalizedFile = getLocationFileNormalized(archiveFile.getLocationFile());
     String linesTerminatedBy = archiveFile.getLinesTerminatedBy();
 
     //if we already sorted the file and its source didn't change we can avoid doing it again
@@ -151,15 +154,8 @@ public class DwcFiles {
       return false;
     }
 
-    //if the linesTerminatedBy used is the same as TabularFileNormalizer and no quoted cells are used
-    //we can skip normalization
-    boolean normalizationRequired = TabularFileNormalizer.NORMALIZED_END_OF_LINE.equals(linesTerminatedBy) &&
-            archiveFile.getFieldsEnclosedBy() == null;
-
-    if (normalizationRequired) {
-      TabularFileNormalizer.normalizeFile(archiveFile.getLocationFile().toPath(), normalizedFile.toPath(),
-              Charset.forName(archiveFile.getEncoding()), getFieldsTerminatedBy(archiveFile.getFieldsTerminatedBy()),
-              linesTerminatedBy, archiveFile.getFieldsEnclosedBy());
+    File normalizedFile = normalizeIfRequired(archiveFile);
+    if(normalizedFile != null){
       fileToSort = normalizedFile;
     }
 
@@ -167,9 +163,38 @@ public class DwcFiles {
             archiveFile.getId().getIndex(), archiveFile.getFieldsTerminatedBy(), archiveFile.getFieldsEnclosedBy(),
             TabularFileNormalizer.NORMALIZED_END_OF_LINE, archiveFile.getIgnoreHeaderLines());
 
-    Files.deleteIfExists(normalizedFile.toPath());
+    if(normalizedFile != null ){
+      Files.deleteIfExists(normalizedFile.toPath());
+    }
 
     return true;
+  }
+
+  /**
+   * Apply file normalization if required.
+   *
+   * @param archiveFile
+   *
+   * @return normalizedFile or null if normalization was not applied
+   *
+   * @throws IOException
+   */
+  @VisibleForTesting
+  protected static File normalizeIfRequired(ArchiveFile archiveFile) throws IOException {
+    //if the linesTerminatedBy used is the same as TabularFileNormalizer and no quoted cells are used
+    //we can skip normalization
+    boolean normalizationRequired =
+            !TabularFileNormalizer.NORMALIZED_END_OF_LINE.equals(archiveFile.getLinesTerminatedBy()) ||
+                    archiveFile.getFieldsEnclosedBy() != null;
+
+    if (normalizationRequired) {
+      File normalizedFile = getLocationFileNormalized(archiveFile.getLocationFile());
+      TabularFileNormalizer.normalizeFile(archiveFile.getLocationFile().toPath(), normalizedFile.toPath(),
+              Charset.forName(archiveFile.getEncoding()), getFieldsTerminatedBy(archiveFile.getFieldsTerminatedBy()),
+              archiveFile.getLinesTerminatedBy(), archiveFile.getFieldsEnclosedBy());
+      return normalizedFile;
+    }
+    return null;
   }
 
   private static File getLocationFileNormalized(File location) {

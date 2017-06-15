@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
@@ -25,6 +26,13 @@ import static org.junit.Assert.assertNotNull;
  * Tests related to {@link DwcFiles}.
  */
 public class DwcFilesTest {
+  
+  @Test
+  public void testNormalizeIfRequired() throws Exception {
+    ArchiveFile testArchiveFile = new ArchiveFile();
+    testArchiveFile.setFieldsEnclosedBy(null);
+    assertNull(DwcFiles.normalizeIfRequired(testArchiveFile));
+  }
 
   @Test
   public void testStartRecordIterator() throws IOException {
