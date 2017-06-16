@@ -56,7 +56,7 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testMetaHandlerUtf16le() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">for</strong> (String fn : <strong class="jxr_keyword">new</strong> String[]{<span class="jxr_string">"/meta/meta.xml"</span>, <span class="jxr_string">"/meta-utf16le.xml"</span>,<span class="jxr_string">"/xml-entity-meta/meta.xml"</span>}) {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>        System.out.println(fn);
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>        InputStream is = ClassLoader.<strong class="jxr_keyword">class</strong>.getResourceAsStream(fn);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>        InputStream is = getClass().getResourceAsStream(fn);
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>        ArchiveFactory.readMetaDescriptor(<strong class="jxr_keyword">new</strong> Archive(), is);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      }
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>    }
