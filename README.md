@@ -64,9 +64,12 @@ Add the dwca-io artifact
   <dependency>
     <groupId>org.gbif</groupId>
     <artifactId>dwca-io</artifactId>
-    <version>1.23</version>
+    <version>1.31</version>
   </dependency>
 ```
+
+## Change Log
+[Change Log](CHANGELOG.md)
 
 ## Documentation
 [JavaDocs](http://gbif.github.io/dwca-io/apidocs/)
