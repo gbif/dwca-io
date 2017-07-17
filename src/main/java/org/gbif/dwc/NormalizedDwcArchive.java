@@ -43,6 +43,6 @@ public class NormalizedDwcArchive {
    * @throws IOException
    */
   public ClosableIterator<StarRecord> iterator() throws IOException {
-    return new StartRecordIterator(coreItSupplier.get(), extItSupplier != null ? extItSupplier.get() : null);
+    return new StarRecordIterator(coreItSupplier.get(), extItSupplier != null ? extItSupplier.get() : null);
   }
 }

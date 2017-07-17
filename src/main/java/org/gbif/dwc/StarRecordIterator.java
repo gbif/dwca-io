@@ -25,7 +25,7 @@ import com.google.common.collect.PeekingIterator;
  * {@link ClosableIterator} of {@link StarRecord} which includes the core record and all its extension records.
  * This is an revised version of {@link Archive.ArchiveIterator}
  */
-class StartRecordIterator implements ClosableIterator<StarRecord> {
+class StarRecordIterator implements ClosableIterator<StarRecord> {
 
   private final StarRecordImpl rec;
   private final ClosableIterator<Record> coreIter;
@@ -33,7 +33,7 @@ class StartRecordIterator implements ClosableIterator<StarRecord> {
   private final Map<Term, PeekingIterator<Record>> extensionIters = new HashMap<>();
   private final Map<Term, Integer> extensionRecordsSkipped = new HashMap<>();
 
-  StartRecordIterator(ClosableIterator<Record> coreIt, Map<Term, ClosableIterator<Record>> extensionIts) throws IOException {
+  StarRecordIterator(ClosableIterator<Record> coreIt, Map<Term, ClosableIterator<Record>> extensionIts) throws IOException {
     coreIter = coreIt;
     List<Term> rowTypes = new ArrayList<>();
 

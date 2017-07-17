@@ -2,7 +2,7 @@
 
 *Formerly know as dwca-reader*
 
-The dwca-oi library provides:
+The dwca-io library provides:
  * Reader for [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/index.htm) file with or without extensions
  * Writer for simple [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/index.htm) file with or without extensions
 
@@ -21,11 +21,17 @@ File extractToFolder = new File("/tmp/myarchive");
 Archive dwcArchive = ArchiveFactory.openArchive(myArchiveFile, extractToFolder);
 
 // loop over core darwin core records and display scientificName
-Iterator<DarwinCoreRecord> it = dwcArchive.iteratorDwc();
-while (it.hasNext()) {
-  DarwinCoreRecord dwc = it.next();
-  System.out.println(dwc.getScientificName());
+try(ClosableIterator<Record> it = DwcFiles.iterator(arch.getCore())) {
+  while (it.hasNext()) {
+    Record rec = it.next();
+    System.out.println(rec.value(DwcTerm.scientificName));
+  }
 }
+catch (Exception e) {
+  //deal with exception
+}
+
+
 ```
 ### Reading DarwinCore archive + extensions
 Read from a folder(extracted archive) and display the scientific name of each records + vernacular name(s) from the extension:

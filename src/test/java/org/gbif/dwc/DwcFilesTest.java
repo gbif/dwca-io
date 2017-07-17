@@ -35,6 +35,23 @@ public class DwcFilesTest {
   }
 
   @Test
+  public void testDwcRecordIterator() throws IOException {
+    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+    int count=0;
+    try(ClosableIterator<Record> it = DwcFiles.iterator(arch.getCore())) {
+      while (it.hasNext()) {
+        it.next();
+        count++;
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
+    assertEquals(3248, count);
+  }
+
+  @Test
   public void testStartRecordIterator() throws IOException {
 
     Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));

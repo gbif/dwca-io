@@ -38,6 +38,16 @@ public class DwcFiles {
   }
 
   /**
+   * @see #iterator(ArchiveFile, boolean, boolean)
+   * @param source
+   * @return
+   * @throws IOException
+   */
+  public static ClosableIterator<Record> iterator(ArchiveFile source) throws IOException {
+    return iterator(source, true, true);
+  }
+
+  /**
    * Get a {@link ClosableIterator} on the provided {@link ArchiveFile}.
    *
    * @param source
