@@ -8,6 +8,7 @@ The dwca-io library provides:
 
 
 ## To build the project
+Note: this project requires Java 8.
 ```
 mvn clean install
 ```
@@ -31,23 +32,28 @@ catch (Exception e) {
   //deal with exception
 }
 
-
 ```
 ### Reading DarwinCore archive + extensions
 Read from a folder(extracted archive) and display the scientific name of each records + vernacular name(s) from the extension:
 ```java
-//WARNING: StarRecord requires underlying data files(including extensions) to be sorted by the coreid column
 Archive dwcArchive = ArchiveFactory.openArchive(new File("/tmp/myarchive"));
 System.out.println("Archive rowtype: " + dwcArchive.getCore().getRowType() + ", "
     + dwcArchive.getExtensions().size() + " extension(s)");
+
+//this step can take some time depending on the size of the archive
+NormalizedDwcArchive nda = DwcFiles.prepareArchive(dwcArchive, false, false);
 // loop over core darwin core star records
-for (StarRecord rec : dwcArchive) {
+try(ClosableIterator<StarRecord> it = nda.iterator()){
+  StarRecord rec : it.next();
   System.out.println(rec.core().id() + " scientificName: " + rec.core().value(DwcTerm.scientificName));
   if (rec.hasExtension(GbifTerm.VernacularName)) {
     for (Record extRec : rec.extension(GbifTerm.VernacularName)) {
       System.out.println(" -" + extRec.value(DwcTerm.vernacularName));
     }
   }
+}
+catch (Exception e) {
+  //deal with exception
 }
 ```
 ### Other supported file types
