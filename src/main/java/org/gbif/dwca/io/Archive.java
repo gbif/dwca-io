@@ -36,7 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A darwin core star archive allowing easy reading and iteration over a core record with all its extensions.
+ * Represents a Darwin Core star archive and its components (metadata, core, extensions).
+ *
+ * Note: This class contains @Deprecated classes and methods. Everything related to the iteration over the archive
+ * is now @Deprecated and {@link DwcFiles} should be used instead.
  *
  * @see <a href="http://tdwg.github.io/dwc/terms/guides/text/">Darwin Core Text Guide</a>
  */
@@ -48,6 +51,7 @@ public class Archive implements Iterable<StarRecord> {
    * An iterator of fixed DarwinCoreRecords over the core file only. This iterator doesn't need any sorted data files
    * as it doesn't deal with extensions.
    */
+  @Deprecated
   static class ArchiveDwcIterator implements ClosableIterator<DarwinCoreRecord> {
 
     private CSVReader coreReader;
@@ -130,6 +134,7 @@ public class Archive implements Iterable<StarRecord> {
    * Extension rows with a non existing coreid are skipped. This requires that we use the same sorting order in the
    * java code as we use for sorting the data files!
    */
+  @Deprecated
   class ArchiveIterator implements ClosableIterator<StarRecord> {
 
     private final StarRecordImpl rec;
@@ -353,6 +358,7 @@ public class Archive implements Iterable<StarRecord> {
    * @return a complete iterator using star records with all extension records that replace literal null values and
    * html entities.
    */
+  @Deprecated
   public ClosableIterator<StarRecord> iterator() {
     return new ArchiveIterator(this, true, true);
   }
@@ -363,6 +369,7 @@ public class Archive implements Iterable<StarRecord> {
    * @return a complete iterator using star records with all extension records that are not replacing literal null
    *         values or html entities.
    */
+  @Deprecated
   public ClosableIterator<StarRecord> iteratorRaw() {
     return new ArchiveIterator(this, false, false);
   }
@@ -371,6 +378,7 @@ public class Archive implements Iterable<StarRecord> {
    * @return an iterator over simple darwin core records based on the core data file(s). The DarwinCoreRecord instance
    *         is reused to give better performance, so create a clone before referencing it.
    */
+  @Deprecated
   public ClosableIterator<DarwinCoreRecord> iteratorDwc() {
     return new ArchiveDwcIterator(this);
   }

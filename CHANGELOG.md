@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.32 (not released yet)
+ * Deprecation of all iteration related classes/methods from [Archive](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwca/io/Archive.html)
+ in favour of [DwcFiles](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwc/DwcFiles.html).
+
 ## 1.31 (2017-06-16)
 
 [Complete Changelog](https://github.com/gbif/dwca-io/compare/dwca-io-1.30...dwca-io-1.31)
