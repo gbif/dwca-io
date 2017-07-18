@@ -29,7 +29,7 @@ import static org.gbif.dwca.io.ArchiveFile.getLocationFileSorted;
  */
 public class DwcFiles {
 
-  private static FileUtils F_UTILS = new FileUtils();
+  private static final FileUtils F_UTILS = new FileUtils();
 
   /**
    * Collections of static methods, no constructors.
@@ -38,10 +38,14 @@ public class DwcFiles {
   }
 
   /**
-   * @see #iterator(ArchiveFile, boolean, boolean)
+   * Same as calling #iterator(ArchiveFile, true, true)
+   *
    * @param source
+   *
    * @return
+   *
    * @throws IOException
+   * @see #iterator(ArchiveFile, boolean, boolean)
    */
   public static ClosableIterator<Record> iterator(ArchiveFile source) throws IOException {
     return iterator(source, true, true);
@@ -51,7 +55,7 @@ public class DwcFiles {
    * Get a {@link ClosableIterator} on the provided {@link ArchiveFile}.
    *
    * @param source
-   * @param replaceNulls    if true record values will have literal nulls replaced with NULL.
+   * @param replaceNulls    if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
    * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
   public static ClosableIterator<Record> iterator(ArchiveFile source, boolean replaceNulls, boolean replaceEntities) throws IOException {
@@ -104,14 +108,28 @@ public class DwcFiles {
   }
 
   /**
+   * Same as calling #prepareArchive(ArchiveFile, true, true)
+   *
+   * @param archive source archive
+   *
+   * @return new {@link NormalizedDwcArchive} instance
+   *
+   * @throws IOException
+   * @see #prepareArchive(Archive, boolean, boolean)
+   */
+  public static NormalizedDwcArchive prepareArchive(final Archive archive) throws IOException {
+    return prepareArchive(archive, true, true);
+  }
+
+  /**
    * Prepare an {@link Archive} into a {@link NormalizedDwcArchive} which allows to get {@link StarRecord} {@link
    * ClosableIterator}.
    * This method will initiate the normalization process. This process can take some times depending on the size of
    * files and number of extension.
    *
-   * @param archive
-   * @param replaceNulls
-   * @param replaceEntities
+   * @param archive source archive
+   * @param replaceNulls if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
+   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    *
    * @return new {@link NormalizedDwcArchive} instance
    *
@@ -147,6 +165,7 @@ public class DwcFiles {
    * we want to sort.
    *
    * @param archiveFile
+   *
    * @return the file was sorted or not. If the file was not sorted it simply means it was not required.
    *
    * @throws IOException
@@ -156,7 +175,6 @@ public class DwcFiles {
 
     File fileToSort = archiveFile.getLocationFile();
     File sortedFile = ArchiveFile.getLocationFileSorted(archiveFile.getLocationFile());
-    String linesTerminatedBy = archiveFile.getLinesTerminatedBy();
 
     //if we already sorted the file and its source didn't change we can avoid doing it again
     if (sortedFile.exists() && Files.getLastModifiedTime(sortedFile.toPath()).toInstant().isAfter(
@@ -165,7 +183,7 @@ public class DwcFiles {
     }
 
     File normalizedFile = normalizeIfRequired(archiveFile);
-    if(normalizedFile != null){
+    if (normalizedFile != null) {
       fileToSort = normalizedFile;
     }
 
@@ -173,7 +191,7 @@ public class DwcFiles {
             archiveFile.getId().getIndex(), archiveFile.getFieldsTerminatedBy(), archiveFile.getFieldsEnclosedBy(),
             TabularFileNormalizer.NORMALIZED_END_OF_LINE, archiveFile.getIgnoreHeaderLines());
 
-    if(normalizedFile != null ){
+    if (normalizedFile != null) {
       Files.deleteIfExists(normalizedFile.toPath());
     }
 
