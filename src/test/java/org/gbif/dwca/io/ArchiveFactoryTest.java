@@ -1,5 +1,6 @@
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -47,9 +48,8 @@ public class ArchiveFactoryTest {
   @Test
   public void testMetaHandlerUtf16le() throws Exception {
     for (String fn : new String[]{"/meta/meta.xml", "/meta-utf16le.xml","/xml-entity-meta/meta.xml"}) {
-      System.out.println(fn);
       InputStream is = getClass().getResourceAsStream(fn);
-      ArchiveFactory.readMetaDescriptor(new Archive(), is);
+      DwcMetaFiles.fromMetaDescriptor(is);
     }
   }
 

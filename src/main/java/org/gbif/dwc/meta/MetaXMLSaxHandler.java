@@ -1,7 +1,12 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc.meta;
 
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
+import org.gbif.dwca.io.Archive;
+import org.gbif.dwca.io.ArchiveField;
+import org.gbif.dwca.io.ArchiveFile;
+import org.gbif.dwca.io.SimpleSaxHandler;
+import org.gbif.dwca.io.UnsupportedArchiveException;
 
 import com.google.common.base.Strings;
 import org.xml.sax.Attributes;

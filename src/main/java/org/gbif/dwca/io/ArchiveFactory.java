@@ -12,6 +12,7 @@
  */
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -27,7 +28,6 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,21 +38,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.io.input.BOMInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 /**
  * Factory used to build {@link Archive} object from a DarwinCore Archive file.
@@ -85,14 +81,6 @@ public class ArchiveFactory {
    */
   private static final List<Term> ID_TERMS = Collections.unmodifiableList(
           Arrays.asList(DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.eventID, DcTerm.identifier));
-
-
-  private static final SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();
-
-  static {
-    SAX_FACTORY.setNamespaceAware(true);
-    SAX_FACTORY.setValidating(false);
-  }
 
   /**
    * Opens an archive from a URL, downloading and decompressing it.
@@ -164,7 +152,8 @@ public class ArchiveFactory {
     archive.setCore(coreFile);
 
     // check if we also have a metadata file next to this data file
-    discoverMetadataFile(archive, dataFile.getParentFile());
+    DwcMetaFiles.discoverMetadataFile(dataFile.getParentFile().toPath())
+            .ifPresent(archive::setMetadataLocation);
 
     // final validation
     return validateArchive(archive);
@@ -202,9 +191,14 @@ public class ArchiveFactory {
     // read metadata
     File mf = new File(dwcaFolder, Archive.META_FN);
     if (mf.exists()) {
-      // read metafile
-      readMetaDescriptor(archive, new FileInputStream(mf));
-
+      // read metaDescriptor file
+      try {
+        archive = DwcMetaFiles.fromMetaDescriptor(new FileInputStream(mf));
+        archive.setLocation(dwcaFolder);
+      } catch (SAXException | IOException e) {
+        // using UnsupportedArchiveException for backward compatibility but IOException would be fine here
+        throw new UnsupportedArchiveException(e);
+      }
     } else {
       // meta.xml lacking.
       // Try to detect data files ourselves as best as we can.
@@ -231,24 +225,11 @@ public class ArchiveFactory {
     }
 
     // check if we also have a metadata file next to this data file
-    discoverMetadataFile(archive, mf.getParentFile());
+    DwcMetaFiles.discoverMetadataFile(dwcaFolder.toPath())
+            .ifPresent(archive::setMetadataLocation);
 
     // final validation
     return validateArchive(archive);
-  }
-
-
-  private static void discoverMetadataFile(Archive archive, File folder) {
-    if (archive.getMetadataLocation() == null) {
-      // search for popular metadata filenames
-      for (String metadataFN : Lists.newArrayList("eml.xml", "metadata.xml")) {
-        File emlFile = new File(folder, metadataFN);
-        if (emlFile.exists()) {
-          archive.setMetadataLocation(metadataFN);
-          break;
-        }
-      }
-    }
   }
 
   private static ArchiveFile readFileHeaders(File dataFile) throws UnsupportedArchiveException, IOException {
@@ -291,19 +272,6 @@ public class ArchiveFactory {
 
     determineRowType(headerAsTerm).ifPresent(dwcFile::setRowType);
     return dwcFile;
-  }
-
-  @VisibleForTesting
-  protected static void readMetaDescriptor(Archive archive, InputStream metaDescriptor) throws UnsupportedArchiveException {
-    try (BOMInputStream bomInputStream = new BOMInputStream(metaDescriptor)){
-      SAXParser p = SAX_FACTORY.newSAXParser();
-      MetaXMLSaxHandler mh = new MetaXMLSaxHandler(archive);
-      LOG.debug("Reading archive metadata file");
-      p.parse(bomInputStream, mh);
-    } catch (Exception e1) {
-      LOG.warn("Exception caught", e1);
-      throw new UnsupportedArchiveException(e1);
-    }
   }
 
   private static Archive validateArchive(Archive archive) throws UnsupportedArchiveException {

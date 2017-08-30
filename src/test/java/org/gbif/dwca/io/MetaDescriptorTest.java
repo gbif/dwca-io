@@ -1,5 +1,6 @@
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
@@ -201,8 +202,7 @@ public class MetaDescriptorTest {
   @Test
   public void testMetaDescriptorReading() throws Exception {
     // we can read only a meta.xml file as an Archive
-    Archive arch = new Archive();
-    ArchiveFactory.readMetaDescriptor(arch, new FileInputStream(FileUtils.getClasspathFile("meta/meta.xml")));
+    Archive arch = DwcMetaFiles.fromMetaDescriptor(new FileInputStream(FileUtils.getClasspathFile("meta/meta.xml")));
 
     //validate archive ID field
     ArchiveField af = arch.getCore().getId();
