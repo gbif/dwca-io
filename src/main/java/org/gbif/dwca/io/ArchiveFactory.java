@@ -13,15 +13,8 @@
 package org.gbif.dwca.io;
 
 import org.gbif.dwc.meta.DwcMetaFiles;
-import org.gbif.dwc.terms.DcTerm;
-import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwc.terms.Term;
-import org.gbif.dwc.terms.TermFactory;
-import org.gbif.dwca.io.ArchiveField.DataType;
 import org.gbif.util.DownloadUtil;
 import org.gbif.utils.file.CompressionUtil;
-import org.gbif.utils.file.csv.CSVReader;
-import org.gbif.utils.file.csv.CSVReaderFactory;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -31,13 +24,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
@@ -50,6 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import static org.gbif.dwc.DwcFileFactory.fromSingleFile;
+
 /**
  * Factory used to build {@link Archive} object from a DarwinCore Archive file.
  * 
@@ -58,29 +48,9 @@ import org.xml.sax.SAXException;
  */
 public class ArchiveFactory {
 
-  private static final TermFactory TERM_FACTORY = TermFactory.instance();
-
   private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);
   private static final List<String> DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
 
-  /**
-   * Predefined mapping between {@link Term} and its rowType.
-   * Ordering is important since the first found will be used.
-   */
-  private static final Map<Term, Term> TERM_TO_ROW_TYPE;
-  static {
-    Map<Term, Term> idToRowType = new LinkedHashMap<>();
-    idToRowType.put(DwcTerm.occurrenceID, DwcTerm.Occurrence);
-    idToRowType.put(DwcTerm.taxonID, DwcTerm.Taxon);
-    idToRowType.put(DwcTerm.eventID, DwcTerm.Event);
-    TERM_TO_ROW_TYPE = Collections.unmodifiableMap(idToRowType);
-  }
-
-  /**
-   * Terms that can represent an identifier within a file
-   */
-  private static final List<Term> ID_TERMS = Collections.unmodifiableList(
-          Arrays.asList(DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.eventID, DcTerm.identifier));
 
   /**
    * Opens an archive from a URL, downloading and decompressing it.
@@ -148,7 +118,7 @@ public class ArchiveFactory {
     Archive archive = new Archive();
     archive.setLocation(dataFile);
 
-    ArchiveFile coreFile = readFileHeaders(dataFile);
+    ArchiveFile coreFile = fromSingleFile(dataFile.toPath());
     archive.setCore(coreFile);
 
     // check if we also have a metadata file next to this data file
@@ -213,7 +183,7 @@ public class ArchiveFactory {
 
       if (dataFiles.size() == 1) {
         File dataFile = new File(dwcaFolder, dataFiles.get(0).getName());
-        ArchiveFile coreFile = readFileHeaders(dataFile);
+        ArchiveFile coreFile = fromSingleFile(dataFile.toPath());
         coreFile.getLocations().clear();
         coreFile.addLocation(dataFile.getName());
         archive.setCore(coreFile);
@@ -230,48 +200,6 @@ public class ArchiveFactory {
 
     // final validation
     return validateArchive(archive);
-  }
-
-  private static ArchiveFile readFileHeaders(File dataFile) throws UnsupportedArchiveException, IOException {
-    ArchiveFile dwcFile = new ArchiveFile();
-    dwcFile.addLocation(null);
-    dwcFile.setIgnoreHeaderLines(1);
-
-    String[] headers;
-    try (CSVReader reader = CSVReaderFactory.build(dataFile)) {
-      // copy found delimiters & encoding
-      dwcFile.setEncoding(reader.encoding);
-      dwcFile.setFieldsTerminatedBy(reader.delimiter);
-      dwcFile.setFieldsEnclosedBy(reader.quoteChar);
-      headers = reader.getHeader();
-    }
-
-    // detect dwc terms as good as we can based on header row
-    int index = 0;
-    for (String head : headers) {
-      // there are never any quotes in term names - remove them just in case the csvreader didnt recognize them
-      if (head != null && head.length() > 1) {
-        try {
-          Term dt = TERM_FACTORY.findTerm(head);
-          ArchiveField field = new ArchiveField(index, dt, null, DataType.string);
-          dwcFile.addField(field);
-        } catch (IllegalArgumentException e) {
-          LOG.warn("Illegal term name >>{}<< found in header, ignore column {}", head, index);
-        }
-      }
-      index++;
-    }
-
-    List<Term> headerAsTerm = dwcFile.getFields().keySet()
-            .stream()
-            .collect(Collectors.toList());
-
-    determineRecordIdentifier(headerAsTerm).ifPresent(
-            t -> dwcFile.setId(dwcFile.getField(t))
-    );
-
-    determineRowType(headerAsTerm).ifPresent(dwcFile::setRowType);
-    return dwcFile;
   }
 
   private static Archive validateArchive(Archive archive) throws UnsupportedArchiveException {
@@ -313,33 +241,6 @@ public class ArchiveFactory {
     if (f.getEncoding() == null) {
       throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a character encoding");
     }
-  }
-
-  /**
-   * Tries to determine the rowType based on a list of {@link Term}.
-   *
-   * @param terms the list can contain null values
-   *
-   * @return {@link Term} as {@code Optional} or {@code Optional.empty()} if can not be determined
-   */
-  static Optional<Term> determineRowType(List<Term> terms) {
-    return TERM_TO_ROW_TYPE.entrySet().stream()
-            .filter(ke -> terms.contains(ke.getKey()))
-            .map(Map.Entry::getValue).findFirst();
-  }
-
-  /**
-   * Tries to determine the record identifier based on a list of {@link Term}.
-   *
-   * @param terms the list can contain null values
-   *
-   * @return {@link Term} as {@code Optional} or {@code Optional.empty()} if can not be determined
-   */
-  static Optional<Term> determineRecordIdentifier(List<Term> terms) {
-    //try to find the first matching term respecting the order defined by ID_TERMS
-    return ID_TERMS.stream()
-            .filter(terms::contains)
-            .findFirst();
   }
 
 }

@@ -597,31 +597,5 @@ public class ArchiveFactoryTest {
     assertNull(arch.getCore().getLocation());
   }
 
-  @Test
-  public void testDetermineRowType() {
-    Optional<Term> rowType = ArchiveFactory
-            .determineRowType(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
-    assertEquals(DwcTerm.Occurrence, rowType.get());
-  }
 
-  @Test
-  public void testDetermineRecordIdentifier() {
-    Optional<Term> id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
-    assertEquals(DwcTerm.occurrenceID, id.get());
-
-    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.taxonID, DwcTerm.scientificName));
-    assertEquals(DwcTerm.taxonID, id.get());
-
-    //eventId should be picked even if taxonID is there
-    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.eventID, DwcTerm.scientificName, DwcTerm.taxonID));
-    assertEquals(DwcTerm.taxonID, id.get());
-
-    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName,
-            DcTerm.identifier));
-    assertEquals(DcTerm.identifier, id.get());
-
-    //eventId should be picked even if taxonID is there
-    id = ArchiveFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName, DwcTerm.decimalLatitude));
-    assertFalse(id.isPresent());
-  }
 }
