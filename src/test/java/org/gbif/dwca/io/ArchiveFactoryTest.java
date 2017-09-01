@@ -56,7 +56,6 @@ public class ArchiveFactoryTest {
     assertEquals(7, reader.next().length);
     reader.close();
 
-
     reader = ArchiveFactory.openArchive(FileUtils.getClasspathFile("iucn100.tab.txt")).getCore().getCSVReader();
     assertEquals(8, reader.next().length);
     reader.close();
@@ -377,7 +376,6 @@ public class ArchiveFactoryTest {
     Iterator<StarRecord> dwci = arch.iterator();
     StarRecord star = dwci.next();
     assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));
-    //assertNull(arch.getCore().getLocation());
     assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
 
     // test folder with single text file in (with taxonID, meaning it has dwc:Taxon rowType)
@@ -574,7 +572,6 @@ public class ArchiveFactoryTest {
     StarRecord star = dwci.next();
     assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));
     assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
-//    assertNull(arch.getCore().getLocation());
   }
 
   /**
@@ -594,8 +591,6 @@ public class ArchiveFactoryTest {
     StarRecord star = dwci.next();
     assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));
     assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
-    //assertNull(arch.getCore().getLocation());
   }
-
 
 }

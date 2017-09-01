@@ -110,7 +110,7 @@ public class DwcFileFactory {
    * Creates an {@link Archive} from a single file.
    *
    * @param dwcFile represents a single data file or a metadata file.
-   * @return
+   * @return a new {@link Archive}, never null.
    * @throws IOException
    */
   private static Archive archiveFromSingleFile(Path dwcFile) throws IOException {
@@ -133,6 +133,7 @@ public class DwcFileFactory {
 
   /**
    * @param dwcLocation the location of an expanded dwc archive directory or just a single dwc text file
+   * @return new {@link Archive}, never null. But, the {@link Archive} can be empty (e.g. no core)
    */
   public static Archive fromLocation(Path dwcLocation) throws IOException, UnsupportedArchiveException {
     if (!Files.exists(dwcLocation)) {
@@ -144,19 +145,14 @@ public class DwcFileFactory {
     }
 
     Archive archive = new Archive();
-    archive.setLocation(dwcLocation.toFile());
-
     applyIpt205Patch(dwcLocation);
 
-    // read metadata
-    //File m = new File(dwcaFolder, Archive.META_FN);
+    // Check for meta descriptor
     Path metaDescriptorFile = dwcLocation.resolve(Archive.META_FN);
     if (Files.exists(metaDescriptorFile)) {
       // read metaDescriptor file
       try {
         archive = DwcMetaFiles.fromMetaDescriptor(new FileInputStream(metaDescriptorFile.toFile()));
-        archive.setLocation(dwcLocation.toFile());
-        archive.setDwcLayout(DwcLayout.DIRECTORY_ROOT);
       } catch (SAXException | IOException e) {
         // using UnsupportedArchiveException for backward compatibility but IOException would be fine here
         throw new UnsupportedArchiveException(e);
@@ -168,19 +164,15 @@ public class DwcFileFactory {
       List<File> dataFiles = extractPossibleDataFile(dwcLocation.toFile());
       if (dataFiles.size() == 1) {
         archive = archiveFromSingleFile(dataFiles.get(0).toPath());
-        archive.setLocation(dwcLocation.toFile());
-        archive.setDwcLayout(DwcLayout.DIRECTORY_ROOT);
       }
-//      else {
-//
-//        throw new UnsupportedArchiveException(
-//                "The archive given is a folder with more or less than 1 data files having a csv, txt or tab suffix");
-//      }
     }
 
     // check if we also have a metadata file next to this data file
     DwcMetaFiles.discoverMetadataFile(dwcLocation)
             .ifPresent(archive::setMetadataLocation);
+
+    archive.setLocation(dwcLocation.toFile());
+    archive.setDwcLayout(DwcLayout.DIRECTORY_ROOT);
 
     return archive;
   }

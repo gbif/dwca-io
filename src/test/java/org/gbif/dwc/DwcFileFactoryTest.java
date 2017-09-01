@@ -3,7 +3,11 @@ package org.gbif.dwc;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
+import org.gbif.dwca.io.Archive;
+import org.gbif.utils.file.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -11,11 +15,25 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
  */
 public class DwcFileFactoryTest {
+
+  @Test
+  public void testEmlOnly() throws IOException {
+    File eml = FileUtils.getClasspathFile("metadata/eml-alone/");
+    Archive archive = DwcFileFactory.fromLocation(eml.toPath());
+    assertNotNull(archive.getMetadataLocationFile());
+    assertEquals(DwcLayout.DIRECTORY_ROOT, archive.getDwcLayout());
+
+    eml = FileUtils.getClasspathFile("metadata/eml-alone/eml.xml");
+    archive = DwcFileFactory.fromLocation(eml.toPath());
+    assertNotNull(archive.getMetadataLocationFile());
+    assertEquals(DwcLayout.FILE_ROOT, archive.getDwcLayout());
+  }
 
   @Test
   public void testDetermineRowType() {

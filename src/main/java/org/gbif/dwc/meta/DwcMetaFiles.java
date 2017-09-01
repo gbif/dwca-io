@@ -43,6 +43,7 @@ public class DwcMetaFiles {
    * @throws SAXException
    * @throws IOException
    * @throws UnsupportedArchiveException
+   * @return a new {@link Archive}, never null
    */
   public static Archive fromMetaDescriptor(InputStream metaDescriptor) throws SAXException, IOException, UnsupportedArchiveException {
     Archive archive = new Archive();
