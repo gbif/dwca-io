@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
 
 /**
  * WORK-IN-PROGESS, the class could be renamed without notice.
- * Its visibility is set to punlic only to accommodate {@link org.gbif.dwca.io.ArchiveFactory} during the transition.
+ * Its visibility is set to public only to accommodate {@link org.gbif.dwca.io.ArchiveFactory} during the transition.
  *
  */
 public class DwcFileFactory {

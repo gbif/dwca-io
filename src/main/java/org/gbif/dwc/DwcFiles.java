@@ -137,6 +137,9 @@ public class DwcFiles {
    */
   public static NormalizedDwcArchive prepareArchive(final Archive archive, boolean replaceNulls, boolean replaceEntities) throws IOException {
 
+    Objects.requireNonNull(archive, "archive shall be provided");
+    Objects.requireNonNull(archive.getCore(), "The archive shall have a core");
+
     //if no extensions are provided we don't need to sort the file
     if (archive.getExtensions().isEmpty()) {
       return new NormalizedDwcArchive(() -> iterator(archive.getCore(), replaceNulls, replaceEntities));
