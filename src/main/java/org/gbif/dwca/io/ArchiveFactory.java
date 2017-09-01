@@ -18,26 +18,17 @@ import org.gbif.utils.file.CompressionUtil;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
+import static org.gbif.dwc.DwcFileFactory.fromLocation;
 import static org.gbif.dwc.DwcFileFactory.fromSingleFile;
 
 /**
@@ -49,8 +40,6 @@ import static org.gbif.dwc.DwcFileFactory.fromSingleFile;
 public class ArchiveFactory {
 
   private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);
-  private static final List<String> DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
-
 
   /**
    * Opens an archive from a URL, downloading and decompressing it.
@@ -133,70 +122,8 @@ public class ArchiveFactory {
    * @param dwcaFolder the location of an expanded dwc archive directory or just a single dwc text file
    */
   public static Archive openArchive(File dwcaFolder) throws IOException, UnsupportedArchiveException {
-    if (!dwcaFolder.exists()) {
-      throw new FileNotFoundException("Archive folder not existing: " + dwcaFolder.getAbsolutePath());
-    }
-    // delegate to open data file method if its a single file, not a folder
-    if (dwcaFolder.isFile()) {
-      return openArchiveDataFile(dwcaFolder);
-    }
 
-    Archive archive = new Archive();
-    archive.setLocation(dwcaFolder);
-
-    // Accommodate archives coming from legacy IPTs which put a "\" before each filename
-    // http://dev.gbif.org/issues/browse/POR-2396
-    // https://code.google.com/p/gbif-providertoolkit/issues/detail?id=1015
-    Iterator<File> iter = FileUtils.iterateFiles(dwcaFolder, new String[] {"xml", "txt"}, false);
-    while (iter.hasNext()) {
-      File f = iter.next();
-      if (f.getName().startsWith("\\")) {
-        String orig = f.getName();
-        String replacement = f.getName().replaceFirst("\\\\", "");
-        LOG.info("Renaming file from {} to {}", orig, replacement);
-        f.renameTo(new File(dwcaFolder, replacement));
-      }
-    }
-
-    // read metadata
-    File mf = new File(dwcaFolder, Archive.META_FN);
-    if (mf.exists()) {
-      // read metaDescriptor file
-      try {
-        archive = DwcMetaFiles.fromMetaDescriptor(new FileInputStream(mf));
-        archive.setLocation(dwcaFolder);
-      } catch (SAXException | IOException e) {
-        // using UnsupportedArchiveException for backward compatibility but IOException would be fine here
-        throw new UnsupportedArchiveException(e);
-      }
-    } else {
-      // meta.xml lacking.
-      // Try to detect data files ourselves as best as we can.
-      // look for a single, visible text data file
-      List<File> dataFiles = new ArrayList<File>();
-      for (String suffix : DATA_FILE_SUFFICES) {
-        FileFilter ff = FileFilterUtils.and(
-            FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE), HiddenFileFilter.VISIBLE
-        );
-        dataFiles.addAll(Arrays.asList(dwcaFolder.listFiles(ff)));
-      }
-
-      if (dataFiles.size() == 1) {
-        File dataFile = new File(dwcaFolder, dataFiles.get(0).getName());
-        ArchiveFile coreFile = fromSingleFile(dataFile.toPath());
-        coreFile.getLocations().clear();
-        coreFile.addLocation(dataFile.getName());
-        archive.setCore(coreFile);
-
-      } else {
-        throw new UnsupportedArchiveException(
-          "The archive given is a folder with more or less than 1 data files having a csv, txt or tab suffix");
-      }
-    }
-
-    // check if we also have a metadata file next to this data file
-    DwcMetaFiles.discoverMetadataFile(dwcaFolder.toPath())
-            .ifPresent(archive::setMetadataLocation);
+    Archive archive = fromLocation(dwcaFolder.toPath());
 
     // final validation
     return validateArchive(archive);

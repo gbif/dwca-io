@@ -1,9 +1,11 @@
 package org.gbif.dwc;
 
+import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
+import org.gbif.dwca.io.Archive;
 import org.gbif.dwca.io.ArchiveField;
 import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.dwca.io.UnsupportedArchiveException;
@@ -13,9 +15,13 @@ import org.gbif.utils.file.tabular.TabularFileMetadataExtractor;
 import org.gbif.utils.file.tabular.TabularFiles;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,9 +32,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -62,7 +73,9 @@ public class DwcFileFactory {
    */
   private static final List<Term> ID_TERMS = Collections.unmodifiableList(
           Arrays.asList(DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.eventID, DcTerm.identifier));
-  
+
+  private static final List<String> DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
+
   // Utility class
   private DwcFileFactory() {}
 
@@ -80,6 +93,96 @@ public class DwcFileFactory {
         f.renameTo(new File(dwcFolder.toFile(), replacement));
       }
     }
+  }
+
+  private static List<File> extractPossibleDataFile(File dwcFolder) {
+    List<File> dataFiles = new ArrayList<>();
+    for (String suffix : DATA_FILE_SUFFICES) {
+      FileFilter ff = FileFilterUtils.and(
+              FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE), HiddenFileFilter.VISIBLE
+      );
+      dataFiles.addAll(Arrays.asList(dwcFolder.listFiles(ff)));
+    }
+    return dataFiles;
+  }
+
+  /**
+   * Creates an {@link Archive} from a single file.
+   *
+   * @param dwcFile represents a single data file or a metadata file.
+   * @return
+   * @throws IOException
+   */
+  private static Archive archiveFromSingleFile(Path dwcFile) throws IOException {
+    Archive archive = new Archive();
+    archive.setLocation(dwcFile.toFile());
+    archive.setDwcLayout(DwcLayout.fromFile(dwcFile.toFile()));
+
+    Optional<String> possibleMetadataFile = DwcMetaFiles.discoverMetadataFile(dwcFile);
+    if(possibleMetadataFile.isPresent()) {
+      archive.setMetadataLocation(possibleMetadataFile.get());
+    }
+    else{
+      ArchiveFile coreFile = fromSingleFile(dwcFile);
+      coreFile.addLocation(dwcFile.getFileName().toString());
+      archive.setCore(coreFile);
+    }
+
+    return archive;
+  }
+
+  /**
+   * @param dwcLocation the location of an expanded dwc archive directory or just a single dwc text file
+   */
+  public static Archive fromLocation(Path dwcLocation) throws IOException, UnsupportedArchiveException {
+    if (!Files.exists(dwcLocation)) {
+      throw new FileNotFoundException("dwcLocation does not exist: " + dwcLocation.toAbsolutePath());
+    }
+    // delegate to {@link #archiveFromSingleFile) if its a single file, not a folder
+    if (Files.isRegularFile(dwcLocation)) {
+      return archiveFromSingleFile(dwcLocation);
+    }
+
+    Archive archive = new Archive();
+    archive.setLocation(dwcLocation.toFile());
+
+    applyIpt205Patch(dwcLocation);
+
+    // read metadata
+    //File m = new File(dwcaFolder, Archive.META_FN);
+    Path metaDescriptorFile = dwcLocation.resolve(Archive.META_FN);
+    if (Files.exists(metaDescriptorFile)) {
+      // read metaDescriptor file
+      try {
+        archive = DwcMetaFiles.fromMetaDescriptor(new FileInputStream(metaDescriptorFile.toFile()));
+        archive.setLocation(dwcLocation.toFile());
+        archive.setDwcLayout(DwcLayout.DIRECTORY_ROOT);
+      } catch (SAXException | IOException e) {
+        // using UnsupportedArchiveException for backward compatibility but IOException would be fine here
+        throw new UnsupportedArchiveException(e);
+      }
+    } else {
+      // meta.xml lacking.
+      // Try to detect data files ourselves as best as we can.
+      // look for a single, visible text data file
+      List<File> dataFiles = extractPossibleDataFile(dwcLocation.toFile());
+      if (dataFiles.size() == 1) {
+        archive = archiveFromSingleFile(dataFiles.get(0).toPath());
+        archive.setLocation(dwcLocation.toFile());
+        archive.setDwcLayout(DwcLayout.DIRECTORY_ROOT);
+      }
+//      else {
+//
+//        throw new UnsupportedArchiveException(
+//                "The archive given is a folder with more or less than 1 data files having a csv, txt or tab suffix");
+//      }
+    }
+
+    // check if we also have a metadata file next to this data file
+    DwcMetaFiles.discoverMetadataFile(dwcLocation)
+            .ifPresent(archive::setMetadataLocation);
+
+    return archive;
   }
 
   /**
@@ -114,7 +217,7 @@ public class DwcFileFactory {
     // detect dwc terms as good as we can based on header row
     int index = 0;
     for (String head : headers) {
-      // there are never any quotes in term names - remove them just in case the csvreader didnt recognize them
+      // there are never any quotes in term names - remove them just in case the we didn't recognize them
       if (head != null && head.length() > 1) {
         try {
           Term dt = TERM_FACTORY.findTerm(head);

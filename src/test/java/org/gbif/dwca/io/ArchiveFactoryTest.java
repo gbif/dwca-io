@@ -1,9 +1,9 @@
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.DwcLayout;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.util.CSVReaderHelper;
@@ -17,20 +17,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -381,7 +377,8 @@ public class ArchiveFactoryTest {
     Iterator<StarRecord> dwci = arch.iterator();
     StarRecord star = dwci.next();
     assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));
-    assertNull(arch.getCore().getLocation());
+    //assertNull(arch.getCore().getLocation());
+    assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
 
     // test folder with single text file in (with taxonID, meaning it has dwc:Taxon rowType)
     arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("dwca"));
@@ -398,6 +395,7 @@ public class ArchiveFactoryTest {
     assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));
     assertEquals("1559060", star.core().value(DwcTerm.taxonID));
     assertEquals("DarwinCore.txt", arch.getCore().getLocation());
+    assertEquals(DwcLayout.DIRECTORY_ROOT, arch.getDwcLayout());
   }
 
   @Test
@@ -575,7 +573,8 @@ public class ArchiveFactoryTest {
     Iterator<StarRecord> dwci = arch.iterator();
     StarRecord star = dwci.next();
     assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));
-    assertNull(arch.getCore().getLocation());
+    assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
+//    assertNull(arch.getCore().getLocation());
   }
 
   /**
@@ -594,7 +593,8 @@ public class ArchiveFactoryTest {
     Iterator<StarRecord> dwci = arch.iterator();
     StarRecord star = dwci.next();
     assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));
-    assertNull(arch.getCore().getLocation());
+    assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
+    //assertNull(arch.getCore().getLocation());
   }
 
 

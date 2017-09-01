@@ -2,6 +2,7 @@ package org.gbif.dwca.io;
 
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.DwcFiles;
+import org.gbif.dwc.DwcLayout;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
@@ -263,6 +264,8 @@ public class Archive implements Iterable<StarRecord> {
   private Set<ArchiveFile> extensions = new HashSet<ArchiveFile>();
   private boolean sorted = false;
 
+  private DwcLayout dwcLayout;
+
   public void addExtension(ArchiveFile extension) {
     extension.setArchive(this);
     extensions.add(extension);
@@ -398,6 +401,14 @@ public class Archive implements Iterable<StarRecord> {
 
   public void setMetadataLocation(String metadataLocation) {
     this.metadataLocation = metadataLocation;
+  }
+
+  public DwcLayout getDwcLayout() {
+    return dwcLayout;
+  }
+
+  public void setDwcLayout(DwcLayout dwcLayout) {
+    this.dwcLayout = dwcLayout;
   }
 
   /**

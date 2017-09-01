@@ -21,6 +21,8 @@ import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -246,7 +248,9 @@ public class ArchiveFile implements Iterable<Record> {
         dataFile = new File(getLocation());
       } else {
         // use source file relative to archive dir
-        dataFile = new File(archive.getLocation(), getLocation());
+        Path archiveLocation = archive.getLocation().toPath();
+        File directory = Files.isDirectory(archiveLocation) ? archiveLocation.toFile() : archiveLocation.getParent().toFile();
+        dataFile = new File(directory, getLocation());
       }
     } else {
       dataFile = new File(getLocation());
