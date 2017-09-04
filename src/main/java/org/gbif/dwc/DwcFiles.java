@@ -52,8 +52,22 @@ public class DwcFiles {
     return InternalDwcFileFactory.fromLocation(dwcLocation);
   }
 
-//  public static Archive fromCompressed(Path dwcaLocation, Path destination){
-//  }
+  /**
+   * Build an {@link Archive} from a compressed file. The compressed file will be extracted in the provided directory.
+   * The supported compressions are zip and gzip.
+   *
+   * @param dwcaLocation the location of a dwc archive(compressed)
+   * @param destination  the destination of the uncompressed content.
+   *
+   * @return new {@link Archive}, never null. But, the {@link Archive} can be empty (e.g. no core)
+   *
+   * @throws IOException
+   * @throws UnsupportedArchiveException
+   */
+  public static Archive fromCompressed(Path dwcaLocation, Path destination) throws IOException, UnsupportedArchiveException {
+    // delegate to InternalDwcFileFactory
+    return InternalDwcFileFactory.fromCompressed(dwcaLocation, destination);
+  }
 
   /**
    * Same as calling #iterator(ArchiveFile, true, true)

@@ -9,6 +9,7 @@ import org.gbif.dwca.io.Archive;
 import org.gbif.dwca.io.ArchiveField;
 import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.dwca.io.UnsupportedArchiveException;
+import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 import org.gbif.utils.file.tabular.TabularFileMetadata;
 import org.gbif.utils.file.tabular.TabularFileMetadataExtractor;
@@ -37,16 +38,17 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 
 /**
- * Its visibility is set to public only to accommodate {@link org.gbif.dwca.io.ArchiveFactory} during the transition.
+ * Internal class responsible to handle the creation of {@link Archive} objects and related functions.
  *
  */
-public class InternalDwcFileFactory {
+class InternalDwcFileFactory {
 
   private static final Logger LOG = LoggerFactory.getLogger(InternalDwcFileFactory.class);
 
@@ -134,7 +136,7 @@ public class InternalDwcFileFactory {
    * @param dwcLocation the location of an expanded dwc archive directory or just a single dwc text file
    * @return new {@link Archive}, never null. But, the {@link Archive} can be empty (e.g. no core)
    */
-  public static Archive fromLocation(Path dwcLocation) throws IOException, UnsupportedArchiveException {
+  static Archive fromLocation(Path dwcLocation) throws IOException, UnsupportedArchiveException {
     if (!Files.exists(dwcLocation)) {
       throw new FileNotFoundException("dwcLocation does not exist: " + dwcLocation.toAbsolutePath());
     }
@@ -176,6 +178,40 @@ public class InternalDwcFileFactory {
     return archive;
   }
 
+  static Archive fromCompressed(Path dwcaLocation, Path destination) throws IOException, UnsupportedArchiveException {
+    if (!Files.exists(dwcaLocation)) {
+      throw new FileNotFoundException("dwcaLocation does not exist: " + dwcaLocation.toAbsolutePath());
+    }
+
+    if (Files.exists(destination)) {
+      // clean up any existing folder
+      LOG.debug("Deleting existing archive folder [{}]", destination.toAbsolutePath());
+      org.gbif.utils.file.FileUtils.deleteDirectoryRecursively(destination.toFile());
+    }
+    FileUtils.forceMkdir(destination.toFile());
+    // try to decompress archive
+    try {
+      CompressionUtil.decompressFile(destination.toFile(), dwcaLocation.toFile(), true);
+      // we keep subfolder, but often the entire archive is within one subfolder. Remove that root folder if present
+      File[] rootFiles = destination.toFile().listFiles((FileFilter) HiddenFileFilter.VISIBLE);
+      if (rootFiles.length == 1) {
+        File root = rootFiles[0];
+        if (root.isDirectory()) {
+          // single root dir, flatten structure
+          LOG.debug("Removing single root folder {} found in decompressed archive", root.getAbsoluteFile());
+          for (File f : FileUtils.listFiles(root, TrueFileFilter.TRUE, null)) {
+            File f2 = new File(destination.toFile(), f.getName());
+            f.renameTo(f2);
+          }
+        }
+      }
+      // continue to read archive from the tmp dir
+      return fromLocation(destination);
+    } catch (CompressionUtil.UnsupportedCompressionType e) {
+      throw new UnsupportedArchiveException(e);
+    }
+  }
+
   /**
    * Return a {@link ArchiveFile} based on a single data file.
    * Delimiter, quote char and encoding will be extracted from the file using {@link TabularFileMetadataExtractor}.
@@ -186,7 +222,7 @@ public class InternalDwcFileFactory {
    * @throws UnsupportedArchiveException
    * @throws IOException
    */
-  public static ArchiveFile fromSingleFile(Path dataFile) throws UnsupportedArchiveException, IOException {
+  static ArchiveFile fromSingleFile(Path dataFile) throws UnsupportedArchiveException, IOException {
     Preconditions.checkArgument(Files.isRegularFile(dataFile), "dataFile shall be a file");
     ArchiveFile dwcFile = new ArchiveFile();
    // dwcFile.addLocation(null);

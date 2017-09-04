@@ -12,24 +12,18 @@
  */
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.util.DownloadUtil;
-import org.gbif.utils.file.CompressionUtil;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 
 import com.google.common.io.Files;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.gbif.dwc.InternalDwcFileFactory.fromLocation;
-import static org.gbif.dwc.InternalDwcFileFactory.fromSingleFile;
 
 /**
  * Factory used to build {@link Archive} object from a DarwinCore Archive file.
@@ -65,33 +59,14 @@ public class ArchiveFactory {
    * @param archiveDir  empty, writable directory used to keep decompress archive in
    */
   public static Archive openArchive(File archiveFile, File archiveDir) throws IOException, UnsupportedArchiveException {
-    if (archiveDir.exists()) {
-      // clean up any existing folder
-      LOG.debug("Deleting existing archive folder [{}]", archiveDir.getAbsolutePath());
-      org.gbif.utils.file.FileUtils.deleteDirectoryRecursively(archiveDir);
-    }
-    FileUtils.forceMkdir(archiveDir);
-    // try to decompress archive
-    try {
-      CompressionUtil.decompressFile(archiveDir, archiveFile, true);
-      // we keep subfolder, but often the entire archive is within one subfolder. Remove that root folder if present
-      File[] rootFiles = archiveDir.listFiles((FileFilter) HiddenFileFilter.VISIBLE);
-      if (rootFiles.length == 1) {
-        File root = rootFiles[0];
-        if (root.isDirectory()) {
-          // single root dir, flatten structure
-          LOG.debug("Removing single root folder {} found in decompressed archive", root.getAbsoluteFile());
-          for (File f : FileUtils.listFiles(root, TrueFileFilter.TRUE, null)) {
-            File f2 = new File(archiveDir, f.getName());
-            f.renameTo(f2);
-          }
-        }
-      }
-      // continue to read archive from the tmp dir
-      return openArchive(archiveDir);
 
-    } catch (CompressionUtil.UnsupportedCompressionType e) {
-      LOG.debug("Could not uncompress archive [{}], try to read as single text file", archiveFile, e);
+    try {
+      Archive archive = DwcFiles.fromCompressed(archiveFile.toPath(), archiveDir.toPath());
+      // keep validation for backward compatibility
+      return validateArchive(archive);
+    }
+    catch (UnsupportedArchiveException uaEx){
+      LOG.debug("Could not uncompress archive [{}], try to read as single text file", archiveFile, uaEx);
       // If its a text file only we will get this exception - but also for corrupt compressions
       // try to open as text file only and if successful copy file to archive dir
       Archive arch = openArchiveDataFile(archiveFile);
@@ -104,15 +79,15 @@ public class ArchiveFactory {
    * Opens a dwca archive which is just a single decompressed data file with headers, e.g. a csv or tab delimited file
    */
   public static Archive openArchiveDataFile(File dataFile) throws IOException, UnsupportedArchiveException {
-    Archive archive = new Archive();
-    archive.setLocation(dataFile);
+    Archive archive = DwcFiles.fromLocation(dataFile.toPath());
 
-    ArchiveFile coreFile = fromSingleFile(dataFile.toPath());
-    archive.setCore(coreFile);
-
-    // check if we also have a metadata file next to this data file
-    DwcMetaFiles.discoverMetadataFile(dataFile.getParentFile().toPath())
-            .ifPresent(archive::setMetadataLocation);
+    // for backward compatibility reason we keep this behavior to check if we have a metadata file next to
+    // a single file.
+    if(StringUtils.isBlank(archive.getMetadataLocation())) {
+      // check if we also have a metadata file next to this data file
+      DwcMetaFiles.discoverMetadataFile(dataFile.getParentFile().toPath())
+              .ifPresent(archive::setMetadataLocation);
+    }
 
     // final validation
     return validateArchive(archive);
@@ -123,7 +98,7 @@ public class ArchiveFactory {
    */
   public static Archive openArchive(File dwcaFolder) throws IOException, UnsupportedArchiveException {
 
-    Archive archive = fromLocation(dwcaFolder.toPath());
+    Archive archive = DwcFiles.fromLocation(dwcaFolder.toPath());
 
     // final validation
     return validateArchive(archive);

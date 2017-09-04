@@ -3,6 +3,7 @@
 ## 1.32 (not released yet)
  * Deprecation of all iteration related classes/methods from [Archive](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwca/io/Archive.html)
  in favour of [DwcFiles](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwc/DwcFiles.html).
+ * [DwcFiles](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwc/DwcFiles.html) can now create [Archive](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwca/io/Archive.html) objects.
 
 ## 1.31 (2017-06-16)
 

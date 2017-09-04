@@ -3,7 +3,6 @@ package org.gbif.dwc;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
@@ -16,14 +15,16 @@ import java.io.IOException;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests related to {@link DwcFiles}.
+ * For methods where the call is delegated to {@link InternalDwcFileFactory}, the corresponding test is in
+ * {@link InternalDwcFileFactoryTest}.
  */
 public class DwcFilesTest {
 
@@ -36,7 +37,7 @@ public class DwcFilesTest {
 
   @Test
   public void testDwcRecordIterator() throws IOException {
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
     int count=0;
     try(ClosableIterator<Record> it = DwcFiles.iterator(arch.getCore())) {
       while (it.hasNext()) {
@@ -54,7 +55,7 @@ public class DwcFilesTest {
   @Test
   public void testStartRecordIterator() throws IOException {
 
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
     NormalizedDwcArchive nda = DwcFiles.prepareArchive(arch, false, false);
     try(ClosableIterator<StarRecord> it = nda.iterator()){
       assertNotNull(arch.getCore());
@@ -139,7 +140,7 @@ public class DwcFilesTest {
   @Test
   public void testNormalizeAndSort() throws IOException, InterruptedException {
 
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
     ArchiveFile core = arch.getCore();
     File sortedFile = ArchiveFile.getLocationFileSorted(core.getLocationFile());
 

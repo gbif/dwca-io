@@ -17,9 +17,9 @@ mvn clean install
 ### Reading DarwinCore archive
 Read an archive and display the scientific name of each records:
 ```java
-File myArchiveFile = new File("myArchive.zip");
-File extractToFolder = new File("/tmp/myarchive");
-Archive dwcArchive = ArchiveFactory.openArchive(myArchiveFile, extractToFolder);
+Path myArchiveFile = Paths.get("myArchive.zip");
+Path extractToFolder = Paths.get("/tmp/myarchive");
+Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
 
 // loop over core darwin core records and display scientificName
 try(ClosableIterator<Record> it = DwcFiles.iterator(arch.getCore())) {
@@ -36,7 +36,7 @@ catch (Exception e) {
 ### Reading DarwinCore archive + extensions
 Read from a folder(extracted archive) and display the scientific name of each records + vernacular name(s) from the extension:
 ```java
-Archive dwcArchive = ArchiveFactory.openArchive(new File("/tmp/myarchive"));
+Archive dwcArchive = DwcFiles.fromLocation(Paths.get("/tmp/myarchive"));
 System.out.println("Archive rowtype: " + dwcArchive.getCore().getRowType() + ", "
     + dwcArchive.getExtensions().size() + " extension(s)");
 

@@ -13,7 +13,6 @@ import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -264,56 +263,6 @@ public class ArchiveFactoryTest {
     }
     assertEquals("Occurrence extension file has 740 records", 740, occCounter2);
     assertEquals("Occurrence start extensions should be 740 records", 740, occCounter);
-  }
-
-  @Test(expected = FileNotFoundException.class)
-  public void testNonExistingFile() throws Exception {
-    // test zip with 1 extension file
-    File none = new File("/ping/pong/nuts");
-    // try to open archive
-    ArchiveFactory.openArchive(none);
-  }
-
-  @Test
-  public void testOpenArchiveAsZip() throws UnsupportedArchiveException, IOException {
-    // test zip with 1 extension file
-    File zip = FileUtils.getClasspathFile("archive-tax.zip");
-    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
-    tmpDir.deleteOnExit();
-
-    // open archive from zip
-    Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
-    assertNotNull(arch.getCore().getId());
-    assertEquals(1, arch.getExtensions().size());
-
-    boolean found = false;
-    for (Record rec : arch.getCore()) {
-      if ("113775".equals(rec.id())) {
-        found = true;
-      }
-    }
-    assertTrue(found);
-  }
-
-  @Test
-  public void testOpenArchiveAsTarGzip() throws UnsupportedArchiveException, IOException {
-    // test gziped tar file with 1 extension
-    File zip = FileUtils.getClasspathFile("archive-tax.tar.gz");
-    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
-    tmpDir.deleteOnExit();
-
-    // open compressed archive
-    Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
-    assertNotNull(arch.getCore().getId());
-    assertEquals(1, arch.getExtensions().size());
-
-    boolean found = false;
-    for (Record rec : arch.getCore()) {
-      if ("113775".equals(rec.id())) {
-        found = true;
-      }
-    }
-    assertTrue(found);
   }
 
   /**
