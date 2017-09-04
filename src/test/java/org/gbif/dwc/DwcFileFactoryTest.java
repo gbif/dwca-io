@@ -25,41 +25,41 @@ public class DwcFileFactoryTest {
   @Test
   public void testEmlOnly() throws IOException {
     File eml = FileUtils.getClasspathFile("metadata/eml-alone/");
-    Archive archive = DwcFileFactory.fromLocation(eml.toPath());
+    Archive archive = DwcFiles.fromLocation(eml.toPath());
     assertNotNull(archive.getMetadataLocationFile());
     assertEquals(DwcLayout.DIRECTORY_ROOT, archive.getDwcLayout());
 
     eml = FileUtils.getClasspathFile("metadata/eml-alone/eml.xml");
-    archive = DwcFileFactory.fromLocation(eml.toPath());
+    archive = DwcFiles.fromLocation(eml.toPath());
     assertNotNull(archive.getMetadataLocationFile());
     assertEquals(DwcLayout.FILE_ROOT, archive.getDwcLayout());
   }
 
   @Test
   public void testDetermineRowType() {
-    Optional<Term> rowType = DwcFileFactory
+    Optional<Term> rowType = InternalDwcFileFactory
             .determineRowType(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
     assertEquals(DwcTerm.Occurrence, rowType.get());
   }
 
   @Test
   public void testDetermineRecordIdentifier() {
-    Optional<Term> id = DwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
+    Optional<Term> id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
     assertEquals(DwcTerm.occurrenceID, id.get());
 
-    id = DwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.taxonID, DwcTerm.scientificName));
+    id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.taxonID, DwcTerm.scientificName));
     assertEquals(DwcTerm.taxonID, id.get());
 
     //eventId should be picked even if taxonID is there
-    id = DwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.eventID, DwcTerm.scientificName, DwcTerm.taxonID));
+    id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.eventID, DwcTerm.scientificName, DwcTerm.taxonID));
     assertEquals(DwcTerm.taxonID, id.get());
 
-    id = DwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName,
+    id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName,
             DcTerm.identifier));
     assertEquals(DcTerm.identifier, id.get());
 
     //eventId should be picked even if taxonID is there
-    id = DwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName, DwcTerm.decimalLatitude));
+    id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName, DwcTerm.decimalLatitude));
     assertFalse(id.isPresent());
   }
 }

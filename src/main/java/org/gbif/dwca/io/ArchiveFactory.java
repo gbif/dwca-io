@@ -28,8 +28,8 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.gbif.dwc.DwcFileFactory.fromLocation;
-import static org.gbif.dwc.DwcFileFactory.fromSingleFile;
+import static org.gbif.dwc.InternalDwcFileFactory.fromLocation;
+import static org.gbif.dwc.InternalDwcFileFactory.fromSingleFile;
 
 /**
  * Factory used to build {@link Archive} object from a DarwinCore Archive file.

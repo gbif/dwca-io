@@ -43,13 +43,12 @@ import org.xml.sax.SAXException;
 
 
 /**
- * WORK-IN-PROGESS, the class could be renamed without notice.
  * Its visibility is set to public only to accommodate {@link org.gbif.dwca.io.ArchiveFactory} during the transition.
  *
  */
-public class DwcFileFactory {
+public class InternalDwcFileFactory {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DwcFileFactory.class);
+  private static final Logger LOG = LoggerFactory.getLogger(InternalDwcFileFactory.class);
 
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
   private static final String DEFAULT_ENDLINE_CHAR = "\n";
@@ -77,7 +76,7 @@ public class DwcFileFactory {
   private static final List<String> DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
 
   // Utility class
-  private DwcFileFactory() {}
+  private InternalDwcFileFactory() {}
 
   private static void applyIpt205Patch(final Path dwcFolder) {
     // Accommodate archives coming from legacy IPTs which put a "\" before each filename

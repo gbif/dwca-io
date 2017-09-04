@@ -3,6 +3,7 @@ package org.gbif.dwc;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.io.Archive;
 import org.gbif.dwca.io.ArchiveFile;
+import org.gbif.dwca.io.UnsupportedArchiveException;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.ClosableIterator;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,22 @@ public class DwcFiles {
    */
   private DwcFiles() {
   }
+
+  /**
+   * Build an {@link Archive} from a location. The location can be an uncompressed directory or an uncompressed file.
+   *
+   * @param dwcLocation the location of an expanded dwc archive directory, a single dwc text file or a metadata
+   *                    document
+   *
+   * @return new {@link Archive}, never null. But, the {@link Archive} can be empty (e.g. no core)
+   */
+  public static Archive fromLocation(Path dwcLocation) throws IOException, UnsupportedArchiveException {
+    // delegate to InternalDwcFileFactory
+    return InternalDwcFileFactory.fromLocation(dwcLocation);
+  }
+
+//  public static Archive fromCompressed(Path dwcaLocation, Path destination){
+//  }
 
   /**
    * Same as calling #iterator(ArchiveFile, true, true)
