@@ -16,8 +16,6 @@
 
 package org.gbif.dwca.io;
 
-import org.gbif.registry.metadata.EMLWriter;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,6 +25,8 @@ import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
+
+import static freemarker.template.Configuration.VERSION_2_3_25;
 
 /**
  * Utils class to write a meta.xml descriptor file.
@@ -63,9 +63,9 @@ public class MetaDescriptorWriter {
    */
   private static Configuration provideFreemarker() {
     // load templates from classpath by prefixing /templates
-    TemplateLoader tl = new ClassTemplateLoader(EMLWriter.class, TEMPLATE_PATH);
+    TemplateLoader tl = new ClassTemplateLoader(MetaDescriptorWriter.class, TEMPLATE_PATH);
 
-    Configuration fm = new Configuration();
+    Configuration fm = new Configuration(VERSION_2_3_25);
     fm.setDefaultEncoding("utf8");
     fm.setTemplateLoader(tl);
 
