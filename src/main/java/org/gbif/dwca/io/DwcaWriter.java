@@ -312,7 +312,7 @@ public class DwcaWriter {
     if(!multiValueDelimiter.containsKey(rowType)){
       multiValueDelimiter.put(rowType, new HashMap<Term, String>());
     }
-    Map<Term,String> delimiters= defaultValues.get(rowType);
+    Map<Term,String> delimiters= multiValueDelimiter.get(rowType);
     if(delimiters.containsKey(term)){
       throw new IllegalStateException("The delimiter of term "+ term + " is already defined");
     }
