@@ -15,6 +15,12 @@ package org.gbif.dwca.io;
  * limitations under the License.
  */
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
@@ -22,29 +28,12 @@ import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.io.TabWriter;
 import org.gbif.registry.metadata.EMLWriter;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.io.Closeables;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
+import java.io.*;
+import java.util.*;
 
 /**
  * Simple writer class to create valid dwc archives using tab data files.
@@ -68,6 +57,7 @@ public class DwcaWriter {
   private final Map<Term, List<Term>> terms = Maps.newHashMap();
   // key=rowType, value=default values per column
   private final Map<Term, Map<Term, String>> defaultValues = Maps.newHashMap();
+  private final Map<Term, Map<Term, String>> multiValueDelimiter = Maps.newHashMap();
   private Dataset eml;
   private Map<String, Dataset> constituents = Maps.newHashMap();
 
@@ -305,6 +295,31 @@ public class DwcaWriter {
   }
 
   /**
+   * Declares the multi value delimiter for a term of the core rowType.
+   *
+   * @param term
+   * @param defaultValue
+   */
+  public void addCoreMultiValueDelimiter(Term term, String defaultValue){
+    addMultiValueDelimiter(coreRowType, term, defaultValue);
+  }
+
+  /**
+   * Declares the multi value delimiter for a term of the provided rowType.
+   */
+  public void addMultiValueDelimiter(Term rowType, Term term, String delimiter){
+
+    if(!multiValueDelimiter.containsKey(rowType)){
+      multiValueDelimiter.put(rowType, new HashMap<Term, String>());
+    }
+    Map<Term,String> delimiters= defaultValues.get(rowType);
+    if(delimiters.containsKey(term)){
+      throw new IllegalStateException("The delimiter of term "+ term + " is already defined");
+    }
+    delimiters.put(term, delimiter);
+  }
+
+  /**
    * @return new map of all current data file names by their rowTypes.
    */
   public Map<Term, String> getDataFiles() {
@@ -458,13 +473,16 @@ public class DwcaWriter {
     }
     
     Map<Term,String> termDefaultValueMap = defaultValues.get(rowType);
+    Map<Term,String> termMultiValueDelimiterMap = multiValueDelimiter.get(rowType);
     List<Term> rowTypeTerms = terms.get(rowType);
     int idx = 0;
     String defaultValue;
+    String mvDelim;
     for (Term c : rowTypeTerms) {
       idx++;
       defaultValue = (termDefaultValueMap !=null ? termDefaultValueMap.get(c) : null);
-      af.addField(buildArchiveField(idx, c, defaultValue));
+      mvDelim = (termMultiValueDelimiterMap !=null ? termMultiValueDelimiterMap.get(c) : null);
+      af.addField(buildArchiveField(idx, c, defaultValue, mvDelim));
     }
     
     // check if default values are provided for this rowType
@@ -514,6 +532,19 @@ public class DwcaWriter {
    * @return
    */
   private ArchiveField buildArchiveField(Integer idx, Term term, String defaultValue){
+    return buildArchiveField(idx, term, defaultValue, null);
+  }
+
+  /**
+   *
+   * Build an ArchiveField from optional parameters.
+   *
+   * @param idx index or null
+   * @param term term or null
+   * @param defaultValue default value or null
+   * @param multiValueDelimiter value delimiter or null
+   */
+  private ArchiveField buildArchiveField(Integer idx, Term term, String defaultValue, String multiValueDelimiter){
     Preconditions.checkNotNull(idx, "Can't use a null index");
     Preconditions.checkNotNull(term, "Can't use a null term");
 
@@ -521,6 +552,9 @@ public class DwcaWriter {
 
     if (StringUtils.isNotBlank(defaultValue)){
       field.setDefaultValue(defaultValue);
+    }
+    if (StringUtils.isNotEmpty(multiValueDelimiter)){
+      field.setDelimitedBy(multiValueDelimiter);
     }
     return field;
   }
