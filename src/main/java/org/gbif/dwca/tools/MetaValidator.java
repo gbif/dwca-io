@@ -15,11 +15,13 @@ import org.xml.sax.SAXException;
 
 /**
  * Utility class that exposes a singleton instance of an xml validator for the dwc archive meta.xml descriptor.
+ * @Deprecated use validator for that
  */
+@Deprecated
 public class MetaValidator {
   private static final Logger LOG = LoggerFactory.getLogger(MetaValidator.class);
   private static final String SCHEMA_LANG = "http://www.w3.org/2001/XMLSchema";
-  private static final String XSD_SCHEMA = "https://raw.githubusercontent.com/tdwg/dwc/master/text/tdwg_dwc_text.xsd";
+  private static final String XSD_SCHEMA = "https://raw.githubusercontent.com/tdwg/dwc/master/standard/documents/text/tdwg_dwc_text.xsd";
   private static Validator VALIDATOR;
 
   public static void validate(String xml) throws IllegalArgumentException, IOException, SAXException {
