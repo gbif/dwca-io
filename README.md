@@ -1,6 +1,6 @@
 # dwca-io
 
-*Formerly know as dwca-reader*
+*Formerly known as dwca-reader*
 
 The dwca-io library provides:
  * Reader for [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/index.htm) file with or without extensions.
