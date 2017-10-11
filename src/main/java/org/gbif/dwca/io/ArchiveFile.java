@@ -82,7 +82,8 @@ public class ArchiveFile implements Iterable<Record> {
 
   private String dateFormat = "YYYY-MM-DD";
 
-  private final Map<Term, ArchiveField> fields = new HashMap<Term, ArchiveField>();
+  private final Map<Term, ArchiveField> fields = new HashMap<>();
+  private final List<ArchiveField> rawArchiveFields = new ArrayList<>();
 
   public static ArchiveFile buildCsvFile() {
     ArchiveFile af = new ArchiveFile();
@@ -108,6 +109,7 @@ public class ArchiveFile implements Iterable<Record> {
 
   public void addField(ArchiveField field) {
     fields.put(field.getTerm(), field);
+    rawArchiveFields.add(field);
   }
 
   public void addLocation(String location) {
@@ -161,9 +163,19 @@ public class ArchiveFile implements Iterable<Record> {
    * @return
    */
   public List<ArchiveField> getFieldsSorted() {
-    List<ArchiveField> list = new ArrayList<ArchiveField>(fields.values());
+    List<ArchiveField> list = new ArrayList<>(fields.values());
     Collections.sort(list, new ArchiveFieldIndexComparator());
     return list;
+  }
+
+  /**
+   * Return a copy of the raw {@link ArchiveField}.
+   * This function is mostly used for validation purpose.
+   * May include duplicates.
+   * @return
+   */
+  public List<ArchiveField> getRawArchiveFields() {
+    return new ArrayList<>(rawArchiveFields);
   }
 
   /**
