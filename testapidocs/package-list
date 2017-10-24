@@ -1,6 +1,7 @@
 org.gbif
 org.gbif.dwc
 org.gbif.dwc.extensions
+org.gbif.dwc.meta
 org.gbif.dwc.terms
 org.gbif.dwc.terms.jackson
 org.gbif.dwca.io

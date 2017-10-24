@@ -162,7 +162,7 @@
 <span class="sourceLineNo">154</span>  public void testIgnoreEmptyLines() throws IOException {<a name="line.154"></a>
 <span class="sourceLineNo">155</span>    File csv = FileUtils.getClasspathFile("csv/empty_line.tab");<a name="line.155"></a>
 <span class="sourceLineNo">156</span>    CSVReader reader = new CSVReader(csv, UTF8, "\t", null, 1);<a name="line.156"></a>
-<span class="sourceLineNo">157</span>    String[] ids = {"1", "5", "10", "12", "14", "20"};<a name="line.157"></a>
+<span class="sourceLineNo">157</span>    String[] ids = {"1", "5", "10", "12", "14", "20", "21", "", "30"};<a name="line.157"></a>
 <span class="sourceLineNo">158</span>    int row = 0;<a name="line.158"></a>
 <span class="sourceLineNo">159</span>    while (reader.hasNext()) {<a name="line.159"></a>
 <span class="sourceLineNo">160</span>      String[] rec = reader.next();<a name="line.160"></a>
@@ -171,7 +171,7 @@
 <span class="sourceLineNo">163</span>    }<a name="line.163"></a>
 <span class="sourceLineNo">164</span>    assertTrue(reader.getEmptyLines().size() &gt; 1);<a name="line.164"></a>
 <span class="sourceLineNo">165</span>    assertTrue(reader.getEmptyLines().contains(6));<a name="line.165"></a>
-<span class="sourceLineNo">166</span>    assertTrue(reader.getEmptyLines().contains(9));<a name="line.166"></a>
+<span class="sourceLineNo">166</span>    assertTrue(reader.getEmptyLines().contains(12));<a name="line.166"></a>
 <span class="sourceLineNo">167</span>  }<a name="line.167"></a>
 <span class="sourceLineNo">168</span><a name="line.168"></a>
 <span class="sourceLineNo">169</span>  /**<a name="line.169"></a>

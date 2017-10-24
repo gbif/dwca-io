@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<title>StartRecordIterator xref</title>
+<title>StarRecordIterator xref</title>
 <link type="text/css" rel="stylesheet" href="../../../stylesheet.css" />
 </head>
 <body>
-<div id="overview"><a href="../../../../apidocs/org/gbif/dwc/StartRecordIterator.html">View Javadoc</a></div><pre>
+<div id="overview"><a href="../../../../apidocs/org/gbif/dwc/StarRecordIterator.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.gbif.dwc;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.terms.Term;
@@ -33,7 +33,7 @@
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment"> * {@link ClosableIterator} of {@link StarRecord} which includes the core record and all its extension records.</em>
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> * This is an revised version of {@link Archive.ArchiveIterator}</em>
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">class</strong> <a href="../../../org/gbif/dwc/StartRecordIterator.html">StartRecordIterator</a> <strong class="jxr_keyword">implements</strong> ClosableIterator&lt;StarRecord&gt; {
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">class</strong> <a href="../../../org/gbif/dwc/StarRecordIterator.html">StarRecordIterator</a> <strong class="jxr_keyword">implements</strong> ClosableIterator&lt;StarRecord&gt; {
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../org/gbif/dwca/record/StarRecordImpl.html">StarRecordImpl</a> rec;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ClosableIterator&lt;Record&gt; coreIter;
@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;Term, PeekingIterator&lt;Record&gt;&gt; extensionIters = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;Term, Integer&gt; extensionRecordsSkipped = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>    <a href="../../../org/gbif/dwc/StartRecordIterator.html">StartRecordIterator</a>(ClosableIterator&lt;Record&gt; coreIt, Map&lt;Term, ClosableIterator&lt;Record&gt;&gt; extensionIts) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>    <a href="../../../org/gbif/dwc/StarRecordIterator.html">StarRecordIterator</a>(ClosableIterator&lt;Record&gt; coreIt, Map&lt;Term, ClosableIterator&lt;Record&gt;&gt; extensionIts) <strong class="jxr_keyword">throws</strong> IOException {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      coreIter = coreIt;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      List&lt;Term&gt; rowTypes = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  

@@ -20,369 +20,140 @@
 <span class="sourceLineNo">012</span> */<a name="line.12"></a>
 <span class="sourceLineNo">013</span>package org.gbif.dwca.io;<a name="line.13"></a>
 <span class="sourceLineNo">014</span><a name="line.14"></a>
-<span class="sourceLineNo">015</span>import org.gbif.dwc.terms.DcTerm;<a name="line.15"></a>
-<span class="sourceLineNo">016</span>import org.gbif.dwc.terms.DwcTerm;<a name="line.16"></a>
-<span class="sourceLineNo">017</span>import org.gbif.dwc.terms.Term;<a name="line.17"></a>
-<span class="sourceLineNo">018</span>import org.gbif.dwc.terms.TermFactory;<a name="line.18"></a>
-<span class="sourceLineNo">019</span>import org.gbif.dwca.io.ArchiveField.DataType;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import org.gbif.util.DownloadUtil;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import org.gbif.utils.file.CompressionUtil;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import org.gbif.utils.file.csv.CSVReader;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import org.gbif.utils.file.csv.CSVReaderFactory;<a name="line.23"></a>
-<span class="sourceLineNo">024</span><a name="line.24"></a>
-<span class="sourceLineNo">025</span>import java.io.File;<a name="line.25"></a>
-<span class="sourceLineNo">026</span>import java.io.FileFilter;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import java.io.FileInputStream;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import java.io.FileNotFoundException;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import java.io.IOException;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import java.io.InputStream;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import java.net.URL;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import java.util.ArrayList;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import java.util.Arrays;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import java.util.Collections;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import java.util.Iterator;<a name="line.35"></a>
-<span class="sourceLineNo">036</span>import java.util.LinkedHashMap;<a name="line.36"></a>
-<span class="sourceLineNo">037</span>import java.util.List;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import java.util.Map;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import java.util.Optional;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import java.util.stream.Collectors;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>import javax.xml.parsers.SAXParser;<a name="line.41"></a>
-<span class="sourceLineNo">042</span>import javax.xml.parsers.SAXParserFactory;<a name="line.42"></a>
-<span class="sourceLineNo">043</span><a name="line.43"></a>
-<span class="sourceLineNo">044</span>import com.google.common.annotations.VisibleForTesting;<a name="line.44"></a>
-<span class="sourceLineNo">045</span>import com.google.common.collect.ImmutableList;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>import com.google.common.collect.Lists;<a name="line.46"></a>
-<span class="sourceLineNo">047</span>import com.google.common.io.Files;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>import org.apache.commons.io.FileUtils;<a name="line.48"></a>
-<span class="sourceLineNo">049</span>import org.apache.commons.io.IOCase;<a name="line.49"></a>
-<span class="sourceLineNo">050</span>import org.apache.commons.io.filefilter.FileFilterUtils;<a name="line.50"></a>
-<span class="sourceLineNo">051</span>import org.apache.commons.io.filefilter.HiddenFileFilter;<a name="line.51"></a>
-<span class="sourceLineNo">052</span>import org.apache.commons.io.filefilter.TrueFileFilter;<a name="line.52"></a>
-<span class="sourceLineNo">053</span>import org.apache.commons.io.input.BOMInputStream;<a name="line.53"></a>
-<span class="sourceLineNo">054</span>import org.slf4j.Logger;<a name="line.54"></a>
-<span class="sourceLineNo">055</span>import org.slf4j.LoggerFactory;<a name="line.55"></a>
-<span class="sourceLineNo">056</span><a name="line.56"></a>
-<span class="sourceLineNo">057</span>/**<a name="line.57"></a>
-<span class="sourceLineNo">058</span> * Factory used to build {@link Archive} object from a DarwinCore Archive file.<a name="line.58"></a>
-<span class="sourceLineNo">059</span> * <a name="line.59"></a>
-<span class="sourceLineNo">060</span> * @author mdoering<a name="line.60"></a>
-<span class="sourceLineNo">061</span> *<a name="line.61"></a>
-<span class="sourceLineNo">062</span> */<a name="line.62"></a>
-<span class="sourceLineNo">063</span>public class ArchiveFactory {<a name="line.63"></a>
-<span class="sourceLineNo">064</span><a name="line.64"></a>
-<span class="sourceLineNo">065</span>  private static final TermFactory TERM_FACTORY = TermFactory.instance();<a name="line.65"></a>
-<span class="sourceLineNo">066</span><a name="line.66"></a>
-<span class="sourceLineNo">067</span>  private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);<a name="line.67"></a>
-<span class="sourceLineNo">068</span>  private static final List&lt;String&gt; DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");<a name="line.68"></a>
-<span class="sourceLineNo">069</span><a name="line.69"></a>
-<span class="sourceLineNo">070</span>  /**<a name="line.70"></a>
-<span class="sourceLineNo">071</span>   * Predefined mapping between {@link Term} and its rowType.<a name="line.71"></a>
-<span class="sourceLineNo">072</span>   * Ordering is important since the first found will be used.<a name="line.72"></a>
-<span class="sourceLineNo">073</span>   */<a name="line.73"></a>
-<span class="sourceLineNo">074</span>  private static final Map&lt;Term, Term&gt; TERM_TO_ROW_TYPE;<a name="line.74"></a>
-<span class="sourceLineNo">075</span>  static {<a name="line.75"></a>
-<span class="sourceLineNo">076</span>    Map&lt;Term, Term&gt; idToRowType = new LinkedHashMap&lt;&gt;();<a name="line.76"></a>
-<span class="sourceLineNo">077</span>    idToRowType.put(DwcTerm.occurrenceID, DwcTerm.Occurrence);<a name="line.77"></a>
-<span class="sourceLineNo">078</span>    idToRowType.put(DwcTerm.taxonID, DwcTerm.Taxon);<a name="line.78"></a>
-<span class="sourceLineNo">079</span>    idToRowType.put(DwcTerm.eventID, DwcTerm.Event);<a name="line.79"></a>
-<span class="sourceLineNo">080</span>    TERM_TO_ROW_TYPE = Collections.unmodifiableMap(idToRowType);<a name="line.80"></a>
-<span class="sourceLineNo">081</span>  }<a name="line.81"></a>
-<span class="sourceLineNo">082</span><a name="line.82"></a>
-<span class="sourceLineNo">083</span>  /**<a name="line.83"></a>
-<span class="sourceLineNo">084</span>   * Terms that can represent an identifier within a file<a name="line.84"></a>
-<span class="sourceLineNo">085</span>   */<a name="line.85"></a>
-<span class="sourceLineNo">086</span>  private static final List&lt;Term&gt; ID_TERMS = Collections.unmodifiableList(<a name="line.86"></a>
-<span class="sourceLineNo">087</span>          Arrays.asList(DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.eventID, DcTerm.identifier));<a name="line.87"></a>
-<span class="sourceLineNo">088</span><a name="line.88"></a>
-<span class="sourceLineNo">089</span><a name="line.89"></a>
-<span class="sourceLineNo">090</span>  private static final SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();<a name="line.90"></a>
+<span class="sourceLineNo">015</span>import org.gbif.dwc.DwcFiles;<a name="line.15"></a>
+<span class="sourceLineNo">016</span>import org.gbif.dwc.meta.DwcMetaFiles;<a name="line.16"></a>
+<span class="sourceLineNo">017</span>import org.gbif.util.DownloadUtil;<a name="line.17"></a>
+<span class="sourceLineNo">018</span><a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.io.File;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.io.IOException;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.net.URL;<a name="line.21"></a>
+<span class="sourceLineNo">022</span><a name="line.22"></a>
+<span class="sourceLineNo">023</span>import com.google.common.io.Files;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.commons.lang3.StringUtils;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import org.slf4j.Logger;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import org.slf4j.LoggerFactory;<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>/**<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * Factory used to build {@link Archive} object from a DarwinCore Archive file.<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * <a name="line.30"></a>
+<span class="sourceLineNo">031</span> * @author mdoering<a name="line.31"></a>
+<span class="sourceLineNo">032</span> *<a name="line.32"></a>
+<span class="sourceLineNo">033</span> */<a name="line.33"></a>
+<span class="sourceLineNo">034</span>public class ArchiveFactory {<a name="line.34"></a>
+<span class="sourceLineNo">035</span><a name="line.35"></a>
+<span class="sourceLineNo">036</span>  private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);<a name="line.36"></a>
+<span class="sourceLineNo">037</span><a name="line.37"></a>
+<span class="sourceLineNo">038</span>  /**<a name="line.38"></a>
+<span class="sourceLineNo">039</span>   * Opens an archive from a URL, downloading and decompressing it.<a name="line.39"></a>
+<span class="sourceLineNo">040</span>   *<a name="line.40"></a>
+<span class="sourceLineNo">041</span>   * @param archiveUrl the location of a compressed archive or single data file<a name="line.41"></a>
+<span class="sourceLineNo">042</span>   * @param workingDir writable directory to download to and decompress archive<a name="line.42"></a>
+<span class="sourceLineNo">043</span>   */<a name="line.43"></a>
+<span class="sourceLineNo">044</span>  public static Archive openArchive(URL archiveUrl, File workingDir) throws IOException, UnsupportedArchiveException {<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    File downloadTo = new File(workingDir, "dwca-download");<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    File dwca = new File(workingDir, "dwca");<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    DownloadUtil.download(archiveUrl, downloadTo);<a name="line.47"></a>
+<span class="sourceLineNo">048</span>    return openArchive(downloadTo, dwca);<a name="line.48"></a>
+<span class="sourceLineNo">049</span>  }<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>  /**<a name="line.51"></a>
+<span class="sourceLineNo">052</span>   * Opens an archive from a local file and decompresses or copies it into the given archive directory.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>   * Make sure the archive directory does not contain files already, any existing files will be removed!<a name="line.53"></a>
+<span class="sourceLineNo">054</span>   *<a name="line.54"></a>
+<span class="sourceLineNo">055</span>   * If the source archive is an uncompressed, single data file and a valid archive, it will be copied as is<a name="line.55"></a>
+<span class="sourceLineNo">056</span>   * to the archiveDir.<a name="line.56"></a>
+<span class="sourceLineNo">057</span>   *<a name="line.57"></a>
+<span class="sourceLineNo">058</span>   * @param archiveFile the location of a compressed archive or single data file<a name="line.58"></a>
+<span class="sourceLineNo">059</span>   * @param archiveDir  empty, writable directory used to keep decompress archive in<a name="line.59"></a>
+<span class="sourceLineNo">060</span>   */<a name="line.60"></a>
+<span class="sourceLineNo">061</span>  public static Archive openArchive(File archiveFile, File archiveDir) throws IOException, UnsupportedArchiveException {<a name="line.61"></a>
+<span class="sourceLineNo">062</span><a name="line.62"></a>
+<span class="sourceLineNo">063</span>    try {<a name="line.63"></a>
+<span class="sourceLineNo">064</span>      Archive archive = DwcFiles.fromCompressed(archiveFile.toPath(), archiveDir.toPath());<a name="line.64"></a>
+<span class="sourceLineNo">065</span>      // keep validation for backward compatibility<a name="line.65"></a>
+<span class="sourceLineNo">066</span>      return validateArchive(archive);<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    }<a name="line.67"></a>
+<span class="sourceLineNo">068</span>    catch (UnsupportedArchiveException uaEx){<a name="line.68"></a>
+<span class="sourceLineNo">069</span>      LOG.debug("Could not uncompress archive [{}], try to read as single text file", archiveFile, uaEx);<a name="line.69"></a>
+<span class="sourceLineNo">070</span>      // If its a text file only we will get this exception - but also for corrupt compressions<a name="line.70"></a>
+<span class="sourceLineNo">071</span>      // try to open as text file only and if successful copy file to archive dir<a name="line.71"></a>
+<span class="sourceLineNo">072</span>      Archive arch = openArchiveDataFile(archiveFile);<a name="line.72"></a>
+<span class="sourceLineNo">073</span>      Files.copy(archiveFile, new File(archiveDir, archiveFile.getName()));<a name="line.73"></a>
+<span class="sourceLineNo">074</span>      return arch;<a name="line.74"></a>
+<span class="sourceLineNo">075</span>    }<a name="line.75"></a>
+<span class="sourceLineNo">076</span>  }<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>  /**<a name="line.78"></a>
+<span class="sourceLineNo">079</span>   * Opens a dwca archive which is just a single decompressed data file with headers, e.g. a csv or tab delimited file<a name="line.79"></a>
+<span class="sourceLineNo">080</span>   */<a name="line.80"></a>
+<span class="sourceLineNo">081</span>  public static Archive openArchiveDataFile(File dataFile) throws IOException, UnsupportedArchiveException {<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    Archive archive = DwcFiles.fromLocation(dataFile.toPath());<a name="line.82"></a>
+<span class="sourceLineNo">083</span><a name="line.83"></a>
+<span class="sourceLineNo">084</span>    // for backward compatibility reason we keep this behavior to check if we have a metadata file next to<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    // a single file.<a name="line.85"></a>
+<span class="sourceLineNo">086</span>    if(StringUtils.isBlank(archive.getMetadataLocation())) {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>      // check if we also have a metadata file next to this data file<a name="line.87"></a>
+<span class="sourceLineNo">088</span>      DwcMetaFiles.discoverMetadataFile(dataFile.getParentFile().toPath())<a name="line.88"></a>
+<span class="sourceLineNo">089</span>              .ifPresent(archive::setMetadataLocation);<a name="line.89"></a>
+<span class="sourceLineNo">090</span>    }<a name="line.90"></a>
 <span class="sourceLineNo">091</span><a name="line.91"></a>
-<span class="sourceLineNo">092</span>  static {<a name="line.92"></a>
-<span class="sourceLineNo">093</span>    SAX_FACTORY.setNamespaceAware(true);<a name="line.93"></a>
-<span class="sourceLineNo">094</span>    SAX_FACTORY.setValidating(false);<a name="line.94"></a>
-<span class="sourceLineNo">095</span>  }<a name="line.95"></a>
-<span class="sourceLineNo">096</span><a name="line.96"></a>
-<span class="sourceLineNo">097</span>  /**<a name="line.97"></a>
-<span class="sourceLineNo">098</span>   * Opens an archive from a URL, downloading and decompressing it.<a name="line.98"></a>
-<span class="sourceLineNo">099</span>   *<a name="line.99"></a>
-<span class="sourceLineNo">100</span>   * @param archiveUrl the location of a compressed archive or single data file<a name="line.100"></a>
-<span class="sourceLineNo">101</span>   * @param workingDir writable directory to download to and decompress archive<a name="line.101"></a>
-<span class="sourceLineNo">102</span>   */<a name="line.102"></a>
-<span class="sourceLineNo">103</span>  public static Archive openArchive(URL archiveUrl, File workingDir) throws IOException, UnsupportedArchiveException {<a name="line.103"></a>
-<span class="sourceLineNo">104</span>    File downloadTo = new File(workingDir, "dwca-download");<a name="line.104"></a>
-<span class="sourceLineNo">105</span>    File dwca = new File(workingDir, "dwca");<a name="line.105"></a>
-<span class="sourceLineNo">106</span>    DownloadUtil.download(archiveUrl, downloadTo);<a name="line.106"></a>
-<span class="sourceLineNo">107</span>    return openArchive(downloadTo, dwca);<a name="line.107"></a>
-<span class="sourceLineNo">108</span>  }<a name="line.108"></a>
-<span class="sourceLineNo">109</span><a name="line.109"></a>
-<span class="sourceLineNo">110</span>  /**<a name="line.110"></a>
-<span class="sourceLineNo">111</span>   * Opens an archive from a local file and decompresses or copies it into the given archive directory.<a name="line.111"></a>
-<span class="sourceLineNo">112</span>   * Make sure the archive directory does not contain files already, any existing files will be removed!<a name="line.112"></a>
-<span class="sourceLineNo">113</span>   *<a name="line.113"></a>
-<span class="sourceLineNo">114</span>   * If the source archive is an uncompressed, single data file and a valid archive, it will be copied as is<a name="line.114"></a>
-<span class="sourceLineNo">115</span>   * to the archiveDir.<a name="line.115"></a>
-<span class="sourceLineNo">116</span>   *<a name="line.116"></a>
-<span class="sourceLineNo">117</span>   * @param archiveFile the location of a compressed archive or single data file<a name="line.117"></a>
-<span class="sourceLineNo">118</span>   * @param archiveDir  empty, writable directory used to keep decompress archive in<a name="line.118"></a>
-<span class="sourceLineNo">119</span>   */<a name="line.119"></a>
-<span class="sourceLineNo">120</span>  public static Archive openArchive(File archiveFile, File archiveDir) throws IOException, UnsupportedArchiveException {<a name="line.120"></a>
-<span class="sourceLineNo">121</span>    if (archiveDir.exists()) {<a name="line.121"></a>
-<span class="sourceLineNo">122</span>      // clean up any existing folder<a name="line.122"></a>
-<span class="sourceLineNo">123</span>      LOG.debug("Deleting existing archive folder [{}]", archiveDir.getAbsolutePath());<a name="line.123"></a>
-<span class="sourceLineNo">124</span>      org.gbif.utils.file.FileUtils.deleteDirectoryRecursively(archiveDir);<a name="line.124"></a>
-<span class="sourceLineNo">125</span>    }<a name="line.125"></a>
-<span class="sourceLineNo">126</span>    FileUtils.forceMkdir(archiveDir);<a name="line.126"></a>
-<span class="sourceLineNo">127</span>    // try to decompress archive<a name="line.127"></a>
-<span class="sourceLineNo">128</span>    try {<a name="line.128"></a>
-<span class="sourceLineNo">129</span>      CompressionUtil.decompressFile(archiveDir, archiveFile, true);<a name="line.129"></a>
-<span class="sourceLineNo">130</span>      // we keep subfolder, but often the entire archive is within one subfolder. Remove that root folder if present<a name="line.130"></a>
-<span class="sourceLineNo">131</span>      File[] rootFiles = archiveDir.listFiles((FileFilter) HiddenFileFilter.VISIBLE);<a name="line.131"></a>
-<span class="sourceLineNo">132</span>      if (rootFiles.length == 1) {<a name="line.132"></a>
-<span class="sourceLineNo">133</span>        File root = rootFiles[0];<a name="line.133"></a>
-<span class="sourceLineNo">134</span>        if (root.isDirectory()) {<a name="line.134"></a>
-<span class="sourceLineNo">135</span>          // single root dir, flatten structure<a name="line.135"></a>
-<span class="sourceLineNo">136</span>          LOG.debug("Removing single root folder {} found in decompressed archive", root.getAbsoluteFile());<a name="line.136"></a>
-<span class="sourceLineNo">137</span>          for (File f : FileUtils.listFiles(root, TrueFileFilter.TRUE, null)) {<a name="line.137"></a>
-<span class="sourceLineNo">138</span>            File f2 = new File(archiveDir, f.getName());<a name="line.138"></a>
-<span class="sourceLineNo">139</span>            f.renameTo(f2);<a name="line.139"></a>
-<span class="sourceLineNo">140</span>          }<a name="line.140"></a>
-<span class="sourceLineNo">141</span>        }<a name="line.141"></a>
-<span class="sourceLineNo">142</span>      }<a name="line.142"></a>
-<span class="sourceLineNo">143</span>      // continue to read archive from the tmp dir<a name="line.143"></a>
-<span class="sourceLineNo">144</span>      return openArchive(archiveDir);<a name="line.144"></a>
-<span class="sourceLineNo">145</span><a name="line.145"></a>
-<span class="sourceLineNo">146</span>    } catch (CompressionUtil.UnsupportedCompressionType e) {<a name="line.146"></a>
-<span class="sourceLineNo">147</span>      LOG.debug("Could not uncompress archive [{}], try to read as single text file", archiveFile, e);<a name="line.147"></a>
-<span class="sourceLineNo">148</span>      // If its a text file only we will get this exception - but also for corrupt compressions<a name="line.148"></a>
-<span class="sourceLineNo">149</span>      // try to open as text file only and if successful copy file to archive dir<a name="line.149"></a>
-<span class="sourceLineNo">150</span>      Archive arch = openArchiveDataFile(archiveFile);<a name="line.150"></a>
-<span class="sourceLineNo">151</span>      Files.copy(archiveFile, new File(archiveDir, archiveFile.getName()));<a name="line.151"></a>
-<span class="sourceLineNo">152</span>      return arch;<a name="line.152"></a>
-<span class="sourceLineNo">153</span>    }<a name="line.153"></a>
-<span class="sourceLineNo">154</span>  }<a name="line.154"></a>
-<span class="sourceLineNo">155</span><a name="line.155"></a>
-<span class="sourceLineNo">156</span>  /**<a name="line.156"></a>
-<span class="sourceLineNo">157</span>   * Opens a dwca archive which is just a single decompressed data file with headers, e.g. a csv or tab delimited file<a name="line.157"></a>
-<span class="sourceLineNo">158</span>   */<a name="line.158"></a>
-<span class="sourceLineNo">159</span>  public static Archive openArchiveDataFile(File dataFile) throws IOException, UnsupportedArchiveException {<a name="line.159"></a>
-<span class="sourceLineNo">160</span>    Archive archive = new Archive();<a name="line.160"></a>
-<span class="sourceLineNo">161</span>    archive.setLocation(dataFile);<a name="line.161"></a>
-<span class="sourceLineNo">162</span><a name="line.162"></a>
-<span class="sourceLineNo">163</span>    ArchiveFile coreFile = readFileHeaders(dataFile);<a name="line.163"></a>
-<span class="sourceLineNo">164</span>    archive.setCore(coreFile);<a name="line.164"></a>
-<span class="sourceLineNo">165</span><a name="line.165"></a>
-<span class="sourceLineNo">166</span>    // check if we also have a metadata file next to this data file<a name="line.166"></a>
-<span class="sourceLineNo">167</span>    discoverMetadataFile(archive, dataFile.getParentFile());<a name="line.167"></a>
-<span class="sourceLineNo">168</span><a name="line.168"></a>
-<span class="sourceLineNo">169</span>    // final validation<a name="line.169"></a>
-<span class="sourceLineNo">170</span>    return validateArchive(archive);<a name="line.170"></a>
-<span class="sourceLineNo">171</span>  }<a name="line.171"></a>
-<span class="sourceLineNo">172</span><a name="line.172"></a>
-<span class="sourceLineNo">173</span>  /**<a name="line.173"></a>
-<span class="sourceLineNo">174</span>   * @param dwcaFolder the location of an expanded dwc archive directory or just a single dwc text file<a name="line.174"></a>
-<span class="sourceLineNo">175</span>   */<a name="line.175"></a>
-<span class="sourceLineNo">176</span>  public static Archive openArchive(File dwcaFolder) throws IOException, UnsupportedArchiveException {<a name="line.176"></a>
-<span class="sourceLineNo">177</span>    if (!dwcaFolder.exists()) {<a name="line.177"></a>
-<span class="sourceLineNo">178</span>      throw new FileNotFoundException("Archive folder not existing: " + dwcaFolder.getAbsolutePath());<a name="line.178"></a>
-<span class="sourceLineNo">179</span>    }<a name="line.179"></a>
-<span class="sourceLineNo">180</span>    // delegate to open data file method if its a single file, not a folder<a name="line.180"></a>
-<span class="sourceLineNo">181</span>    if (dwcaFolder.isFile()) {<a name="line.181"></a>
-<span class="sourceLineNo">182</span>      return openArchiveDataFile(dwcaFolder);<a name="line.182"></a>
-<span class="sourceLineNo">183</span>    }<a name="line.183"></a>
-<span class="sourceLineNo">184</span><a name="line.184"></a>
-<span class="sourceLineNo">185</span>    Archive archive = new Archive();<a name="line.185"></a>
-<span class="sourceLineNo">186</span>    archive.setLocation(dwcaFolder);<a name="line.186"></a>
-<span class="sourceLineNo">187</span><a name="line.187"></a>
-<span class="sourceLineNo">188</span>    // Accommodate archives coming from legacy IPTs which put a "\" before each filename<a name="line.188"></a>
-<span class="sourceLineNo">189</span>    // http://dev.gbif.org/issues/browse/POR-2396<a name="line.189"></a>
-<span class="sourceLineNo">190</span>    // https://code.google.com/p/gbif-providertoolkit/issues/detail?id=1015<a name="line.190"></a>
-<span class="sourceLineNo">191</span>    Iterator&lt;File&gt; iter = FileUtils.iterateFiles(dwcaFolder, new String[] {"xml", "txt"}, false);<a name="line.191"></a>
-<span class="sourceLineNo">192</span>    while (iter.hasNext()) {<a name="line.192"></a>
-<span class="sourceLineNo">193</span>      File f = iter.next();<a name="line.193"></a>
-<span class="sourceLineNo">194</span>      if (f.getName().startsWith("\\")) {<a name="line.194"></a>
-<span class="sourceLineNo">195</span>        String orig = f.getName();<a name="line.195"></a>
-<span class="sourceLineNo">196</span>        String replacement = f.getName().replaceFirst("\\\\", "");<a name="line.196"></a>
-<span class="sourceLineNo">197</span>        LOG.info("Renaming file from {} to {}", orig, replacement);<a name="line.197"></a>
-<span class="sourceLineNo">198</span>        f.renameTo(new File(dwcaFolder, replacement));<a name="line.198"></a>
-<span class="sourceLineNo">199</span>      }<a name="line.199"></a>
-<span class="sourceLineNo">200</span>    }<a name="line.200"></a>
-<span class="sourceLineNo">201</span><a name="line.201"></a>
-<span class="sourceLineNo">202</span>    // read metadata<a name="line.202"></a>
-<span class="sourceLineNo">203</span>    File mf = new File(dwcaFolder, Archive.META_FN);<a name="line.203"></a>
-<span class="sourceLineNo">204</span>    if (mf.exists()) {<a name="line.204"></a>
-<span class="sourceLineNo">205</span>      // read metafile<a name="line.205"></a>
-<span class="sourceLineNo">206</span>      readMetaDescriptor(archive, new FileInputStream(mf));<a name="line.206"></a>
-<span class="sourceLineNo">207</span><a name="line.207"></a>
-<span class="sourceLineNo">208</span>    } else {<a name="line.208"></a>
-<span class="sourceLineNo">209</span>      // meta.xml lacking.<a name="line.209"></a>
-<span class="sourceLineNo">210</span>      // Try to detect data files ourselves as best as we can.<a name="line.210"></a>
-<span class="sourceLineNo">211</span>      // look for a single, visible text data file<a name="line.211"></a>
-<span class="sourceLineNo">212</span>      List&lt;File&gt; dataFiles = new ArrayList&lt;File&gt;();<a name="line.212"></a>
-<span class="sourceLineNo">213</span>      for (String suffix : DATA_FILE_SUFFICES) {<a name="line.213"></a>
-<span class="sourceLineNo">214</span>        FileFilter ff = FileFilterUtils.and(<a name="line.214"></a>
-<span class="sourceLineNo">215</span>            FileFilterUtils.suffixFileFilter(suffix, IOCase.INSENSITIVE), HiddenFileFilter.VISIBLE<a name="line.215"></a>
-<span class="sourceLineNo">216</span>        );<a name="line.216"></a>
-<span class="sourceLineNo">217</span>        dataFiles.addAll(Arrays.asList(dwcaFolder.listFiles(ff)));<a name="line.217"></a>
-<span class="sourceLineNo">218</span>      }<a name="line.218"></a>
-<span class="sourceLineNo">219</span><a name="line.219"></a>
-<span class="sourceLineNo">220</span>      if (dataFiles.size() == 1) {<a name="line.220"></a>
-<span class="sourceLineNo">221</span>        File dataFile = new File(dwcaFolder, dataFiles.get(0).getName());<a name="line.221"></a>
-<span class="sourceLineNo">222</span>        ArchiveFile coreFile = readFileHeaders(dataFile);<a name="line.222"></a>
-<span class="sourceLineNo">223</span>        coreFile.getLocations().clear();<a name="line.223"></a>
-<span class="sourceLineNo">224</span>        coreFile.addLocation(dataFile.getName());<a name="line.224"></a>
-<span class="sourceLineNo">225</span>        archive.setCore(coreFile);<a name="line.225"></a>
-<span class="sourceLineNo">226</span><a name="line.226"></a>
-<span class="sourceLineNo">227</span>      } else {<a name="line.227"></a>
-<span class="sourceLineNo">228</span>        throw new UnsupportedArchiveException(<a name="line.228"></a>
-<span class="sourceLineNo">229</span>          "The archive given is a folder with more or less than 1 data files having a csv, txt or tab suffix");<a name="line.229"></a>
-<span class="sourceLineNo">230</span>      }<a name="line.230"></a>
-<span class="sourceLineNo">231</span>    }<a name="line.231"></a>
-<span class="sourceLineNo">232</span><a name="line.232"></a>
-<span class="sourceLineNo">233</span>    // check if we also have a metadata file next to this data file<a name="line.233"></a>
-<span class="sourceLineNo">234</span>    discoverMetadataFile(archive, mf.getParentFile());<a name="line.234"></a>
-<span class="sourceLineNo">235</span><a name="line.235"></a>
-<span class="sourceLineNo">236</span>    // final validation<a name="line.236"></a>
-<span class="sourceLineNo">237</span>    return validateArchive(archive);<a name="line.237"></a>
-<span class="sourceLineNo">238</span>  }<a name="line.238"></a>
-<span class="sourceLineNo">239</span><a name="line.239"></a>
-<span class="sourceLineNo">240</span><a name="line.240"></a>
-<span class="sourceLineNo">241</span>  private static void discoverMetadataFile(Archive archive, File folder) {<a name="line.241"></a>
-<span class="sourceLineNo">242</span>    if (archive.getMetadataLocation() == null) {<a name="line.242"></a>
-<span class="sourceLineNo">243</span>      // search for popular metadata filenames<a name="line.243"></a>
-<span class="sourceLineNo">244</span>      for (String metadataFN : Lists.newArrayList("eml.xml", "metadata.xml")) {<a name="line.244"></a>
-<span class="sourceLineNo">245</span>        File emlFile = new File(folder, metadataFN);<a name="line.245"></a>
-<span class="sourceLineNo">246</span>        if (emlFile.exists()) {<a name="line.246"></a>
-<span class="sourceLineNo">247</span>          archive.setMetadataLocation(metadataFN);<a name="line.247"></a>
-<span class="sourceLineNo">248</span>          break;<a name="line.248"></a>
-<span class="sourceLineNo">249</span>        }<a name="line.249"></a>
-<span class="sourceLineNo">250</span>      }<a name="line.250"></a>
-<span class="sourceLineNo">251</span>    }<a name="line.251"></a>
-<span class="sourceLineNo">252</span>  }<a name="line.252"></a>
-<span class="sourceLineNo">253</span><a name="line.253"></a>
-<span class="sourceLineNo">254</span>  private static ArchiveFile readFileHeaders(File dataFile) throws UnsupportedArchiveException, IOException {<a name="line.254"></a>
-<span class="sourceLineNo">255</span>    ArchiveFile dwcFile = new ArchiveFile();<a name="line.255"></a>
-<span class="sourceLineNo">256</span>    dwcFile.addLocation(null);<a name="line.256"></a>
-<span class="sourceLineNo">257</span>    dwcFile.setIgnoreHeaderLines(1);<a name="line.257"></a>
-<span class="sourceLineNo">258</span><a name="line.258"></a>
-<span class="sourceLineNo">259</span>    String[] headers;<a name="line.259"></a>
-<span class="sourceLineNo">260</span>    try (CSVReader reader = CSVReaderFactory.build(dataFile)) {<a name="line.260"></a>
-<span class="sourceLineNo">261</span>      // copy found delimiters &amp; encoding<a name="line.261"></a>
-<span class="sourceLineNo">262</span>      dwcFile.setEncoding(reader.encoding);<a name="line.262"></a>
-<span class="sourceLineNo">263</span>      dwcFile.setFieldsTerminatedBy(reader.delimiter);<a name="line.263"></a>
-<span class="sourceLineNo">264</span>      dwcFile.setFieldsEnclosedBy(reader.quoteChar);<a name="line.264"></a>
-<span class="sourceLineNo">265</span>      headers = reader.getHeader();<a name="line.265"></a>
-<span class="sourceLineNo">266</span>    }<a name="line.266"></a>
-<span class="sourceLineNo">267</span><a name="line.267"></a>
-<span class="sourceLineNo">268</span>    // detect dwc terms as good as we can based on header row<a name="line.268"></a>
-<span class="sourceLineNo">269</span>    int index = 0;<a name="line.269"></a>
-<span class="sourceLineNo">270</span>    for (String head : headers) {<a name="line.270"></a>
-<span class="sourceLineNo">271</span>      // there are never any quotes in term names - remove them just in case the csvreader didnt recognize them<a name="line.271"></a>
-<span class="sourceLineNo">272</span>      if (head != null &amp;&amp; head.length() &gt; 1) {<a name="line.272"></a>
-<span class="sourceLineNo">273</span>        try {<a name="line.273"></a>
-<span class="sourceLineNo">274</span>          Term dt = TERM_FACTORY.findTerm(head);<a name="line.274"></a>
-<span class="sourceLineNo">275</span>          ArchiveField field = new ArchiveField(index, dt, null, DataType.string);<a name="line.275"></a>
-<span class="sourceLineNo">276</span>          dwcFile.addField(field);<a name="line.276"></a>
-<span class="sourceLineNo">277</span>        } catch (IllegalArgumentException e) {<a name="line.277"></a>
-<span class="sourceLineNo">278</span>          LOG.warn("Illegal term name &gt;&gt;{}&lt;&lt; found in header, ignore column {}", head, index);<a name="line.278"></a>
-<span class="sourceLineNo">279</span>        }<a name="line.279"></a>
-<span class="sourceLineNo">280</span>      }<a name="line.280"></a>
-<span class="sourceLineNo">281</span>      index++;<a name="line.281"></a>
-<span class="sourceLineNo">282</span>    }<a name="line.282"></a>
-<span class="sourceLineNo">283</span><a name="line.283"></a>
-<span class="sourceLineNo">284</span>    List&lt;Term&gt; headerAsTerm = dwcFile.getFields().keySet()<a name="line.284"></a>
-<span class="sourceLineNo">285</span>            .stream()<a name="line.285"></a>
-<span class="sourceLineNo">286</span>            .collect(Collectors.toList());<a name="line.286"></a>
-<span class="sourceLineNo">287</span><a name="line.287"></a>
-<span class="sourceLineNo">288</span>    determineRecordIdentifier(headerAsTerm).ifPresent(<a name="line.288"></a>
-<span class="sourceLineNo">289</span>            t -&gt; dwcFile.setId(dwcFile.getField(t))<a name="line.289"></a>
-<span class="sourceLineNo">290</span>    );<a name="line.290"></a>
-<span class="sourceLineNo">291</span><a name="line.291"></a>
-<span class="sourceLineNo">292</span>    determineRowType(headerAsTerm).ifPresent(dwcFile::setRowType);<a name="line.292"></a>
-<span class="sourceLineNo">293</span>    return dwcFile;<a name="line.293"></a>
-<span class="sourceLineNo">294</span>  }<a name="line.294"></a>
-<span class="sourceLineNo">295</span><a name="line.295"></a>
-<span class="sourceLineNo">296</span>  @VisibleForTesting<a name="line.296"></a>
-<span class="sourceLineNo">297</span>  protected static void readMetaDescriptor(Archive archive, InputStream metaDescriptor) throws UnsupportedArchiveException {<a name="line.297"></a>
-<span class="sourceLineNo">298</span>    try (BOMInputStream bomInputStream = new BOMInputStream(metaDescriptor)){<a name="line.298"></a>
-<span class="sourceLineNo">299</span>      SAXParser p = SAX_FACTORY.newSAXParser();<a name="line.299"></a>
-<span class="sourceLineNo">300</span>      MetaXMLSaxHandler mh = new MetaXMLSaxHandler(archive);<a name="line.300"></a>
-<span class="sourceLineNo">301</span>      LOG.debug("Reading archive metadata file");<a name="line.301"></a>
-<span class="sourceLineNo">302</span>      p.parse(bomInputStream, mh);<a name="line.302"></a>
-<span class="sourceLineNo">303</span>    } catch (Exception e1) {<a name="line.303"></a>
-<span class="sourceLineNo">304</span>      LOG.warn("Exception caught", e1);<a name="line.304"></a>
-<span class="sourceLineNo">305</span>      throw new UnsupportedArchiveException(e1);<a name="line.305"></a>
-<span class="sourceLineNo">306</span>    }<a name="line.306"></a>
-<span class="sourceLineNo">307</span>  }<a name="line.307"></a>
-<span class="sourceLineNo">308</span><a name="line.308"></a>
-<span class="sourceLineNo">309</span>  private static Archive validateArchive(Archive archive) throws UnsupportedArchiveException {<a name="line.309"></a>
-<span class="sourceLineNo">310</span>    validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());<a name="line.310"></a>
-<span class="sourceLineNo">311</span>    for (ArchiveFile af : archive.getExtensions()) {<a name="line.311"></a>
-<span class="sourceLineNo">312</span>      validateExtensionFile(af);<a name="line.312"></a>
-<span class="sourceLineNo">313</span>    }<a name="line.313"></a>
-<span class="sourceLineNo">314</span>    // report basic stats<a name="line.314"></a>
-<span class="sourceLineNo">315</span>    LOG.debug("Archive contains " + archive.getExtensions().size() + " described extension files");<a name="line.315"></a>
-<span class="sourceLineNo">316</span>    LOG.debug("Archive contains " + archive.getCore().getFields().size() + " core properties");<a name="line.316"></a>
-<span class="sourceLineNo">317</span>    return archive;<a name="line.317"></a>
-<span class="sourceLineNo">318</span>  }<a name="line.318"></a>
-<span class="sourceLineNo">319</span><a name="line.319"></a>
-<span class="sourceLineNo">320</span>  private static void validateCoreFile(ArchiveFile f, boolean hasExtensions) throws UnsupportedArchiveException {<a name="line.320"></a>
-<span class="sourceLineNo">321</span>    if (hasExtensions) {<a name="line.321"></a>
-<span class="sourceLineNo">322</span>      if (f.getId() == null) {<a name="line.322"></a>
-<span class="sourceLineNo">323</span>        LOG.warn(<a name="line.323"></a>
-<span class="sourceLineNo">324</span>          "DwC-A core data file " + f.getTitle() + " is lacking an id column. No extensions allowed in this case");<a name="line.324"></a>
-<span class="sourceLineNo">325</span>      }<a name="line.325"></a>
-<span class="sourceLineNo">326</span>    }<a name="line.326"></a>
-<span class="sourceLineNo">327</span>    validateFile(f);<a name="line.327"></a>
-<span class="sourceLineNo">328</span>  }<a name="line.328"></a>
-<span class="sourceLineNo">329</span><a name="line.329"></a>
-<span class="sourceLineNo">330</span>  private static void validateExtensionFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.330"></a>
-<span class="sourceLineNo">331</span>    if (f.getId() == null) {<a name="line.331"></a>
-<span class="sourceLineNo">332</span>      throw new UnsupportedArchiveException(<a name="line.332"></a>
-<span class="sourceLineNo">333</span>        "DwC-A data file " + f.getTitle() + " requires an id or foreign key to the core id");<a name="line.333"></a>
-<span class="sourceLineNo">334</span>    }<a name="line.334"></a>
-<span class="sourceLineNo">335</span>    validateFile(f);<a name="line.335"></a>
-<span class="sourceLineNo">336</span>  }<a name="line.336"></a>
-<span class="sourceLineNo">337</span><a name="line.337"></a>
-<span class="sourceLineNo">338</span>  private static void validateFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.338"></a>
-<span class="sourceLineNo">339</span>    if (f == null) {<a name="line.339"></a>
-<span class="sourceLineNo">340</span>      throw new UnsupportedArchiveException("DwC-A data file is NULL");<a name="line.340"></a>
-<span class="sourceLineNo">341</span>    }<a name="line.341"></a>
-<span class="sourceLineNo">342</span>    if (f.getLocationFile() == null) {<a name="line.342"></a>
-<span class="sourceLineNo">343</span>      throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a location");<a name="line.343"></a>
-<span class="sourceLineNo">344</span>    }<a name="line.344"></a>
-<span class="sourceLineNo">345</span>    if (f.getEncoding() == null) {<a name="line.345"></a>
-<span class="sourceLineNo">346</span>      throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a character encoding");<a name="line.346"></a>
-<span class="sourceLineNo">347</span>    }<a name="line.347"></a>
-<span class="sourceLineNo">348</span>  }<a name="line.348"></a>
-<span class="sourceLineNo">349</span><a name="line.349"></a>
-<span class="sourceLineNo">350</span>  /**<a name="line.350"></a>
-<span class="sourceLineNo">351</span>   * Tries to determine the rowType based on a list of {@link Term}.<a name="line.351"></a>
-<span class="sourceLineNo">352</span>   *<a name="line.352"></a>
-<span class="sourceLineNo">353</span>   * @param terms the list can contain null values<a name="line.353"></a>
-<span class="sourceLineNo">354</span>   *<a name="line.354"></a>
-<span class="sourceLineNo">355</span>   * @return {@link Term} as {@code Optional} or {@code Optional.empty()} if can not be determined<a name="line.355"></a>
-<span class="sourceLineNo">356</span>   */<a name="line.356"></a>
-<span class="sourceLineNo">357</span>  static Optional&lt;Term&gt; determineRowType(List&lt;Term&gt; terms) {<a name="line.357"></a>
-<span class="sourceLineNo">358</span>    return TERM_TO_ROW_TYPE.entrySet().stream()<a name="line.358"></a>
-<span class="sourceLineNo">359</span>            .filter(ke -&gt; terms.contains(ke.getKey()))<a name="line.359"></a>
-<span class="sourceLineNo">360</span>            .map(Map.Entry::getValue).findFirst();<a name="line.360"></a>
-<span class="sourceLineNo">361</span>  }<a name="line.361"></a>
-<span class="sourceLineNo">362</span><a name="line.362"></a>
-<span class="sourceLineNo">363</span>  /**<a name="line.363"></a>
-<span class="sourceLineNo">364</span>   * Tries to determine the record identifier based on a list of {@link Term}.<a name="line.364"></a>
-<span class="sourceLineNo">365</span>   *<a name="line.365"></a>
-<span class="sourceLineNo">366</span>   * @param terms the list can contain null values<a name="line.366"></a>
-<span class="sourceLineNo">367</span>   *<a name="line.367"></a>
-<span class="sourceLineNo">368</span>   * @return {@link Term} as {@code Optional} or {@code Optional.empty()} if can not be determined<a name="line.368"></a>
-<span class="sourceLineNo">369</span>   */<a name="line.369"></a>
-<span class="sourceLineNo">370</span>  static Optional&lt;Term&gt; determineRecordIdentifier(List&lt;Term&gt; terms) {<a name="line.370"></a>
-<span class="sourceLineNo">371</span>    //try to find the first matching term respecting the order defined by ID_TERMS<a name="line.371"></a>
-<span class="sourceLineNo">372</span>    return ID_TERMS.stream()<a name="line.372"></a>
-<span class="sourceLineNo">373</span>            .filter(terms::contains)<a name="line.373"></a>
-<span class="sourceLineNo">374</span>            .findFirst();<a name="line.374"></a>
-<span class="sourceLineNo">375</span>  }<a name="line.375"></a>
-<span class="sourceLineNo">376</span><a name="line.376"></a>
-<span class="sourceLineNo">377</span>}<a name="line.377"></a>
+<span class="sourceLineNo">092</span>    // final validation<a name="line.92"></a>
+<span class="sourceLineNo">093</span>    return validateArchive(archive);<a name="line.93"></a>
+<span class="sourceLineNo">094</span>  }<a name="line.94"></a>
+<span class="sourceLineNo">095</span><a name="line.95"></a>
+<span class="sourceLineNo">096</span>  /**<a name="line.96"></a>
+<span class="sourceLineNo">097</span>   * @param dwcaFolder the location of an expanded dwc archive directory or just a single dwc text file<a name="line.97"></a>
+<span class="sourceLineNo">098</span>   */<a name="line.98"></a>
+<span class="sourceLineNo">099</span>  public static Archive openArchive(File dwcaFolder) throws IOException, UnsupportedArchiveException {<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span>    Archive archive = DwcFiles.fromLocation(dwcaFolder.toPath());<a name="line.101"></a>
+<span class="sourceLineNo">102</span><a name="line.102"></a>
+<span class="sourceLineNo">103</span>    // final validation<a name="line.103"></a>
+<span class="sourceLineNo">104</span>    return validateArchive(archive);<a name="line.104"></a>
+<span class="sourceLineNo">105</span>  }<a name="line.105"></a>
+<span class="sourceLineNo">106</span><a name="line.106"></a>
+<span class="sourceLineNo">107</span>  private static Archive validateArchive(Archive archive) throws UnsupportedArchiveException {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>    validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    for (ArchiveFile af : archive.getExtensions()) {<a name="line.109"></a>
+<span class="sourceLineNo">110</span>      validateExtensionFile(af);<a name="line.110"></a>
+<span class="sourceLineNo">111</span>    }<a name="line.111"></a>
+<span class="sourceLineNo">112</span>    // report basic stats<a name="line.112"></a>
+<span class="sourceLineNo">113</span>    LOG.debug("Archive contains " + archive.getExtensions().size() + " described extension files");<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    LOG.debug("Archive contains " + archive.getCore().getFields().size() + " core properties");<a name="line.114"></a>
+<span class="sourceLineNo">115</span>    return archive;<a name="line.115"></a>
+<span class="sourceLineNo">116</span>  }<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>  private static void validateCoreFile(ArchiveFile f, boolean hasExtensions) throws UnsupportedArchiveException {<a name="line.118"></a>
+<span class="sourceLineNo">119</span>    if (hasExtensions) {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>      if (f.getId() == null) {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>        LOG.warn(<a name="line.121"></a>
+<span class="sourceLineNo">122</span>          "DwC-A core data file " + f.getTitle() + " is lacking an id column. No extensions allowed in this case");<a name="line.122"></a>
+<span class="sourceLineNo">123</span>      }<a name="line.123"></a>
+<span class="sourceLineNo">124</span>    }<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    validateFile(f);<a name="line.125"></a>
+<span class="sourceLineNo">126</span>  }<a name="line.126"></a>
+<span class="sourceLineNo">127</span><a name="line.127"></a>
+<span class="sourceLineNo">128</span>  private static void validateExtensionFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.128"></a>
+<span class="sourceLineNo">129</span>    if (f.getId() == null) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>      throw new UnsupportedArchiveException(<a name="line.130"></a>
+<span class="sourceLineNo">131</span>        "DwC-A data file " + f.getTitle() + " requires an id or foreign key to the core id");<a name="line.131"></a>
+<span class="sourceLineNo">132</span>    }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>    validateFile(f);<a name="line.133"></a>
+<span class="sourceLineNo">134</span>  }<a name="line.134"></a>
+<span class="sourceLineNo">135</span><a name="line.135"></a>
+<span class="sourceLineNo">136</span>  private static void validateFile(ArchiveFile f) throws UnsupportedArchiveException {<a name="line.136"></a>
+<span class="sourceLineNo">137</span>    if (f == null) {<a name="line.137"></a>
+<span class="sourceLineNo">138</span>      throw new UnsupportedArchiveException("DwC-A data file is NULL");<a name="line.138"></a>
+<span class="sourceLineNo">139</span>    }<a name="line.139"></a>
+<span class="sourceLineNo">140</span>    if (f.getLocationFile() == null) {<a name="line.140"></a>
+<span class="sourceLineNo">141</span>      throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a location");<a name="line.141"></a>
+<span class="sourceLineNo">142</span>    }<a name="line.142"></a>
+<span class="sourceLineNo">143</span>    if (f.getEncoding() == null) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>      throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a character encoding");<a name="line.144"></a>
+<span class="sourceLineNo">145</span>    }<a name="line.145"></a>
+<span class="sourceLineNo">146</span>  }<a name="line.146"></a>
+<span class="sourceLineNo">147</span><a name="line.147"></a>
+<span class="sourceLineNo">148</span>}<a name="line.148"></a>
 
 
 

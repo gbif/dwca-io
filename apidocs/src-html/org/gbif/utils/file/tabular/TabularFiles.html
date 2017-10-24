@@ -57,19 +57,30 @@
 <span class="sourceLineNo">049</span>  }<a name="line.49"></a>
 <span class="sourceLineNo">050</span><a name="line.50"></a>
 <span class="sourceLineNo">051</span>  /**<a name="line.51"></a>
-<span class="sourceLineNo">052</span>   * Get a new TabularDataFileReader using default quote char and default endOfLineSymbols.<a name="line.52"></a>
-<span class="sourceLineNo">053</span>   *<a name="line.53"></a>
-<span class="sourceLineNo">054</span>   * @param reader<a name="line.54"></a>
-<span class="sourceLineNo">055</span>   * @param delimiterChar<a name="line.55"></a>
-<span class="sourceLineNo">056</span>   * @param headerLine<a name="line.56"></a>
-<span class="sourceLineNo">057</span>   */<a name="line.57"></a>
-<span class="sourceLineNo">058</span>  public static TabularDataFileReader&lt;List&lt;String&gt;&gt; newTabularFileReader(Reader reader, char delimiterChar,<a name="line.58"></a>
-<span class="sourceLineNo">059</span>                                                                         boolean headerLine) throws IOException {<a name="line.59"></a>
-<span class="sourceLineNo">060</span>    return new JacksonCsvFileReader(reader, delimiterChar, new String(CsvSchema.DEFAULT_LINEFEED),<a name="line.60"></a>
-<span class="sourceLineNo">061</span>            CsvSchema.DEFAULT_QUOTE_CHAR, headerLine);<a name="line.61"></a>
-<span class="sourceLineNo">062</span>  }<a name="line.62"></a>
-<span class="sourceLineNo">063</span><a name="line.63"></a>
-<span class="sourceLineNo">064</span>}<a name="line.64"></a>
+<span class="sourceLineNo">052</span>   * Get a new TabularDataFileReader using default quote char (") and default endOfLineSymbols (\n).<a name="line.52"></a>
+<span class="sourceLineNo">053</span>   * Usage:<a name="line.53"></a>
+<span class="sourceLineNo">054</span>   * &lt;pre&gt;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>   * {@code<a name="line.55"></a>
+<span class="sourceLineNo">056</span>   * try (TabularDataFileReader&lt;List&lt;String&gt;&gt; reader = TabularFiles.newTabularFileReader(<a name="line.56"></a>
+<span class="sourceLineNo">057</span>  Files.newBufferedReader(Paths.get("/tmp/test.csv"), StandardCharsets.UTF_8), ',', true)) {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>  ...<a name="line.58"></a>
+<span class="sourceLineNo">059</span>  }<a name="line.59"></a>
+<span class="sourceLineNo">060</span>   * }<a name="line.60"></a>
+<span class="sourceLineNo">061</span>   * &lt;/pre&gt;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>   *<a name="line.62"></a>
+<span class="sourceLineNo">063</span>   *<a name="line.63"></a>
+<span class="sourceLineNo">064</span>   * @param reader<a name="line.64"></a>
+<span class="sourceLineNo">065</span>   * @param delimiterChar<a name="line.65"></a>
+<span class="sourceLineNo">066</span>   * @param headerLine<a name="line.66"></a>
+<span class="sourceLineNo">067</span>   */<a name="line.67"></a>
+<span class="sourceLineNo">068</span>  public static TabularDataFileReader&lt;List&lt;String&gt;&gt; newTabularFileReader(Reader reader, char delimiterChar,<a name="line.68"></a>
+<span class="sourceLineNo">069</span>                                                                         boolean headerLine) throws IOException {<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    return new JacksonCsvFileReader(reader, delimiterChar, new String(CsvSchema.DEFAULT_LINEFEED),<a name="line.70"></a>
+<span class="sourceLineNo">071</span>            CsvSchema.DEFAULT_QUOTE_CHAR, headerLine);<a name="line.71"></a>
+<span class="sourceLineNo">072</span>  }<a name="line.72"></a>
+<span class="sourceLineNo">073</span><a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>}<a name="line.75"></a>
 
 
 

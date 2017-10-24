@@ -24,17 +24,17 @@
 <span class="sourceLineNo">016</span><a name="line.16"></a>
 <span class="sourceLineNo">017</span>package org.gbif.dwca.io;<a name="line.17"></a>
 <span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>import org.gbif.registry.metadata.EMLWriter;<a name="line.19"></a>
-<span class="sourceLineNo">020</span><a name="line.20"></a>
-<span class="sourceLineNo">021</span>import java.io.File;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import java.io.FileWriter;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import java.io.IOException;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import java.io.Writer;<a name="line.24"></a>
-<span class="sourceLineNo">025</span><a name="line.25"></a>
-<span class="sourceLineNo">026</span>import freemarker.cache.ClassTemplateLoader;<a name="line.26"></a>
-<span class="sourceLineNo">027</span>import freemarker.cache.TemplateLoader;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import freemarker.template.Configuration;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import freemarker.template.TemplateException;<a name="line.29"></a>
+<span class="sourceLineNo">019</span>import java.io.File;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.io.FileWriter;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.io.IOException;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.io.Writer;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>import freemarker.cache.ClassTemplateLoader;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import freemarker.cache.TemplateLoader;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import freemarker.template.Configuration;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import freemarker.template.TemplateException;<a name="line.27"></a>
+<span class="sourceLineNo">028</span><a name="line.28"></a>
+<span class="sourceLineNo">029</span>import static freemarker.template.Configuration.VERSION_2_3_25;<a name="line.29"></a>
 <span class="sourceLineNo">030</span><a name="line.30"></a>
 <span class="sourceLineNo">031</span>/**<a name="line.31"></a>
 <span class="sourceLineNo">032</span> * Utils class to write a meta.xml descriptor file.<a name="line.32"></a>
@@ -71,9 +71,9 @@
 <span class="sourceLineNo">063</span>   */<a name="line.63"></a>
 <span class="sourceLineNo">064</span>  private static Configuration provideFreemarker() {<a name="line.64"></a>
 <span class="sourceLineNo">065</span>    // load templates from classpath by prefixing /templates<a name="line.65"></a>
-<span class="sourceLineNo">066</span>    TemplateLoader tl = new ClassTemplateLoader(EMLWriter.class, TEMPLATE_PATH);<a name="line.66"></a>
+<span class="sourceLineNo">066</span>    TemplateLoader tl = new ClassTemplateLoader(MetaDescriptorWriter.class, TEMPLATE_PATH);<a name="line.66"></a>
 <span class="sourceLineNo">067</span><a name="line.67"></a>
-<span class="sourceLineNo">068</span>    Configuration fm = new Configuration();<a name="line.68"></a>
+<span class="sourceLineNo">068</span>    Configuration fm = new Configuration(VERSION_2_3_25);<a name="line.68"></a>
 <span class="sourceLineNo">069</span>    fm.setDefaultEncoding("utf8");<a name="line.69"></a>
 <span class="sourceLineNo">070</span>    fm.setTemplateLoader(tl);<a name="line.70"></a>
 <span class="sourceLineNo">071</span><a name="line.71"></a>
