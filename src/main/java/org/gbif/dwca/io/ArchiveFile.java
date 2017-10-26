@@ -51,23 +51,19 @@ public class ArchiveFile implements Iterable<Record> {
   public static final String DEFAULT_FIELDS_TERMINATED_BY = ",";
   public static final String DEFAULT_LINES_TERMINATED_BY = "\n";
 
-  public class ArchiveFieldIndexComparator implements Comparator<ArchiveField> {
-
-    public int compare(ArchiveField o1, ArchiveField o2) {
-      if (o1.getIndex() == null && o2.getIndex() == null) {
-        return 0;
-      } else if (o1.getIndex() == null) {
-        return -1;
-      } else if (o2.getIndex() == null) {
-        return 1;
-      } else if (o1.getIndex().equals(o2.getIndex())) {
-        return o1.getTerm().qualifiedName().compareToIgnoreCase(o2.getTerm().qualifiedName());
-      } else {
-        return o1.getIndex().compareTo(o2.getIndex());
-      }
+  private static final Comparator<ArchiveField> AF_IDX_COMPARATOR = (o1, o2) -> {
+    if (o1.getIndex() == null && o2.getIndex() == null) {
+      return 0;
+    } else if (o1.getIndex() == null) {
+      return -1;
+    } else if (o2.getIndex() == null) {
+      return 1;
+    } else if (o1.getIndex().equals(o2.getIndex())) {
+      return o1.getTerm().qualifiedName().compareToIgnoreCase(o2.getTerm().qualifiedName());
+    } else {
+      return o1.getIndex().compareTo(o2.getIndex());
     }
-
-  }
+  };
 
   private ArchiveField id;
   private Archive archive;
@@ -164,7 +160,7 @@ public class ArchiveFile implements Iterable<Record> {
    */
   public List<ArchiveField> getFieldsSorted() {
     List<ArchiveField> list = new ArrayList<>(fields.values());
-    Collections.sort(list, new ArchiveFieldIndexComparator());
+    Collections.sort(list, AF_IDX_COMPARATOR);
     return list;
   }
 
@@ -179,6 +175,8 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   /**
+   * Deprecated: use getFieldsSorted(), see https://github.com/gbif/dwca-io/issues/41 for details
+   *
    * Generates an ordered array representing all the {@link Term} matching the position in the underlying file.
    * The array can contain {@code null} if no {@link Term} is mapped at a specific position.
    * The size of the array is defined by the maximum index used within {@link ArchiveField} + 1 (since indices are 0
@@ -186,6 +184,7 @@ public class ArchiveFile implements Iterable<Record> {
    *
    * @return Array of {@link Term} representing the header or an empty Array if no headers are present.
    */
+  @Deprecated
   public Term[] getHeader() {
     List<ArchiveField> archiveFieldsWithIndex = getFieldsSorted()
             .stream().filter(af -> af.getIndex() != null)
