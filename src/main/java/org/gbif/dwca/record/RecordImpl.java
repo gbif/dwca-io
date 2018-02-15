@@ -1,7 +1,7 @@
 package org.gbif.dwca.record;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.io.ArchiveField;
 import org.gbif.dwca.io.ArchiveFile;
 
@@ -10,11 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class RecordImpl implements Record {
-
-  private static final TermFactory TERM_FACTORY = TermFactory.instance();
 
   private final ArchiveField id;
   private final Map<Term, ArchiveField> fields;

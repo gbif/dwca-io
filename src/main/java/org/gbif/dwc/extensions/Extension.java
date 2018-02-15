@@ -202,7 +202,7 @@ public class Extension implements Comparable<org.gbif.dwc.extensions.Extension>{
   }
 
   public void setRowType(String rowType) {
-    setRowType(TermFactory.instance().findTerm(rowType));
+    setRowType(TermFactory.instance().findClassTerm(rowType));
   }
 
   public void setRowType(Term rowType) {

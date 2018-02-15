@@ -148,8 +148,14 @@ public class ExtensionProperty implements Comparable<org.gbif.dwc.extensions.Ext
    * (non-Javadoc)
    * @see org.gbif.dwc.terms.ConceptTerm#qualifiedName()
    */
+  @Override
   public String qualifiedName() {
     return qualname;
+  }
+
+  @Override
+  public boolean isClass() {
+    return false;
   }
 
   /*

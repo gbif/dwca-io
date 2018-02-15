@@ -81,7 +81,7 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
       dwcFile.setLinesTerminatedBy(unescapeBackslash(getAttr(attr, "linesTerminatedBy")));
     }
     if (getAttr(attr, "rowType") != null) {
-      dwcFile.setRowType(TERM_FACTORY.findTerm(getAttr(attr, "rowType")));
+      dwcFile.setRowType(TERM_FACTORY.findClassTerm(getAttr(attr, "rowType")));
     }
     String ignoreHeaderLines = getAttr(attr, "ignoreHeaderLines");
     try {
@@ -96,7 +96,7 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
    */
   private ArchiveField buildField(Attributes attributes) {
     // build field
-    Term term = TERM_FACTORY.findTerm(getAttr(attributes, "term"));
+    Term term = TERM_FACTORY.findPropertyTerm(getAttr(attributes, "term"));
     String defaultValue = getAttr(attributes, "default");
     String vocabulary = getAttr(attributes, "vocabulary");
     ArchiveField.DataType type = ArchiveField.DataType.findByXmlSchemaType(getAttr(attributes, "type"));

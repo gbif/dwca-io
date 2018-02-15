@@ -12,6 +12,7 @@
  */
 package org.gbif.dwca.io;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.record.Record;
@@ -23,19 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class can be used to encapsulate information about a file contained within a Darwin Core Archive. It generally
@@ -46,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 public class ArchiveFile implements Iterable<Record> {
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
 
-  public static final Term DEFAULT_ID_TERM = TermFactory.instance().findTerm("ARCHIVE_RECORD_ID");
+  public static final Term DEFAULT_ID_TERM = TERM_FACTORY.findPropertyTerm("ARCHIVE_RECORD_ID");
   public static final Character DEFAULT_FIELDS_ENCLOSED_BY = '"';
   public static final String DEFAULT_FIELDS_TERMINATED_BY = ",";
   public static final String DEFAULT_LINES_TERMINATED_BY = "\n";
@@ -143,7 +133,7 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   public ArchiveField getField(String term) {
-    return getField(TERM_FACTORY.findTerm(term));
+    return getField(TERM_FACTORY.findPropertyTerm(term));
   }
 
   public Map<Term, ArchiveField> getFields() {

@@ -1,24 +1,12 @@
 package org.gbif.dwca.io;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
-import org.gbif.dwca.tools.MetaValidator;
 import org.gbif.utils.file.FileUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Set;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -26,13 +14,18 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 
-import static org.gbif.TestUtils.TERM_FACTORY;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.gbif.TestUtils.TERM_FACTORY;
+import static org.junit.Assert.*;
 
 /**
  * Integration tests related to the MetaDescriptor operations.
@@ -73,10 +66,6 @@ public class MetaDescriptorTest {
     File tmpMeta = File.createTempFile("meta", ".xml");
     System.out.println("Writing temporary test meta file to " + tmpMeta.getAbsolutePath());
     MetaDescriptorWriter.writeMetaFile(tmpMeta, arch);
-
-    // validate xml
-    System.out.println("Validate xml");
-    MetaValidator.validate(new FileInputStream(tmpMeta));
 
     // verify rowType & terms are URIs
     List<String> terms = Lists.newArrayList();

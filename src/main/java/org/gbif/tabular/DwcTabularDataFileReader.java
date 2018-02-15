@@ -1,5 +1,7 @@
 package org.gbif.tabular;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwca.io.ArchiveField;
@@ -8,9 +10,6 @@ import org.gbif.utils.file.tabular.TabularDataFileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 /**
  * Warning: this class will probably be removed shortly
@@ -22,7 +21,7 @@ import com.google.common.collect.Maps;
 public class DwcTabularDataFileReader extends TermTabularDataFileReader {
 
   //refers to a column in the archive representing the id of the line that is not mapped to a real term
-  public static Term DEFAULT_ID_TERM = TermFactory.instance().findTerm("dwcaId");
+  public static Term DEFAULT_ID_TERM = TermFactory.instance().findPropertyTerm("dwcaId");
 
   private Map<Term, String> defaultValues = Maps.newHashMap();
 

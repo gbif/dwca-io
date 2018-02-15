@@ -1,5 +1,12 @@
 package org.gbif.dwc;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
@@ -14,34 +21,15 @@ import org.gbif.utils.file.tabular.TabularDataFileReader;
 import org.gbif.utils.file.tabular.TabularFileMetadata;
 import org.gbif.utils.file.tabular.TabularFileMetadataExtractor;
 import org.gbif.utils.file.tabular.TabularFiles;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOCase;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.HiddenFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -247,7 +235,7 @@ class InternalDwcFileFactory {
       // there are never any quotes in term names - remove them just in case the we didn't recognize them
       if (head != null && head.length() > 1) {
         try {
-          Term dt = TERM_FACTORY.findTerm(head);
+          Term dt = TERM_FACTORY.findPropertyTerm(head);
           dwcFile.addField(new ArchiveField(index, dt, null, ArchiveField.DataType.string));
         } catch (IllegalArgumentException e) {
           LOG.warn("Illegal term name >>{}<< found in header, ignore column {}", head, index);
