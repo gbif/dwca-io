@@ -12,6 +12,7 @@ package org.gbif.dwc.extensions;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 
+import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -158,6 +159,16 @@ public class ExtensionProperty implements Comparable<org.gbif.dwc.extensions.Ext
     return false;
   }
 
+  @Override
+  public String prefix() {
+    return "";
+  }
+
+  @Override
+  public URI namespace() {
+    return URI.create(namespace);
+  }
+
   /*
    * (non-Javadoc)
    * @see org.gbif.dwc.terms.ConceptTerm#qualifiedNormalisedName()
@@ -240,6 +251,11 @@ public class ExtensionProperty implements Comparable<org.gbif.dwc.extensions.Ext
    */
   public String simpleName() {
     return name;
+  }
+
+  @Override
+  public String prefixedName() {
+    return simpleName();
   }
 
   /*
