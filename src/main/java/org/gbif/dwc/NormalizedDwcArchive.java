@@ -1,6 +1,7 @@
 package org.gbif.dwc;
 
 import org.gbif.dwc.terms.Term;
+import org.gbif.dwca.io.ArchiveFile;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.ClosableIterator;
@@ -9,7 +10,15 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
+ * A {@link NormalizedDwcArchive} represents a DarwinCore archive that has been normalized in order to be able to
+ * offer a {@link ClosableIterator} of {@link StarRecord}. A {@link StarRecord} requires normalization (which means here
+ * sorting all files by core id) in order to give the core records + all extension records attached to it.
  *
+ * If you don't need an iterator of {@link StarRecord}, you can use {@link DwcFiles#iterator(ArchiveFile, boolean, boolean)} to get
+ * an iterator of {@link Record} (which is a record without its extension(s)).
+ *
+ * Internally, this class will use different iterators to traverse the core and its extensions through
+ * {@link StarRecordIterator}.
  */
 public class NormalizedDwcArchive {
 
