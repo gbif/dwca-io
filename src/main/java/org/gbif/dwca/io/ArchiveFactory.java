@@ -25,9 +25,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Factory used to build {@link Archive} object from a DarwinCore Archive file.
- * 
- * @author mdoering
  *
+ * Replaced by DwcFiles, except that this also does some validation of the archive structure.
  */
 public class ArchiveFactory {
 

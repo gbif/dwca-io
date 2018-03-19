@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<archive xmlns="http://rs.tdwg.org/dwc/text/">
+	<core encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy='' ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Taxon">
+		<files>
+			<location>taxa.txt</location>
+		</files>
+		<field index="1" term="http://rs.tdwg.org/dwc/terms/scientificName"/>
+		<field index="2" term="http://rs.tdwg.org/dwc/terms/taxonRank"/>
+	</core>
+
+	<extension encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy='' ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Multimedia">
+		<files>
+			<location>media.txt</location>
+		</files>
+		<coreid index="0"/>
+		<field index="1" term="http://purl.org/dc/terms/identifier"/>
+		<field default="StillImage" term="http://purl.org/dc/terms/type"/>
+	</extension>
+</archive>

@@ -542,4 +542,51 @@ public class ArchiveFactoryTest {
     assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
   }
 
+  /**
+   * Basic validation of archives, that the declared files exist and have basic, valid structure.
+   */
+  @Test
+  public void testInvalidArchives() throws IOException {
+    // Simple archive problems
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/empty"));
+      fail("Empty archive should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/meta-file-encoding-missing"));
+      fail("Archive with missing file encoding in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/meta-file-location-missing"));
+      fail("Archive with missing file location in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    // Extension archive problems
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-missing"));
+      fail("Archive with missing extension file should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-encoding-missing"));
+      fail("Archive with missing extension file encoding in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-location-missing"));
+      fail("Archive with missing extension file location in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-core-id-missing"));
+      fail("Archive with extension lacking coreid in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-id-missing"));
+      fail("Archive with extension and core missing id in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+  }
 }
