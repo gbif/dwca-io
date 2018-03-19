@@ -14,11 +14,9 @@ package org.gbif.dwca.io;
 
 import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.meta.DwcMetaFiles;
-import org.gbif.util.DownloadUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import com.google.common.io.Files;
 import org.apache.commons.lang3.StringUtils;
@@ -34,19 +32,6 @@ import org.slf4j.LoggerFactory;
 public class ArchiveFactory {
 
   private static final Logger LOG = LoggerFactory.getLogger(ArchiveFactory.class);
-
-  /**
-   * Opens an archive from a URL, downloading and decompressing it.
-   *
-   * @param archiveUrl the location of a compressed archive or single data file
-   * @param workingDir writable directory to download to and decompress archive
-   */
-  public static Archive openArchive(URL archiveUrl, File workingDir) throws IOException, UnsupportedArchiveException {
-    File downloadTo = new File(workingDir, "dwca-download");
-    File dwca = new File(workingDir, "dwca");
-    DownloadUtil.download(archiveUrl, downloadTo);
-    return openArchive(downloadTo, dwca);
-  }
 
   /**
    * Opens an archive from a local file and decompresses or copies it into the given archive directory.
