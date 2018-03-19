@@ -3,19 +3,14 @@ package org.gbif.dwca.io;
 import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.DwcLayout;
-import org.gbif.dwc.terms.DcTerm;
-import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.record.DarwinCoreRecord;
 import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.RecordImpl;
 import org.gbif.dwca.record.RecordIterator;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.dwca.record.StarRecordImpl;
 import org.gbif.registry.metadata.parse.DatasetParser;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
-import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -47,81 +42,6 @@ import org.slf4j.LoggerFactory;
 public class Archive implements Iterable<StarRecord> {
   public static final String CONSTITUENT_DIR = "dataset";
   public static final String META_FN = "meta.xml";
-
-  /**
-   * An iterator of fixed DarwinCoreRecords over the core file only. This iterator doesn't need any sorted data files
-   * as it doesn't deal with extensions.
-   */
-  @Deprecated
-  static class ArchiveDwcIterator implements ClosableIterator<DarwinCoreRecord> {
-
-    private CSVReader coreReader;
-    private ArchiveFile core;
-    private int lineCount = 0;
-    private final RecordImpl record;
-    private boolean hasNext = true;
-    private final Set<Term> mappedTerms = new HashSet<Term>();
-
-    ArchiveDwcIterator(Archive archive) {
-      record = new RecordImpl(archive.getCore(), true, true);
-      core = archive.getCore();
-      // remember used DwC and DC terms
-      for (DwcTerm term : DwcTerm.values()) {
-        if (core.hasTerm(term)) {
-          mappedTerms.add(term);
-        }
-      }
-      for (DcTerm term : DcTerm.values()) {
-        if (core.hasTerm(term)) {
-          mappedTerms.add(term);
-        }
-      }
-      try {
-        coreReader = archive.getCore().getCSVReader();
-        // read first core row
-        record.setRow(coreReader.next());
-        if (!record.hasRow()) {
-          hasNext = false;
-        }
-      } catch (Exception e) {
-        hasNext = false;
-        LOG.warn("Exception caught", e);
-      }
-    }
-
-    public void close() {
-      coreReader.close();
-    }
-
-    public boolean hasNext() {
-      return hasNext;
-    }
-
-    public DarwinCoreRecord next() {
-      DarwinCoreRecord dwc = new DarwinCoreRecord();
-      lineCount++;
-      try {
-        for (Term term : mappedTerms) {
-          dwc.setProperty(term, record.value(term));
-        }
-        dwc.setId(record.id());
-        // read next line to see if it exists at all
-        record.setRow(coreReader.next());
-        if (!record.hasRow()) {
-          hasNext = false;
-        }
-
-      } catch (Exception e) {
-        LOG.warn("Bad row somewhere around core line: {}", lineCount, e);
-      }
-      return dwc;
-    }
-
-    public void remove() {
-      throw new UnsupportedOperationException("Cannot remove a row from archive files");
-    }
-
-  }
 
   /**
    * This class is kept for legacy reason, See {@link DwcFiles} for new usage.
@@ -375,15 +295,6 @@ public class Archive implements Iterable<StarRecord> {
   @Deprecated
   public ClosableIterator<StarRecord> iteratorRaw() {
     return new ArchiveIterator(this, false, false);
-  }
-
-  /**
-   * @return an iterator over simple darwin core records based on the core data file(s). The DarwinCoreRecord instance
-   *         is reused to give better performance, so create a clone before referencing it.
-   */
-  @Deprecated
-  public ClosableIterator<DarwinCoreRecord> iteratorDwc() {
-    return new ArchiveDwcIterator(this);
   }
 
   public void setCore(ArchiveFile core) {

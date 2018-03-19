@@ -1,54 +1,27 @@
 package org.gbif.dwca.io;
 
-import org.gbif.dwc.terms.DcTerm;
+import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.record.DarwinCoreRecord;
+import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.FileUtils;
-import org.gbif.utils.file.csv.CSVReader;
 import org.junit.Test;
-import org.mockito.Matchers;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ArchiveTest {
 
   @Test
   public void testIteratorDwc() throws Exception {
-    File csv = FileUtils.getClasspathFile("null_data.txt");
-    CSVReader reader = new CSVReader(csv, "utf8", "\t", null, 1);
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("simplest-archive").toPath());
 
-    Archive arch = new Archive();
-    ArchiveField id = new ArchiveField(0, null, null, null);
-    ArchiveField taxStatus = new ArchiveField(1, DwcTerm.taxonomicStatus, "a", null);
-    ArchiveField dcmodified = new ArchiveField(6, DcTerm.modified, "mod", null);
-
-    ArchiveFile core = mock(ArchiveFile.class);
-    when(core.getCSVReader()).thenReturn(reader);
-    when(core.getId()).thenReturn(id);
-    when(core.getArchive()).thenReturn(arch);
-    when(core.getField(Matchers.<Term>any())).thenReturn(taxStatus);
-    Map<Term, ArchiveField> fields = new HashMap<Term, ArchiveField>();
-    fields.put(DwcTerm.taxonomicStatus, taxStatus);
-    fields.put(DcTerm.modified, dcmodified);
-    when(core.getFields()).thenReturn(fields);
-    when(core.hasTerm(eq(DwcTerm.taxonomicStatus))).thenReturn(true);
-    when(core.hasTerm(eq(DcTerm.modified))).thenReturn(true);
-    arch.setCore(core);
-
-    Iterator<DarwinCoreRecord> iter = arch.iteratorDwc();
-    while (iter.hasNext()) {
-      DarwinCoreRecord rec = iter.next();
-      assertEquals("a", rec.getTaxonomicStatus());
-      assertEquals("mod", rec.getModified());
+    for (StarRecord rec : arch) {
+      assertEquals("Quercus alba", rec.core().value(DwcTerm.scientificName));
+      assertEquals("Species", rec.core().value(DwcTerm.taxonRank));
     }
   }
 

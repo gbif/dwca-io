@@ -1,0 +1,3 @@
+TaxonID	ScientificName	TaxonRank
+1	Quercus alba	Species
+2	Quercus alba	Species

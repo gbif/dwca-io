@@ -1,36 +1,29 @@
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveFactory;
-import org.gbif.dwca.io.UnsupportedArchiveException;
-import org.gbif.dwca.record.DarwinCoreRecord;
+import org.gbif.dwca.record.StarRecord;
+import org.gbif.utils.file.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 public class ScanArchiveForScientificName {
 
   public static void main(String[] args) throws IOException, UnsupportedArchiveException {
-    // opens csv files with headers or dwc-a direcotries with a meta.xml descriptor
-    Archive arch = ArchiveFactory
-      .openArchive(new File("/Volumes/Scratch/ecat-data-col/checklists/beac2c55-d889-4358-a414-b1db79ba3536/dwc-a"));
+    // opens CSV files with headers or dwc-a directories with a meta.xml descriptor
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
 
     // does scientific name exist?
     if (!arch.getCore().hasTerm(DwcTerm.scientificName)) {
-      System.out.println("This application requires dwc-a with scientific names");
+      System.out.println("This application requires a DWC-A with scientific names");
       System.exit(1);
     }
 
-    // loop over core darwin core records
-    Iterator<DarwinCoreRecord> iter = arch.iteratorDwc();
-    DarwinCoreRecord dwc;
-    while (iter.hasNext()) {
-      dwc = iter.next();
-      if (dwc.getScientificName().startsWith("Ambispora callosa")) {
-        System.out.println(dwc.getScientificName());
-        System.out.println(dwc.getScientificNameAuthorship());
+    // loop over core Darwin Core records
+    for (StarRecord dwc : arch) {
+      if (dwc.core().value(DwcTerm.scientificName).startsWith("Ambispora callosa")) {
+        System.out.println(dwc.core().value(DwcTerm.scientificName));
+        System.out.println(dwc.core().value(DwcTerm.scientificNameAuthorship));
         System.out.println(dwc);
       }
     }
