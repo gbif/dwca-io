@@ -16,12 +16,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -234,16 +234,14 @@ public class ArchiveFactoryTest {
    * when using the star record iterator.
    */
   @Test
-  @Ignore("currently fails with only 661 records coming through instead of 740")
   public void testStarIteratorExtRecords() throws Exception {
     File zip = FileUtils.getClasspathFile("checklist_980.zip");
     File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
-    CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tmpDir);
+    Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
     int counter = 0;
     int occCounter = 0;
-    Set<String> ids = Sets.newHashSet();
+    Set<String> ids = new HashSet<>();
     for (StarRecord rec : arch) {
       counter++;
       ids.add(rec.core().id());

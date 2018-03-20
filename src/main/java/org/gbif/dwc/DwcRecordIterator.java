@@ -9,6 +9,7 @@ import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ class DwcRecordIterator implements ClosableIterator<Record> {
 
     try {
       nextLine = tabularFileReader.read();
-    } catch (IOException var2) {
+    } catch (ParseException | IOException var2) {
       try {
         this.close();
       } catch (IOException e) {
