@@ -4,6 +4,7 @@ import org.gbif.dwc.DwcLayout;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.util.CSVReaderHelper;
@@ -21,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -541,49 +541,59 @@ public class ArchiveFactoryTest {
   }
 
   /**
+   * Basic validation of archives, where we rely on falling back to defaults from the DWC-A metadata schema.
+   */
+  @Test
+  public void testFallbackToDefaultsArchives() throws IOException {
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("defaults/meta-file-encoding-missing"));
+      assertEquals("utf8", arch.getCore().getEncoding());
+    } catch (UnsupportedArchiveException e) {
+      fail("Core file encoding defaults to UTF-8 if missing in meta.xml.");
+    }
+
+    try {
+      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("defaults/extension-encoding-missing"));
+      assertEquals("utf8", arch.getExtension(GbifTerm.Multimedia).getEncoding());
+    } catch (UnsupportedArchiveException e) {
+      fail("Extension file encoding defaults to UTF-8 if missing in meta.xml.");
+    }
+  }
+
+  /**
    * Basic validation of archives, that the declared files exist and have basic, valid structure.
    */
   @Test
   public void testInvalidArchives() throws IOException {
     // Simple archive problems
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/empty"));
+      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/empty"));
       fail("Empty archive should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/meta-file-encoding-missing"));
-      fail("Archive with missing file encoding in meta.xml should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
-
-    try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/meta-file-location-missing"));
+      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/meta-file-location-missing"));
       fail("Archive with missing file location in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     // Extension archive problems
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-missing"));
+      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-missing"));
       fail("Archive with missing extension file should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-encoding-missing"));
-      fail("Archive with missing extension file encoding in meta.xml should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
-
-    try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-location-missing"));
+      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-location-missing"));
       fail("Archive with missing extension file location in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-core-id-missing"));
+      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-core-id-missing"));
       fail("Archive with extension lacking coreid in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-id-missing"));
+      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-id-missing"));
       fail("Archive with extension and core missing id in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
   }
