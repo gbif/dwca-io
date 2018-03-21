@@ -24,6 +24,7 @@ import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class RecordIterator implements ClosableIterator<Record> {
     this.replaceEntities = replaceEntities;
     closable = recordSource;
     if (closable == null) {
-      Iterator<String[]> empty = Iterators.emptyIterator();
+      Iterator<String[]> empty = Collections.emptyIterator();
       iter = Iterators.peekingIterator(empty);
     } else {
       iter = Iterators.peekingIterator(closable);
