@@ -103,6 +103,9 @@ public class MetaDescriptorTest {
 
       // write meta.xml
       File tmpDwca = createTmpMeta(arch);
+      Files.createFile(tmpDwca.toPath().resolve("DarwinCore.txt"));
+      Files.createFile(tmpDwca.toPath().resolve("VernacularName.txt"));
+      Files.createFile(tmpDwca.toPath().resolve("media.txt"));
 
       Archive arch2 = ArchiveFactory.openArchive(tmpDwca);
       // core props
@@ -158,6 +161,8 @@ public class MetaDescriptorTest {
 
       // write meta.xml
       File tmpDwca = createTmpMeta(arch);
+      Files.createFile(tmpDwca.toPath().resolve("test"));
+      Files.createFile(tmpDwca.toPath().resolve("test2"));
       Archive arch2 = ArchiveFactory.openArchive(tmpDwca);
 
       // core props
