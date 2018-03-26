@@ -67,7 +67,7 @@ public class RecordIterator implements ClosableIterator<Record> {
 
   /**
    * @param replaceNulls if true record values will have literal nulls replaced with NULL.
-   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
+   * @param replaceEntities if true HTML & XML entities in record values will be replaced with the interpreted value.
    */
   public static RecordIterator build(ArchiveFile source, boolean replaceNulls, boolean replaceEntities) {
     try {
