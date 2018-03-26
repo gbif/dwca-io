@@ -1,6 +1,5 @@
 package org.gbif.dwca.io;
 
-import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.FileUtils;
@@ -11,6 +10,8 @@ import java.util.Map;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by markus on 17/02/2017.
@@ -35,10 +36,8 @@ public class DwcaStreamWriterTest {
                 DwcTerm.scientificName, 1,
                 DwcTerm.taxonRank, 2);
         try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true)){
-            Dataset d = new Dataset();
-            d.setTitle("Abies of the Alps");
-            d.setDescription("Abies of the Alps excl Switzerland.");
-            dwcaWriter.setMetadata(d);
+            String m = "<eml/>";
+            dwcaWriter.addMetadata(m, "eml.xml");
             dwcaWriter.write(DwcTerm.Taxon, 0, mapping, ImmutableList.<String[]>builder()
                     .add(new String[] { "tax-1", "Abies Mill.", "genus" })
                     .add(new String[] { "tax-2", "Abies alba Mill.", "species" })
@@ -46,6 +45,10 @@ public class DwcaStreamWriterTest {
                     .add(new String[] { "tax-4", "Piceae abies subsp. helvetica L.", "subspecies" })
                     .build()
             );
+
+            Archive arch = ArchiveFactory.openArchive(dwca);
+            assertEquals("eml.xml", arch.getMetadataLocation());
+            assertEquals("<eml/>", arch.getMetadata());
 
         } finally {
             org.apache.commons.io.FileUtils.deleteQuietly(dwca);

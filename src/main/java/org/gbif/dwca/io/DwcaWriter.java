@@ -21,13 +21,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwca.record.Record;
 import org.gbif.io.TabWriter;
-import org.gbif.registry.metadata.EMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +34,14 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Simple writer class to create valid dwc archives using tab data files.
- * The meta.xml descriptor is generated automatically and an optional EML metadata document can be added.
+ * Simple writer class to create valid Darwin Core Archives using tabular data files.
+ * The meta.xml descriptor is generated automatically and an optional metadata document can be added.
  * The archive is NOT compressed but the final product is a directory with all the necessary files.
  * For usage of this class please @see DwcaWriterTest.
  */
 public class DwcaWriter {
   private Logger log = LoggerFactory.getLogger(DwcaWriter.class);
+
   private final File dir;
   private final boolean useHeaders;
   private long recordNum;
@@ -58,8 +57,9 @@ public class DwcaWriter {
   // key=rowType, value=default values per column
   private final Map<Term, Map<Term, String>> defaultValues = Maps.newHashMap();
   private final Map<Term, Map<Term, String>> multiValueDelimiter = Maps.newHashMap();
-  private Dataset eml;
-  private Map<String, Dataset> constituents = Maps.newHashMap();
+  private String metadataLocation;
+  private String metadata;
+  private Map<String, String> constituents = Maps.newHashMap();
 
   /**
    * Creates a new writer without header rows.
@@ -355,23 +355,12 @@ public class DwcaWriter {
     writeRow(row, rowType);
   }
 
-  public void setEml(Dataset eml) {
-    this.eml = eml;
-  }
-
-  /**
-   * Adds a constituent dataset using the dataset key as the datasetID
-   */
-  public void addConstituent(Dataset eml) {
-    addConstituent(eml.getKey().toString(), eml);
-  }
-
   /**
    * Adds a constituent dataset.
    * The eml file will be called as the datasetID which has to be unique.
    */
-  public void addConstituent(String datasetID, Dataset eml) {
-    this.constituents.put(datasetID, eml);
+  public void addConstituent(String datasetId, String metadata) {
+    this.constituents.put(datasetId, metadata);
   }
 
   /**
@@ -396,7 +385,6 @@ public class DwcaWriter {
    *
    */
   public void close() throws IOException {
-    addEml();
     addConstituents();
     addMeta();
     // flush last record
@@ -409,24 +397,24 @@ public class DwcaWriter {
     }
   }
 
-  protected static void writeEml(Dataset d, File f) throws IOException {
-    if (d != null) {
+  protected static void writeMetadata(String m, File f) throws IOException {
+    if (m != null) {
       try (Writer writer = new FileWriter(f)){
-        EMLWriter.newInstance().writeTo(d, writer);
+        writer.write(m);
       }
     }
   }
 
-  private void addEml() throws IOException {
-    writeEml(eml, new File(dir, "eml.xml"));
+  public void addMetadata(String metadata, String metadataLocation) throws IOException {
+    writeMetadata(metadata, new File(dir, metadataLocation));
   }
 
   private void addConstituents() throws IOException {
     if (!constituents.isEmpty()) {
       File ddir = new File(dir, Archive.CONSTITUENT_DIR);
       ddir.mkdirs();
-      for (Map.Entry<String, Dataset> de : constituents.entrySet()) {
-        writeEml(de.getValue(), new File(ddir, de.getKey()+".xml"));
+      for (Map.Entry<String, String> de : constituents.entrySet()) {
+        writeMetadata(de.getValue(), new File(ddir, de.getKey()+".xml"));
       }
     }
   }
@@ -435,8 +423,8 @@ public class DwcaWriter {
     File metaFile = new File(dir, Archive.META_FN);
 
     Archive arch = new Archive();
-    if (eml != null) {
-      arch.setMetadataLocation("eml.xml");
+    if (metadataLocation != null) {
+      arch.setMetadataLocation(metadataLocation);
     }
     arch.setCore(buildArchiveFile(arch, coreRowType, coreIdTerm));
     for (Term rowType : this.terms.keySet()) {

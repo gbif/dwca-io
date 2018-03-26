@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<archive xmlns="http://rs.tdwg.org/dwc/text/">
+<archive xmlns="http://rs.tdwg.org/dwc/text/" metadata="eml.xml">
   <core encoding="UTF-8" fieldsTerminatedBy="\t" linesTerminatedBy="\n" fieldsEnclosedBy='' ignoreHeaderLines="1"
         rowType="http://rs.tdwg.org/dwc/terms/Taxon">
     <files>

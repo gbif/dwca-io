@@ -300,4 +300,21 @@ public class DwcaWriterTest {
     assertEquals("dummy2", secondRecord.id());
     assertEquals("es", secondRecord.value(DcTerm.language));
   }
+
+  @Test
+  public void testWriteMetadata() throws Exception {
+    File dwcaDir = FileUtils.createTempDir();
+    dwcaDir.deleteOnExit();
+    LOG.info("Test archive writer in {}", dwcaDir.getAbsolutePath());
+
+    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
+
+    writer.addMetadata("<eml/>", "eml.xml");
+    writer.close();
+
+    Archive arch = ArchiveFactory.openArchive(dwcaDir);
+    assertEquals("eml.xml", arch.getMetadataLocation());
+    assertEquals("<eml/>", arch.getMetadata());
+  }
+
 }

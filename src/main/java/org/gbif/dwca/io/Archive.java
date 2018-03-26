@@ -1,6 +1,5 @@
 package org.gbif.dwca.io;
 
-import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.DwcLayout;
 import org.gbif.dwc.terms.Term;
@@ -8,7 +7,6 @@ import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.RecordIterator;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.dwca.record.StarRecordImpl;
-import org.gbif.registry.metadata.parse.DatasetParser;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 
@@ -28,6 +26,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import com.google.common.collect.PeekingIterator;
+import org.gbif.utils.file.InputStreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,7 +177,7 @@ public class Archive implements Iterable<StarRecord> {
   private static final Logger LOG = LoggerFactory.getLogger(Archive.class);
 
   private String metadataLocation;
-  private Dataset metadata;
+  private String metadata;
   private File location;
   private ArchiveFile core;
   private Set<ArchiveFile> extensions = new HashSet<ArchiveFile>();
@@ -217,7 +216,7 @@ public class Archive implements Iterable<StarRecord> {
     return location;
   }
 
-  public Dataset getMetadata() throws MetadataException {
+  public String getMetadata() throws MetadataException {
     if (metadata == null) {
       File mf = getMetadataLocationFile();
       try {
@@ -229,7 +228,7 @@ public class Archive implements Iterable<StarRecord> {
           URL url = new URL(metadataLocation);
           stream = url.openStream();
         }
-        metadata = DatasetParser.build(stream);
+        metadata = new InputStreamUtils().readEntireStream(stream, "UTF-8");
       } catch (IOException e) {
         throw new MetadataException(e);
       } catch (RuntimeException e) {

@@ -3,19 +3,13 @@ package org.gbif.dwca.io;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
-import com.google.common.io.Closeables;
-import com.google.common.io.Closer;
-import org.apache.commons.io.IOUtils;
-import org.gbif.api.model.registry.Dataset;
 import org.gbif.dwc.terms.Term;
 import org.gbif.io.TabWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -31,8 +25,8 @@ public class DwcaStreamWriter implements AutoCloseable {
     private final Term coreIdTerm;
     private final boolean useHeaders;
     private final Archive archive = new Archive();
-    private Dataset metadata;
-    private Map<String, Dataset> constituents = Maps.newHashMap();
+    private String metadata;
+    private Map<String, String> constituents = Maps.newHashMap();
 
     /**
      * @param dir the directory to use as the archive
@@ -94,7 +88,7 @@ public class DwcaStreamWriter implements AutoCloseable {
 
         final File dataFile = dataFile(rowType);
         ArchiveFile af = ArchiveFile.buildTabFile();
-        af.setEncoding("UTF8");
+        af.setEncoding("UTF-8");
         af.setRowType(rowType);
         af.addLocation(dataFile.getName());
         af.setIgnoreHeaderLines(useHeaders ? 1 : 0);
@@ -179,23 +173,21 @@ public class DwcaStreamWriter implements AutoCloseable {
         }
     }
 
-    public void setMetadata(Dataset d) {
-        metadata = d;
+    public void addMetadata(String metadata, String metadataLocation) throws IOException {
+        DwcaWriter.writeMetadata(metadata, new File(dir, metadataLocation));
+        archive.setMetadataLocation(metadataLocation);
     }
 
-    /**
-     * Adds a constituent dataset using the dataset key as the datasetID
-     */
-    public void addConstituent(Dataset eml) {
-        addConstituent(eml.getKey().toString(), eml);
+    public void setMetadataLocation(String metadataLocation) {
+        archive.setMetadataLocation(metadataLocation);
     }
 
     /**
      * Adds a constituent dataset.
      * The eml file will be called as the datasetID which has to be unique.
      */
-    public void addConstituent(String datasetID, Dataset eml) {
-        this.constituents.put(datasetID, eml);
+    public void addConstituent(String datasetID, String metadata) {
+        this.constituents.put(datasetID, metadata);
     }
 
     /**
@@ -204,7 +196,6 @@ public class DwcaStreamWriter implements AutoCloseable {
     @Override
     public void close() throws IOException {
         checkCoreRowType();
-        addEml();
         addConstituents();
         MetaDescriptorWriter.writeMetaFile(archive);
         LOG.info("Wrote archive to {}", archive.getLocation().getAbsolutePath());
@@ -219,19 +210,12 @@ public class DwcaStreamWriter implements AutoCloseable {
         }
     }
 
-    private void addEml() throws IOException {
-        if (metadata != null) {
-            DwcaWriter.writeEml(metadata, new File(dir, "eml.xml"));
-            archive.setMetadataLocation("eml.xml");
-        }
-    }
-
     private void addConstituents() throws IOException {
         if (!constituents.isEmpty()) {
             File ddir = new File(dir, Archive.CONSTITUENT_DIR);
             ddir.mkdirs();
-            for (Map.Entry<String, Dataset> de : constituents.entrySet()) {
-                DwcaWriter.writeEml(de.getValue(), new File(ddir, de.getKey()+".xml"));
+            for (Map.Entry<String, String> de : constituents.entrySet()) {
+                DwcaWriter.writeMetadata(de.getValue(), new File(ddir, de.getKey()+".xml"));
             }
         }
     }
