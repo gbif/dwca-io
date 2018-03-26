@@ -20,7 +20,7 @@ import org.apache.commons.io.input.BOMInputStream;
 import org.xml.sax.SAXException;
 
 /**
- * Collections of static methods to work with Metadata files (e.g. meta.xml, eml.xml) in
+ * Collections of static methods to work with Metadata files (e.g. metadata.xml, eml.xml) in
  * the context of Darwin Core (archive) files.
  */
 public class DwcMetaFiles {
