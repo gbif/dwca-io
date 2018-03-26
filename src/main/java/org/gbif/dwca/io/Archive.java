@@ -274,6 +274,21 @@ public class Archive implements Iterable<StarRecord> {
     return constituents;
   }
 
+  public void validate() throws UnsupportedArchiveException {
+    if (core == null) {
+      throw new UnsupportedArchiveException("Parts of DwC-A are missing");
+    }
+    core.validateAsCore(!extensions.isEmpty());
+    LOG.trace("Core is valid");
+    for (ArchiveFile af : extensions) {
+      af.validateAsExtension();
+      LOG.trace("Extension {} is valid", af);
+    }
+    // report basic stats
+    LOG.debug("Archive contains {} described extension files", extensions.size());
+    LOG.debug("Archive contains {} core properties", core.getFields().size());
+  }
+
   /**
    * This method is kept for legacy reason, See {@link DwcFiles} for new usage.
    *

@@ -19,6 +19,8 @@ import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.RecordIterator;
 import org.gbif.util.CSVReaderHelper;
 import org.gbif.utils.file.csv.CSVReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +36,8 @@ import java.util.stream.Collectors;
  * @see <a href="http://rs.tdwg.org/dwc/text/tdwg_dwc_text.xsd">Darwin Core Archive XSD</a>
  */
 public class ArchiveFile implements Iterable<Record> {
+  private static final Logger LOG = LoggerFactory.getLogger(ArchiveFile.class);
+
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
 
   public static final Term DEFAULT_ID_TERM = TERM_FACTORY.findPropertyTerm("ARCHIVE_RECORD_ID");
@@ -83,6 +87,38 @@ public class ArchiveFile implements Iterable<Record> {
     af.setFieldsEnclosedBy(null);
     af.setFieldsTerminatedBy("\t");
     return af;
+  }
+
+  protected void validateAsCore(boolean hasExtensions) throws UnsupportedArchiveException {
+    if (hasExtensions) {
+      if (id == null) {
+        LOG.warn("DwC-A core data file »" + title + "« is lacking an id column. No extensions allowed in this case");
+      }
+    }
+    validate();
+  }
+
+  protected void validateAsExtension() throws UnsupportedArchiveException {
+    if (id == null) {
+      throw new UnsupportedArchiveException("DwC-A data file »" + title + "« requires an id or foreign key to the core id");
+    }
+    validate();
+  }
+
+  protected void validate() throws UnsupportedArchiveException {
+    if (this == null) {
+      throw new UnsupportedArchiveException("DwC-A data file is NULL");
+    }
+    if (getLocation() == null) {
+      throw new UnsupportedArchiveException("DwC-A data file »" + title + "« requires a location");
+    }
+    if (!getLocationFile().exists()) {
+      throw new UnsupportedArchiveException("DwC-A data file »" + title + "« does not exist");
+    }
+    if (encoding == null) {
+      throw new UnsupportedArchiveException("DwC-A data file »" + title + "« requires a character encoding");
+    }
+    System.out.println(encoding + " ENCODING");
   }
 
   public static File getLocationFileSorted(File location) {
@@ -325,5 +361,10 @@ public class ArchiveFile implements Iterable<Record> {
 
   public void setRowType(Term rowType) {
     this.rowType = rowType;
+  }
+
+  @Override
+  public String toString() {
+    return "ArchiveFile " + title;
   }
 }

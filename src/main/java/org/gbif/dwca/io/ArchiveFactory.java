@@ -47,7 +47,8 @@ public class ArchiveFactory {
     try {
       Archive archive = DwcFiles.fromCompressed(archiveFile.toPath(), archiveDir.toPath());
       // keep validation for backward compatibility
-      return validateArchive(archive);
+      archive.validate();
+      return archive;
     }
     catch (UnsupportedArchiveException uaEx){
       LOG.debug("Could not uncompress archive [{}], try to read as single text file", archiveFile, uaEx);
@@ -74,7 +75,8 @@ public class ArchiveFactory {
     }
 
     // final validation
-    return validateArchive(archive);
+    archive.validate();
+    return archive;
   }
 
   /**
@@ -85,48 +87,8 @@ public class ArchiveFactory {
     Archive archive = DwcFiles.fromLocation(dwcaFolder.toPath());
 
     // final validation
-    return validateArchive(archive);
-  }
-
-  private static Archive validateArchive(Archive archive) throws UnsupportedArchiveException {
-    validateCoreFile(archive.getCore(), !archive.getExtensions().isEmpty());
-    for (ArchiveFile af : archive.getExtensions()) {
-      validateExtensionFile(af);
-    }
-    // report basic stats
-    LOG.debug("Archive contains " + archive.getExtensions().size() + " described extension files");
-    LOG.debug("Archive contains " + archive.getCore().getFields().size() + " core properties");
+    archive.validate();
     return archive;
-  }
-
-  private static void validateCoreFile(ArchiveFile f, boolean hasExtensions) throws UnsupportedArchiveException {
-    if (hasExtensions) {
-      if (f.getId() == null) {
-        LOG.warn(
-          "DwC-A core data file " + f.getTitle() + " is lacking an id column. No extensions allowed in this case");
-      }
-    }
-    validateFile(f);
-  }
-
-  private static void validateExtensionFile(ArchiveFile f) throws UnsupportedArchiveException {
-    if (f.getId() == null) {
-      throw new UnsupportedArchiveException(
-        "DwC-A data file " + f.getTitle() + " requires an id or foreign key to the core id");
-    }
-    validateFile(f);
-  }
-
-  private static void validateFile(ArchiveFile f) throws UnsupportedArchiveException {
-    if (f == null) {
-      throw new UnsupportedArchiveException("DwC-A data file is NULL");
-    }
-    if (f.getLocationFile() == null) {
-      throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a location");
-    }
-    if (f.getEncoding() == null) {
-      throw new UnsupportedArchiveException("DwC-A data file " + f.getTitle() + " requires a character encoding");
-    }
   }
 
 }

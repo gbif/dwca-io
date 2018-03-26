@@ -3,7 +3,9 @@ package org.gbif.dwc;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwca.io.Archive;
+import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.dwca.io.ArchiveFile;
+import org.gbif.dwca.io.UnsupportedArchiveException;
 import org.gbif.dwca.record.Record;
 import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.ClosableIterator;
@@ -155,4 +157,51 @@ public class DwcFilesTest {
     assertFalse(DwcFiles.normalizeAndSort(arch.getCore()));
   }
 
+  /**
+   * Basic validation of archives, that the declared files exist and have basic, valid structure.
+   */
+  @Test
+  public void testInvalidArchives() throws IOException {
+    System.out.println("Starting on invalids");
+    // Simple archive problems
+    try {
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/empty").toPath());
+      arch.validate();
+      fail("Empty archive should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/meta-file-location-missing").toPath());
+      arch.validate();
+
+      arch.getCore().iterator().hasNext();
+
+      fail("Archive with missing file location in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    // Extension archive problems
+    try {
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-missing").toPath());
+      arch.validate();
+      fail("Archive with missing extension file should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-location-missing").toPath());
+      arch.validate();
+      fail("Archive with missing extension file location in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-core-id-missing").toPath());
+      arch.validate();
+      fail("Archive with extension lacking coreid in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+
+    try {
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-id-missing").toPath());
+      arch.validate();
+      fail("Archive with extension and core missing id in meta.xml should not be opened.");
+    } catch (UnsupportedArchiveException e) {}
+  }
 }
