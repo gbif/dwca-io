@@ -1,4 +1,4 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
 /**
  * Exception indicating invalid or non existing metadata.

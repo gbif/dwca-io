@@ -1,12 +1,12 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwca.io.Archive;
+import org.gbif.dwc.Archive;
+import org.gbif.dwc.UnsupportedArchiveException;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwca.io.ArchiveFactory;
-import org.gbif.dwca.io.UnsupportedArchiveException;
-import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.IOException;

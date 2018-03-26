@@ -1,9 +1,9 @@
-package org.gbif.dwca.record;
+package org.gbif.dwc.record;
 
 import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.io.ArchiveField;
-import org.gbif.dwca.io.ArchiveFile;
+import org.gbif.dwc.ArchiveField;
+import org.gbif.dwc.ArchiveFile;
 
 import java.util.Collection;
 import java.util.HashMap;

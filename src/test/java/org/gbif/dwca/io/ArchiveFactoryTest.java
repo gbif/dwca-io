@@ -1,12 +1,14 @@
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.Archive;
 import org.gbif.dwc.DwcLayout;
+import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
-import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.StarRecord;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.util.CSVReaderHelper;
 import org.gbif.utils.collection.IterableUtils;
 import org.gbif.utils.file.CompressionUtil;

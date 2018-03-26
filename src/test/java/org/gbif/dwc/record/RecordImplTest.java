@@ -14,12 +14,11 @@
  * the License.
  ***************************************************************************/
 
-package org.gbif.dwca.record;
+package org.gbif.dwc.record;
 
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.io.ArchiveField;
-import org.gbif.dwca.record.RecordImpl;
+import org.gbif.dwc.ArchiveField;
 
 import java.util.HashSet;
 import java.util.List;

@@ -10,7 +10,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
 import javax.validation.constraints.NotNull;
 

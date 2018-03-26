@@ -10,13 +10,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
 import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
-import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.RecordIterator;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.RecordIterator;
 import org.gbif.util.CSVReaderHelper;
 import org.gbif.utils.file.csv.CSVReader;
 import org.slf4j.Logger;

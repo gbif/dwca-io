@@ -1,4 +1,4 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;

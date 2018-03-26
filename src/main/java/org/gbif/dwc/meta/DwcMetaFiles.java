@@ -1,7 +1,7 @@
 package org.gbif.dwc.meta;
 
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.UnsupportedArchiveException;
+import org.gbif.dwc.Archive;
+import org.gbif.dwc.UnsupportedArchiveException;
 
 import java.io.File;
 import java.io.IOException;

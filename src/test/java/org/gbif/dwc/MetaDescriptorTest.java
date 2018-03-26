@@ -1,11 +1,16 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.gbif.dwc.Archive;
+import org.gbif.dwc.ArchiveField;
+import org.gbif.dwc.ArchiveFile;
+import org.gbif.dwc.MetaDescriptorWriter;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
+import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 import org.junit.Test;
 import org.xml.sax.Attributes;

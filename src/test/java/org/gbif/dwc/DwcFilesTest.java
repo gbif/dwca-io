@@ -2,12 +2,8 @@ package org.gbif.dwc;
 
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveFactory;
-import org.gbif.dwca.io.ArchiveFile;
-import org.gbif.dwca.io.UnsupportedArchiveException;
-import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.StarRecord;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 

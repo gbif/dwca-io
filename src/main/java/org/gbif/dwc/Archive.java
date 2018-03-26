@@ -1,12 +1,10 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
-import org.gbif.dwc.DwcFiles;
-import org.gbif.dwc.DwcLayout;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.RecordIterator;
-import org.gbif.dwca.record.StarRecord;
-import org.gbif.dwca.record.StarRecordImpl;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.RecordIterator;
+import org.gbif.dwc.record.StarRecord;
+import org.gbif.dwc.record.StarRecordImpl;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 

@@ -1,11 +1,8 @@
 package org.gbif.dwc;
 
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.io.Archive;
-import org.gbif.dwca.io.ArchiveFile;
-import org.gbif.dwca.io.UnsupportedArchiveException;
-import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.StarRecord;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
@@ -24,7 +21,7 @@ import java.util.Objects;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import static org.gbif.dwca.io.ArchiveFile.getLocationFileSorted;
+import static org.gbif.dwc.ArchiveFile.getLocationFileSorted;
 
 /**
  * Collections of static methods to work with Darwin Core (archive) files.

@@ -1,10 +1,9 @@
 package org.gbif.dwc;
 
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.io.ArchiveField;
-import org.gbif.dwca.record.Record;
-import org.gbif.dwca.record.RecordImpl;
-import org.gbif.dwca.record.RecordIterator;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.RecordImpl;
+import org.gbif.dwc.record.RecordIterator;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 

@@ -14,11 +14,11 @@
  * the License.
  ***************************************************************************/
 
-package org.gbif.dwca.record;
+package org.gbif.dwc.record;
 
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.io.ArchiveField;
-import org.gbif.dwca.io.ArchiveFile;
+import org.gbif.dwc.ArchiveField;
+import org.gbif.dwc.ArchiveFile;
 import org.gbif.util.CSVReaderHelper;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.csv.CSVReader;

@@ -16,7 +16,7 @@
 
 package org.gbif.util;
 
-import org.gbif.dwca.io.ArchiveFile;
+import org.gbif.dwc.ArchiveFile;
 import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.IOException;

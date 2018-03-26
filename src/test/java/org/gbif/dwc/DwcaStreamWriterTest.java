@@ -1,7 +1,10 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
+import org.gbif.dwc.Archive;
+import org.gbif.dwc.DwcaStreamWriter;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
+import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;

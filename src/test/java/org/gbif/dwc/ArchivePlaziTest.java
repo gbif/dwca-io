@@ -1,8 +1,8 @@
-package org.gbif.dwca.io;
+package org.gbif.dwc;
 
-import org.gbif.dwca.io.Archive;
+import org.gbif.dwc.Archive;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwca.io.ArchiveFactory;
-import org.gbif.dwca.record.StarRecord;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;

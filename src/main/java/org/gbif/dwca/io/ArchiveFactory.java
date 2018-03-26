@@ -12,7 +12,9 @@
  */
 package org.gbif.dwca.io;
 
+import org.gbif.dwc.Archive;
 import org.gbif.dwc.DwcFiles;
+import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.meta.DwcMetaFiles;
 
 import java.io.File;

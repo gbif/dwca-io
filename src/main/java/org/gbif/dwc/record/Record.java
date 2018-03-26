@@ -1,4 +1,4 @@
-package org.gbif.dwca.record;
+package org.gbif.dwc.record;
 
 import org.gbif.dwc.terms.Term;
 

@@ -1,8 +1,8 @@
-package org.gbif.dwca.record;
+package org.gbif.dwc.record;
 
 import junit.framework.TestCase;
 
-import org.gbif.dwca.record.CleanUtils;
+import org.gbif.dwc.record.CleanUtils;
 import org.junit.Test;
 
 public class CleanUtilsTest extends TestCase {
