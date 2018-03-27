@@ -3,7 +3,6 @@ package org.gbif.dwc;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.RecordImpl;
-import org.gbif.dwc.record.RecordIterator;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 
@@ -14,7 +13,6 @@ import java.util.Map;
 
 /**
  * {@link ClosableIterator} of {@link Record}
- * This is an revised version of {@link RecordIterator}
  */
 class DwcRecordIterator implements ClosableIterator<Record> {
 

@@ -19,6 +19,7 @@ import org.gbif.utils.file.csv.CSVReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -426,8 +427,11 @@ public class ArchiveFactoryTest {
   @Test
   public void testTab2() throws UnsupportedArchiveException, IOException {
     File tab = FileUtils.getClasspathFile("issues/Borza.txt");
-    // read archive from this tmp dir
+    // Read single-file DWC "archive".
     Archive arch = DwcFiles.fromLocation(tab.toPath());
+
+    // File is not in default encoding.
+    arch.getCore().setEncoding(StandardCharsets.ISO_8859_1.name());
 
     boolean found = false;
     int count = 0;

@@ -14,14 +14,36 @@ import static org.junit.Assert.assertEquals;
 
 public class ArchiveTest {
 
+  /**
+   * Check we can handle the simplest of archives.
+   */
   @Test
   public void testIteratorDwc() throws Exception {
     Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("simplest-archive").toPath());
 
+    int count = 0;
     for (StarRecord rec : arch) {
       assertEquals("Quercus alba", rec.core().value(DwcTerm.scientificName));
       assertEquals("Species", rec.core().value(DwcTerm.taxonRank));
+      count++;
     }
+    assertEquals(2, count);
+  }
+
+  /**
+   * Check we can handle an archive file with multiple header lines
+   */
+  @Test
+  public void testMultilineHeader() throws Exception {
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("multiline-header").toPath());
+
+    int count = 0;
+    for (StarRecord rec : arch) {
+      assertEquals("Quercus alba", rec.core().value(DwcTerm.scientificName));
+      assertEquals("Species", rec.core().value(DwcTerm.taxonRank));
+      count++;
+    }
+    assertEquals(2, count);
   }
 
   @Test

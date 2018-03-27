@@ -97,49 +97,9 @@ public class DwcFiles {
     Objects.requireNonNull(source, "source ArchiveFile shall be provided");
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(
             Files.newBufferedReader(source.getLocationFile() != null ? source.getLocationFile().toPath() : source.getArchive().getLocation().toPath()),
-            getFieldsTerminatedBy(source.getFieldsTerminatedBy()), source.getLinesTerminatedBy(), source.getFieldsEnclosedBy(),
-            isHeaderLineIncluded(source.getIgnoreHeaderLines()), getLineToSkipBeforeHeader(source.getIgnoreHeaderLines()));
+            source.getFieldsTerminatedByChar(), source.getLinesTerminatedBy(), source.getFieldsEnclosedBy(),
+            source.areHeaderLinesIncluded(), source.getLinesToSkipBeforeHeader());
     return new DwcRecordIterator(tabularFileReader, source.getId(), source.getFields(), source.getRowType(), replaceNulls, replaceEntities);
-  }
-
-  /**
-   * Get the fieldsTerminatedBy as char or throw exception.
-   *
-   * @param fieldsTerminatedBy
-   *
-   * @return
-   */
-  private static char getFieldsTerminatedBy(String fieldsTerminatedBy) {
-    Objects.requireNonNull(fieldsTerminatedBy, "fieldsTerminatedBy shall be provided");
-    if (fieldsTerminatedBy.length() != 1) {
-      throw new IllegalArgumentException();
-    }
-    return fieldsTerminatedBy.charAt(0);
-  }
-
-  /**
-   * Determines if a header line is included based on an optional integer.
-   *
-   * @param ignoreHeaderLines
-   *
-   * @return
-   */
-  private static boolean isHeaderLineIncluded(Integer ignoreHeaderLines) {
-    return ignoreHeaderLines != null && ignoreHeaderLines > 0;
-  }
-
-  /**
-   * Determines the number of line to skip before the header line or return null.
-   *
-   * @param ignoreHeaderLines
-   *
-   * @return
-   */
-  private static Integer getLineToSkipBeforeHeader(Integer ignoreHeaderLines) {
-    if (ignoreHeaderLines != null && ignoreHeaderLines > 1) {
-      return ignoreHeaderLines - 1;
-    }
-    return null;
   }
 
   /**
@@ -256,7 +216,7 @@ public class DwcFiles {
     if (normalizationRequired) {
       File normalizedFile = getLocationFileNormalized(archiveFile.getLocationFile());
       TabularFileNormalizer.normalizeFile(archiveFile.getLocationFile().toPath(), normalizedFile.toPath(),
-              Charset.forName(archiveFile.getEncoding()), getFieldsTerminatedBy(archiveFile.getFieldsTerminatedBy()),
+              Charset.forName(archiveFile.getEncoding()), archiveFile.getFieldsTerminatedByChar(),
               archiveFile.getLinesTerminatedBy(), archiveFile.getFieldsEnclosedBy());
       return normalizedFile;
     }
@@ -303,9 +263,9 @@ public class DwcFiles {
                                                               boolean replaceNulls, boolean replaceEntities) throws IOException {
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(
             Files.newBufferedReader(getLocationFileSorted(af.getLocationFile()).toPath()),
-            getFieldsTerminatedBy(af.getFieldsTerminatedBy()),
+            af.getFieldsTerminatedByChar(),
             TabularFileNormalizer.NORMALIZED_END_OF_LINE, af.getFieldsEnclosedBy(),
-            isHeaderLineIncluded(af.getIgnoreHeaderLines()), getLineToSkipBeforeHeader(af.getIgnoreHeaderLines()));
+            af.areHeaderLinesIncluded(), af.getLinesToSkipBeforeHeader());
     return new DwcRecordIterator(tabularFileReader, af.getId(), af.getFields(), af.getRowType(), replaceNulls, replaceEntities);
   }
 

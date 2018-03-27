@@ -16,15 +16,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwc.record.Record;
-import org.gbif.dwc.record.RecordIterator;
 import org.gbif.util.CSVReaderHelper;
 import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.csv.CSVReader;
+import org.gbif.utils.file.tabular.TabularDataFileReader;
+import org.gbif.utils.file.tabular.TabularFiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -70,7 +73,6 @@ public class ArchiveFile implements Iterable<Record> {
   private String encoding = FileUtils.UTF8;
   private Term rowType; // Default is http://rs.tdwg.org/dwc/xsd/simpledarwincore/SimpleDarwinRecord
   private Integer ignoreHeaderLines = 0;
-
   private String dateFormat = "YYYY-MM-DD";
 
   // TODO: Change to SortedMap and remove rawArchiveFields?
@@ -255,12 +257,48 @@ public class ArchiveFile implements Iterable<Record> {
     return fieldsTerminatedBy;
   }
 
+  /**
+   * Get the fieldsTerminatedBy as a character.
+   *
+   * @return character which terminates fields.
+   */
+  protected char getFieldsTerminatedByChar() {
+    Objects.requireNonNull(fieldsTerminatedBy, "fieldsTerminatedBy shall be provided");
+    if (fieldsTerminatedBy.length() != 1) {
+      throw new IllegalArgumentException();
+    }
+    return fieldsTerminatedBy.charAt(0);
+  }
+
   public ArchiveField getId() {
     return id;
   }
 
   public Integer getIgnoreHeaderLines() {
     return ignoreHeaderLines;
+  }
+
+  /**
+   * Determines if header line are included based on an optional integer.
+   *
+   * @return true if one or more header lines are included.
+   */
+  protected boolean areHeaderLinesIncluded() {
+    return ignoreHeaderLines != null && ignoreHeaderLines > 0;
+  }
+
+  /**
+   * Determines the number of line to skip <strong>before a header line</strong> or return null.
+   *
+   * The TabularDataFileReader assumes a header line of column names, so we subtract 1.
+   *
+   * @return number of lines to skip, or null.
+   */
+  protected Integer getLinesToSkipBeforeHeader() {
+    if (ignoreHeaderLines != null && ignoreHeaderLines > 1) {
+      return ignoreHeaderLines - 1;
+    }
+    return null;
   }
 
   public String getLinesTerminatedBy() {
@@ -326,7 +364,18 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   public Iterator<Record> iterator() {
-    return RecordIterator.build(this, true, true);
+    try {
+      // ArchiveFile location, or Archive in case this is a fake single-file "archive".
+      Path fileLocation = getLocationFile() != null ? getLocationFile().toPath() : getArchive().getLocation().toPath();
+      Reader reader = Files.newBufferedReader(fileLocation, Charset.forName(getEncoding()));
+
+      TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(reader,
+          getFieldsTerminatedByChar(), getLinesTerminatedBy(), getFieldsEnclosedBy(),
+          areHeaderLinesIncluded(), getLinesToSkipBeforeHeader());
+      return new DwcRecordIterator(tabularFileReader, getId(), getFields(), getRowType(), true, true);
+    } catch (IOException e) {
+      throw new UnsupportedArchiveException(e);
+    }
   }
 
   public void setArchive(Archive archive) {
