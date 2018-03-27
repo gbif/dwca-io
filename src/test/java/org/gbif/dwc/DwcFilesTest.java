@@ -37,7 +37,7 @@ public class DwcFilesTest {
   public void testDwcRecordIterator() throws IOException {
     Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
     int count=0;
-    try(ClosableIterator<Record> it = DwcFiles.iterator(arch.getCore())) {
+    try(ClosableIterator<Record> it = arch.getCore().iterator()) {
       while (it.hasNext()) {
         it.next();
         count++;

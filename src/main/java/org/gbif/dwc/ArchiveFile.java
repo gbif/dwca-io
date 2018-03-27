@@ -17,6 +17,7 @@ import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwc.record.Record;
 import org.gbif.util.CSVReaderHelper;
+import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.csv.CSVReader;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
@@ -363,7 +364,22 @@ public class ArchiveFile implements Iterable<Record> {
     return getField(term) != null;
   }
 
-  public Iterator<Record> iterator() {
+  /**
+   * Get a {@link ClosableIterator}, over the records in this file, replacing nulls and entities.
+   *
+   * @return
+   */
+  public ClosableIterator<Record> iterator() {
+    return iterator(true, true);
+  }
+
+  /**
+   * Get a {@link ClosableIterator} over the records in this file, optionally replacing nulls and entities.
+   *
+   * @param replaceNulls    if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
+   * @param replaceEntities if true HTML & XML entities in record values will be replaced with the interpreted value.
+   */
+  public ClosableIterator<Record> iterator(boolean replaceNulls, boolean replaceEntities) {
     try {
       // ArchiveFile location, or Archive in case this is a fake single-file "archive".
       Path fileLocation = getLocationFile() != null ? getLocationFile().toPath() : getArchive().getLocation().toPath();
@@ -372,7 +388,7 @@ public class ArchiveFile implements Iterable<Record> {
       TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(reader,
           getFieldsTerminatedByChar(), getLinesTerminatedBy(), getFieldsEnclosedBy(),
           areHeaderLinesIncluded(), getLinesToSkipBeforeHeader());
-      return new DwcRecordIterator(tabularFileReader, getId(), getFields(), getRowType(), true, true);
+      return new DwcRecordIterator(tabularFileReader, getId(), getFields(), getRowType(), replaceNulls, replaceEntities);
     } catch (IOException e) {
       throw new UnsupportedArchiveException(e);
     }

@@ -75,7 +75,7 @@ public class InternalDwcFileFactoryTest {
     assertEquals(1, arch.getExtensions().size());
 
     boolean found = false;
-    try (ClosableIterator<Record> it = DwcFiles.iterator(arch.getCore())){
+    try (ClosableIterator<Record> it = arch.getCore().iterator()){
       while(it.hasNext()){
         if(id.equals(it.next().id())){
           found = true;

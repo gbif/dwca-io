@@ -73,36 +73,6 @@ public class DwcFiles {
   }
 
   /**
-   * Same as calling #iterator(ArchiveFile, true, true)
-   *
-   * @param source
-   *
-   * @return
-   *
-   * @throws IOException
-   * @see #iterator(ArchiveFile, boolean, boolean)
-   */
-  public static ClosableIterator<Record> iterator(ArchiveFile source) throws IOException {
-    return iterator(source, true, true);
-  }
-
-  /**
-   * Get a {@link ClosableIterator} on the provided {@link ArchiveFile}.
-   *
-   * @param source
-   * @param replaceNulls    if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
-   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
-   */
-  public static ClosableIterator<Record> iterator(ArchiveFile source, boolean replaceNulls, boolean replaceEntities) throws IOException {
-    Objects.requireNonNull(source, "source ArchiveFile shall be provided");
-    TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(
-            Files.newBufferedReader(source.getLocationFile() != null ? source.getLocationFile().toPath() : source.getArchive().getLocation().toPath()),
-            source.getFieldsTerminatedByChar(), source.getLinesTerminatedBy(), source.getFieldsEnclosedBy(),
-            source.areHeaderLinesIncluded(), source.getLinesToSkipBeforeHeader());
-    return new DwcRecordIterator(tabularFileReader, source.getId(), source.getFields(), source.getRowType(), replaceNulls, replaceEntities);
-  }
-
-  /**
    * Same as calling #prepareArchive(ArchiveFile, true, true)
    *
    * @param archive source archive
@@ -137,7 +107,7 @@ public class DwcFiles {
 
     //if no extensions are provided we don't need to sort the file
     if (archive.getExtensions().isEmpty()) {
-      return new NormalizedDwcArchive(() -> iterator(archive.getCore(), replaceNulls, replaceEntities));
+      return new NormalizedDwcArchive(() -> archive.getCore().iterator(replaceNulls, replaceEntities));
     }
 
     //otherwise, we need to sort core + extensions
