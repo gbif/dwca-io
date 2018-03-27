@@ -27,10 +27,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 /**
  * Internal class responsible to handle the creation of {@link Archive} objects and related functions.
- *
  */
 class InternalDwcFileFactory {
 

@@ -29,7 +29,7 @@ class DwcRecordIterator implements ClosableIterator<Record> {
 
   /**
    * @param replaceNulls    if true record values will have literal nulls replaced with NULL.
-   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
+   * @param replaceEntities if true HTML & XML entities in record values will be replaced with the interpreted value.
    */
   DwcRecordIterator(TabularDataFileReader<List<String>> tabularFileReader, ArchiveField id, Map<Term,
           ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {

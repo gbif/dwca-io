@@ -10,7 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * A simple metadata sax base handler that collects all character data inside elements into a string buffer, resetting
+ * A simple metadata SAX base handler that collects all character data inside elements into a string buffer, resetting
  * the buffer with every element start and storing the string version of the buffer in this.content when the end of the
  * element is reached.
  * Make sure to call the super methods when implementing this handler!

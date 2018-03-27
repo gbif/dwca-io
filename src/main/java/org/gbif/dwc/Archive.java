@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a Darwin Core star archive and its components (metadata, core, extensions).
+ * Represents a Darwin Core Archive and its components (metadata, core, extensions).
  *
  * @see <a href="http://tdwg.github.io/dwc/terms/guides/text/">Darwin Core Text Guide</a>
  */
@@ -104,9 +104,9 @@ public class Archive implements Iterable<StarRecord> {
   }
 
   /**
-   * Scans the archive for a semi standard support of dataset constituent metadata.
-   * A dataset constituent is a subdataset which is referenced via dwc:datasetID in the data.
-   * The agreement first introduced by catalogue of life for their GSDs is to have a new folder "dataset" that keeps
+   * Scans the archive for a semi-standard support of dataset constituent metadata.
+   * A dataset constituent is a sub-dataset which is referenced via dwc:datasetID in the data.
+   * The agreement first introduced by Catalogue of Life for their GSDs is to have a new folder "dataset" that keeps
    * a metadata file for each constituent named just as the datasetID and suffixed with .xml.
    *
    * @return map of constituent datasetID to metadata file inside the archive

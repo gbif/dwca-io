@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import org.gbif.dwc.terms.Term;
 
 /**
- * Container object representing a metafile content &lt;field&gt; tag as defined in the Darwin Core Text Guide.
+ * Container object representing a metafile content &lt;field&gt; element as defined in the Darwin Core Text Guide.
  *
  * @see <a href="http://rs.tdwg.org/dwc/terms/guides/text/#fieldTag">Darwin Core Text Guide - Field element</a>
  *

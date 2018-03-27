@@ -101,7 +101,7 @@ public class RecordImpl implements Record {
         // if column is empty use default value
         return f.getDefaultValue();
       }
-      // otherwise return already cleand column value
+      // otherwise return already cleaned column value
       return val;
     }
     return null;
