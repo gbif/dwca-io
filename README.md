@@ -15,51 +15,40 @@ mvn clean install
 ```
 
 ## Usage
-### Reading DarwinCore archive
-Read an archive and display the scientific name of each records:
+### Reading a Darwin Core Archive
+Read an archive and display data from the core record:
 ```java
 Path myArchiveFile = Paths.get("myArchive.zip");
 Path extractToFolder = Paths.get("/tmp/myarchive");
 Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
 
-// loop over core darwin core records and display scientificName
-try(ClosableIterator<Record> it = DwcFiles.iterator(arch.getCore())) {
-  while (it.hasNext()) {
-    Record rec = it.next();
-    System.out.println(rec.value(DwcTerm.scientificName));
-  }
+// Loop over core core records and display id, basis of record and scientific name
+for (Record rec : dwcArchive.getCore()) {
+  System.out.println(String.format("%s: %s (%s)", rec.id(), rec.value(DwcTerm.basisOfRecord), rec.value(DwcTerm.scientificName)));
 }
-catch (Exception e) {
-  //deal with exception
-}
-
 ```
 ### Reading DarwinCore archive + extensions
-Read from a folder(extracted archive) and display the scientific name of each records + vernacular name(s) from the extension:
+Read from a folder (extracted archive) and display data from the core and the extension:
 ```java
-Archive dwcArchive = DwcFiles.fromLocation(Paths.get("/tmp/myarchive"));
+Path myArchiveFile = Paths.get("myArchive.zip");
+Path extractToFolder = Paths.get("/tmp/myarchive");
+Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
+
 System.out.println("Archive rowtype: " + dwcArchive.getCore().getRowType() + ", "
     + dwcArchive.getExtensions().size() + " extension(s)");
 
-//this step can take some time depending on the size of the archive
-NormalizedDwcArchive nda = DwcFiles.prepareArchive(dwcArchive, false, false);
-// loop over core darwin core star records
-try(ClosableIterator<StarRecord> it = nda.iterator()){
-  StarRecord rec : it.next();
-  System.out.println(rec.core().id() + " scientificName: " + rec.core().value(DwcTerm.scientificName));
+for (StarRecord rec : dwcArchive) {
+  System.out.println(String.format("%s: %s", rec.core().id(), rec.core().value(DwcTerm.scientificName)));
   if (rec.hasExtension(GbifTerm.VernacularName)) {
     for (Record extRec : rec.extension(GbifTerm.VernacularName)) {
-      System.out.println(" -" + extRec.value(DwcTerm.vernacularName));
+      System.out.println(" - " + extRec.value(DwcTerm.vernacularName));
     }
   }
 }
-catch (Exception e) {
-  //deal with exception
-}
 ```
+
 ### Other supported file types
 The `DwcFiles.fromLocation` method also supports the following file types:
- * Single single metadata document (e.g. eml.xml)
  * Single tabular data file with [Darwin Core terms](http://rs.tdwg.org/dwc/terms/#theterms) as header
  
 ## Maven

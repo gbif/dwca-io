@@ -1,8 +1,6 @@
 package org.gbif.dwc;
 
-import org.gbif.dwc.Archive;
 import org.gbif.dwc.record.StarRecord;
-import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
@@ -30,7 +28,7 @@ public class ArchivePlaziTest {
     File tmpDir = FileUtils.createTempDir();
     tmpDir.deleteOnExit();
 
-    Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
+    Archive arch = DwcFiles.fromCompressed(zip.toPath(), tmpDir.toPath());
     assertNumberStarRecords(arch, 10);
   }
 }

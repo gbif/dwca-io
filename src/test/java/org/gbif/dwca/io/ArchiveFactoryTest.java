@@ -1,6 +1,7 @@
 package org.gbif.dwca.io;
 
 import org.gbif.dwc.Archive;
+import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.DwcLayout;
 import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.meta.DwcMetaFiles;
@@ -52,20 +53,20 @@ public class ArchiveFactoryTest {
 
   @Test
   public void testBuildReaderFile() throws IOException {
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("TDB_104.csv"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("TDB_104.csv").toPath());
     CSVReader reader = arch.getCore().getCSVReader();
     assertEquals(7, reader.next().length);
     reader.close();
 
-    reader = ArchiveFactory.openArchive(FileUtils.getClasspathFile("iucn100.tab.txt")).getCore().getCSVReader();
+    reader = DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.tab.txt").toPath()).getCore().getCSVReader();
     assertEquals(8, reader.next().length);
     reader.close();
 
-    reader = ArchiveFactory.openArchive(FileUtils.getClasspathFile("iucn100.pipe.txt")).getCore().getCSVReader();
+    reader = DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.pipe.txt").toPath()).getCore().getCSVReader();
     assertEquals(8, reader.next().length);
     reader.close();
 
-    reader = ArchiveFactory.openArchive(FileUtils.getClasspathFile("csv_quoted-unquoted_headers.csv")).getCore()
+    reader = DwcFiles.fromLocation(FileUtils.getClasspathFile("csv_quoted-unquoted_headers.csv").toPath()).getCore()
       .getCSVReader();
     assertEquals(4, reader.next().length);
     reader.close();
@@ -76,12 +77,12 @@ public class ArchiveFactoryTest {
     // note that we dont read a dwc archive, but only test the csvreader!
     // we therefore do not detect header rows and count *all* rows instead
 
-    assertNumberOfCoreRecords(ArchiveFactory.openArchive(FileUtils.getClasspathFile("iucn100.tab.txt")), 99);
-    assertNumberOfCoreRecords(ArchiveFactory.openArchive(FileUtils.getClasspathFile("iucn100.pipe.txt")), 99);
-    assertNumberOfCoreRecords(ArchiveFactory.openArchive(FileUtils.getClasspathFile("iucn100.csv")), 99);
-    assertNumberOfCoreRecords(ArchiveFactory.openArchive(FileUtils.getClasspathFile("csv_quoted-unquoted_headers.csv")),
+    assertNumberOfCoreRecords(DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.tab.txt").toPath()), 99);
+    assertNumberOfCoreRecords(DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.pipe.txt").toPath()), 99);
+    assertNumberOfCoreRecords(DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.csv").toPath()), 99);
+    assertNumberOfCoreRecords(DwcFiles.fromLocation(FileUtils.getClasspathFile("csv_quoted-unquoted_headers.csv").toPath()),
       3);
-    assertNumberOfCoreRecords(ArchiveFactory.openArchive(FileUtils.getClasspathFile("csv_incl_single_quotes.csv")), 3);
+    assertNumberOfCoreRecords(DwcFiles.fromLocation(FileUtils.getClasspathFile("csv_incl_single_quotes.csv").toPath()), 3);
   }
 
   /**
@@ -93,7 +94,7 @@ public class ArchiveFactoryTest {
   public void testCsv() throws UnsupportedArchiveException, IOException {
     File csv = FileUtils.getClasspathFile("csv_always_quoted.csv");
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(csv);
+    Archive arch = DwcFiles.fromLocation(csv.toPath());
 
     boolean found = false;
     for (Record rec : arch.getCore()) {
@@ -112,7 +113,7 @@ public class ArchiveFactoryTest {
   public void testGnubTab() throws UnsupportedArchiveException, IOException {
     File tab = FileUtils.getClasspathFile("gnub.tab");
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tab);
+    Archive arch = DwcFiles.fromLocation(tab.toPath());
 
     Record rec = arch.getCore().iterator().next();
     assertEquals("246daa62-6fce-448f-88b4-94b0ccc89cf1", rec.id());
@@ -130,7 +131,7 @@ public class ArchiveFactoryTest {
     CompressionUtil.decompressFile(tmpDir, zip);
 
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tmpDir);
+    Archive arch = DwcFiles.fromLocation(tmpDir.toPath());
 
     Record rec = arch.getCore().iterator().next();
     assertEquals("246daa62-6fce-448f-88b4-94b0ccc89cf1", rec.id());
@@ -140,7 +141,7 @@ public class ArchiveFactoryTest {
   public void testCsvExcelStyle() throws UnsupportedArchiveException, IOException {
     File csv = FileUtils.getClasspathFile("csv_optional_quotes_excel2008CSV.csv");
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(csv);
+    Archive arch = DwcFiles.fromLocation(csv.toPath());
     CSVReader reader = arch.getCore().getCSVReader();
 
     String[] atom = reader.next();
@@ -165,7 +166,7 @@ public class ArchiveFactoryTest {
   @Test
   public void testCsvOptionalQuotes() throws UnsupportedArchiveException, IOException {
     File csv = FileUtils.getClasspathFile("csv_optional_quotes_excel2008CSV.csv");
-    Archive arch = ArchiveFactory.openArchive(csv);
+    Archive arch = DwcFiles.fromLocation(csv.toPath());
     String[] ids = {"1", "2", "3", "4"};
     String[] scinames = {"Gadus morhua", "Abies alba", "Pomatoma saltatrix", "Yikes ofcourses"};
     String[] localities =
@@ -192,7 +193,7 @@ public class ArchiveFactoryTest {
     File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tmpDir);
+    Archive arch = DwcFiles.fromLocation(tmpDir.toPath());
     assertNotNull(arch.getCore().getId());
     assertEquals(1, arch.getExtensions().size());
 
@@ -218,7 +219,7 @@ public class ArchiveFactoryTest {
     File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     CompressionUtil.decompressFile(tmpDir, zip);
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tmpDir);
+    Archive arch = DwcFiles.fromLocation(tmpDir.toPath());
     assertNotNull(arch.getCore().getId());
     assertEquals(3, arch.getExtensions().size());
 
@@ -240,7 +241,7 @@ public class ArchiveFactoryTest {
     File zip = FileUtils.getClasspathFile("checklist_980.zip");
     File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(zip, tmpDir);
+    Archive arch = DwcFiles.fromCompressed(zip.toPath(), tmpDir.toPath());
     int counter = 0;
     int occCounter = 0;
     Set<String> ids = new HashSet<>();
@@ -277,7 +278,7 @@ public class ArchiveFactoryTest {
   @Test
   public void testIssue78() throws IOException, UnsupportedArchiveException {
     // test folder with single text file in
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("MOBOTDarwinCore.csv"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("MOBOTDarwinCore.csv").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(DwcTerm.occurrenceID, arch.getCore().getId().getTerm());
@@ -298,7 +299,7 @@ public class ArchiveFactoryTest {
   @Test
   public void testOpenArchive() throws IOException, UnsupportedArchiveException {
     // test proper archive
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertNotNull(arch.getCore().getId());
@@ -307,14 +308,14 @@ public class ArchiveFactoryTest {
     assertEquals("DarwinCore.txt", arch.getCore().getLocation());
 
     // test meta.xml with xml entities as attribute values
-    arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("xml-entity-meta"));
+    arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("xml-entity-meta").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(new Character('"'), arch.getCore().getFieldsEnclosedBy());
     assertEquals("test", arch.getCore().getLocation());
 
     // test direct pointer to core data file (with taxonID, meaning it has dwc:Taxon rowType)
-    arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc/DarwinCore.txt"));
+    arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc/DarwinCore.txt").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(DwcTerm.taxonID, arch.getCore().getId().getTerm());
@@ -328,7 +329,7 @@ public class ArchiveFactoryTest {
     assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());
 
     // test folder with single text file in (with taxonID, meaning it has dwc:Taxon rowType)
-    arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("dwca"));
+    arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("dwca").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(DwcTerm.taxonID, arch.getCore().getId().getTerm());
@@ -348,7 +349,7 @@ public class ArchiveFactoryTest {
   @Test
   public void testOpenSmallArchiveWithEmptyLines() throws IOException, UnsupportedArchiveException {
     // test folder with single text file in
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("empty_line.tab"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("empty_line.tab").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
@@ -378,7 +379,7 @@ public class ArchiveFactoryTest {
   @Test
   public void testQuotedHeaders() throws IOException, UnsupportedArchiveException {
     // test folder with single text file in
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("quoted_headers_MOBOTDarwinCore.csv"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("quoted_headers_MOBOTDarwinCore.csv").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertTrue(arch.getCore().hasTerm(DwcTerm.occurrenceID));
@@ -402,7 +403,7 @@ public class ArchiveFactoryTest {
   public void testTab() throws UnsupportedArchiveException, IOException {
     File tab = FileUtils.getClasspathFile("dwca/DarwinCore.txt");
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tab);
+    Archive arch = DwcFiles.fromLocation(tab.toPath());
 
     boolean found = false;
     int count = 0;
@@ -426,7 +427,7 @@ public class ArchiveFactoryTest {
   public void testTab2() throws UnsupportedArchiveException, IOException {
     File tab = FileUtils.getClasspathFile("issues/Borza.txt");
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tab);
+    Archive arch = DwcFiles.fromLocation(tab.toPath());
 
     boolean found = false;
     int count = 0;
@@ -458,7 +459,7 @@ public class ArchiveFactoryTest {
   public void testTabEol() throws UnsupportedArchiveException, IOException {
     File tab = FileUtils.getClasspathFile("issues/eol/my_darwincore.txt");
     // read archive from this tmp dir
-    Archive arch = ArchiveFactory.openArchive(tab);
+    Archive arch = DwcFiles.fromLocation(tab.toPath());
 
     boolean found = false;
     int count = 0;
@@ -494,7 +495,7 @@ public class ArchiveFactoryTest {
       File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
       tmpDir.deleteOnExit();
 
-      Archive archive = ArchiveFactory.openArchive(FileUtils.getClasspathFile("nullCoreID.zip"), tmpDir);
+      Archive archive = DwcFiles.fromCompressed(FileUtils.getClasspathFile("nullCoreID.zip").toPath(), tmpDir.toPath());
       Iterator<StarRecord> iter = archive.iterator();
       while (iter.hasNext()) {
         iter.next();
@@ -509,7 +510,7 @@ public class ArchiveFactoryTest {
    */
   @Test
   public void testOpenArchiveForEventCore() throws IOException, UnsupportedArchiveException {
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event.txt"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("event.txt").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());
@@ -529,7 +530,7 @@ public class ArchiveFactoryTest {
    */
   @Test
   public void testOpenArchiveForGenericCore() throws IOException, UnsupportedArchiveException {
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("event-plus-id.txt"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("event-plus-id.txt").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());
@@ -548,14 +549,14 @@ public class ArchiveFactoryTest {
   @Test
   public void testFallbackToDefaultsArchives() throws IOException {
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("defaults/meta-file-encoding-missing"));
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/meta-file-encoding-missing").toPath());
       assertEquals("utf8", arch.getCore().getEncoding());
     } catch (UnsupportedArchiveException e) {
       fail("Core file encoding defaults to UTF-8 if missing in meta.xml.");
     }
 
     try {
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("defaults/extension-encoding-missing"));
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/extension-encoding-missing").toPath());
       assertEquals("utf8", arch.getExtension(GbifTerm.Multimedia).getEncoding());
     } catch (UnsupportedArchiveException e) {
       fail("Extension file encoding defaults to UTF-8 if missing in meta.xml.");
@@ -569,33 +570,33 @@ public class ArchiveFactoryTest {
   public void testInvalidArchives() throws IOException {
     // Simple archive problems
     try {
-      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/empty"));
+      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/empty").toPath());
       fail("Empty archive should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/meta-file-location-missing"));
+      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/meta-file-location-missing").toPath());
       fail("Archive with missing file location in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     // Extension archive problems
     try {
-      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-missing"));
+      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-missing").toPath());
       fail("Archive with missing extension file should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-location-missing"));
+      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-location-missing").toPath());
       fail("Archive with missing extension file location in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-core-id-missing"));
+      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-core-id-missing").toPath());
       fail("Archive with extension lacking coreid in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
 
     try {
-      ArchiveFactory.openArchive(FileUtils.getClasspathFile("invalid/extension-id-missing"));
+      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-id-missing").toPath());
       fail("Archive with extension and core missing id in meta.xml should not be opened.");
     } catch (UnsupportedArchiveException e) {}
   }

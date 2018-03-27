@@ -13,6 +13,6 @@ public class DwcMetaFilesTest {
 
   @Test
   public void testDiscoverMetadataFile() {
-    assertTrue(DwcMetaFiles.discoverMetadataFile(FileUtils.getClasspathFile("metadata/eml-alone/eml.xml").toPath()).isPresent());
+    assertTrue(DwcMetaFiles.discoverMetadataFile(FileUtils.getClasspathFile("archive-dwc/eml.xml").toPath()).isPresent());
   }
 }

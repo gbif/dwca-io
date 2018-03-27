@@ -19,7 +19,7 @@ import java.util.Map;
  * Internally, this class will use different iterators to traverse the core and its extensions through
  * {@link StarRecordIterator}.
  */
-public class NormalizedDwcArchive {
+public class NormalizedDwcArchive implements Iterable<StarRecord> {
 
   private final SupplierWithIO<ClosableIterator<Record>> coreItSupplier;
   private final SupplierWithIO<Map<Term, ClosableIterator<Record>>> extItSupplier;
@@ -50,7 +50,11 @@ public class NormalizedDwcArchive {
    * @return
    * @throws IOException
    */
-  public ClosableIterator<StarRecord> iterator() throws IOException {
-    return new StarRecordIterator(coreItSupplier.get(), extItSupplier != null ? extItSupplier.get() : null);
+  public ClosableIterator<StarRecord> iterator() {
+    try {
+      return new StarRecordIterator(coreItSupplier.get(), extItSupplier != null ? extItSupplier.get() : null);
+    } catch(Exception e) {
+      throw new UnsupportedArchiveException(e);
+    }
   }
 }

@@ -16,13 +16,9 @@
 
 package org.gbif.dwc;
 
-import org.gbif.dwc.Archive;
-import org.gbif.dwc.ArchiveFile;
-import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.record.Record;
-import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.IOException;
@@ -45,7 +41,7 @@ public class ArchiveFileTest {
   @Test
   public void testIterator() throws UnsupportedArchiveException, IOException {
     // test proper archive
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc/DarwinCore.txt"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc/DarwinCore.txt").toPath());
     ArchiveFile af = arch.getCore();
 
     assertNotNull(af);
@@ -111,7 +107,7 @@ public class ArchiveFileTest {
   }
 
   private ArchiveFile getCore(String testFilePath) throws IOException {
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile(testFilePath));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile(testFilePath).toPath());
     return arch.getCore();
   }
   

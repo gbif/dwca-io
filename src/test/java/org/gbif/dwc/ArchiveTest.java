@@ -1,11 +1,8 @@
 package org.gbif.dwc;
 
-import org.gbif.dwc.Archive;
-import org.gbif.dwc.ArchiveField;
-import org.gbif.dwc.DwcFiles;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwc.record.StarRecord;
 import org.gbif.utils.file.FileUtils;
 import org.junit.Test;
 

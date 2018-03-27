@@ -25,6 +25,8 @@ import static org.gbif.dwc.ArchiveFile.getLocationFileSorted;
 
 /**
  * Collections of static methods to work with Darwin Core (archive) files.
+ *
+ * TODO: methods without validation, probably for use with the validator.
  */
 public class DwcFiles {
 
@@ -46,7 +48,9 @@ public class DwcFiles {
    */
   public static Archive fromLocation(Path dwcLocation) throws IOException, UnsupportedArchiveException {
     // delegate to InternalDwcFileFactory
-    return InternalDwcFileFactory.fromLocation(dwcLocation);
+    Archive archive = InternalDwcFileFactory.fromLocation(dwcLocation);
+    archive.validate();
+    return archive;
   }
 
   /**
@@ -63,7 +67,9 @@ public class DwcFiles {
    */
   public static Archive fromCompressed(Path dwcaLocation, Path destination) throws IOException, UnsupportedArchiveException {
     // delegate to InternalDwcFileFactory
-    return InternalDwcFileFactory.fromCompressed(dwcaLocation, destination);
+    Archive archive = InternalDwcFileFactory.fromCompressed(dwcaLocation, destination);
+    archive.validate();
+    return archive;
   }
 
   /**
@@ -158,7 +164,7 @@ public class DwcFiles {
    *
    * @param archive source archive
    * @param replaceNulls if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
-   * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
+   * @param replaceEntities if true HTML & XML entities in record values will be replaced with the interpreted value.
    *
    * @return new {@link NormalizedDwcArchive} instance
    *

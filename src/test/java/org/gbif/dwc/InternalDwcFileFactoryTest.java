@@ -89,19 +89,6 @@ public class InternalDwcFileFactoryTest {
   }
 
   @Test
-  public void testEmlOnly() throws IOException {
-    File eml = FileUtils.getClasspathFile("metadata/eml-alone/");
-    Archive archive = DwcFiles.fromLocation(eml.toPath());
-    assertNotNull(archive.getMetadataLocationFile());
-    assertEquals(DwcLayout.DIRECTORY_ROOT, archive.getDwcLayout());
-
-    eml = FileUtils.getClasspathFile("metadata/eml-alone/eml.xml");
-    archive = DwcFiles.fromLocation(eml.toPath());
-    assertNotNull(archive.getMetadataLocationFile());
-    assertEquals(DwcLayout.FILE_ROOT, archive.getDwcLayout());
-  }
-
-  @Test
   public void testDetermineRowType() {
     Optional<Term> rowType = InternalDwcFileFactory
             .determineRowType(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));

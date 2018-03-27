@@ -1,37 +1,42 @@
 package org.gbif.dwc;
 
-import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwc.Archive;
-import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.StarRecord;
-import org.gbif.dwca.io.ArchiveFactory;
+import org.gbif.dwc.terms.GbifTerm;
+import org.gbif.utils.file.FileUtils;
+import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class UsageExample {
 
-  public static void main(String[] args) throws IOException, UnsupportedArchiveException {
-    // opens csv files with headers or dwc-a direcotries with a meta.xml descriptor
-    Archive arch = ArchiveFactory.openArchive(new File(args[0]));
+  @Test
+  public void testUsageExample() throws IOException {
+    Path myArchiveFile = FileUtils.getClasspathFile("checklist_980.zip").toPath();
+    Path extractToFolder = FileUtils.createTempDir().toPath();
+    extractToFolder.toFile().deleteOnExit();
 
-    System.out.println("Reading archive from "+arch.getLocation().getAbsolutePath());
-    System.out.println("Archive of rowtype "+arch.getCore().getRowType()+" with "+arch.getExtensions().size()+" extensions");
-    // loop over star records. i.e. core with all linked extension records
-    for (StarRecord rec : arch) {
-      // print core ID + scientific name
-      System.out.println(rec.core().id()
-        + " sciname:" + rec.core().value(DwcTerm.scientificName)
-        + " bor:" + rec.core().value(DwcTerm.basisOfRecord)
-      );
-      // print out all rowTypes
-      for (Record erec : rec) {
-        // print out extension rowtype
-        System.out.println(erec.rowType() + ", id="+erec.value(DcTerm.identifier));
+    // Open the Darwin Core Archive
+    Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
+
+    System.out.println("Reading archive from " + dwcArchive.getLocation().getAbsolutePath());
+    System.out.println("Archive of rowtype " + dwcArchive.getCore().getRowType() + " with " + dwcArchive.getExtensions().size() + " extensions");
+
+    // Loop over core records and display id, basis of record and scientific name
+    for (Record rec : dwcArchive.getCore()) {
+      System.out.println(String.format("%s: %s (%s)", rec.id(), rec.value(DwcTerm.basisOfRecord), rec.value(DwcTerm.scientificName)));
+    }
+
+    // Loop over star records and display id, core record data, and extension data
+    for (StarRecord rec : dwcArchive) {
+      System.out.println(String.format("%s: %s", rec.core().id(), rec.core().value(DwcTerm.scientificName)));
+      if (rec.hasExtension(GbifTerm.VernacularName)) {
+        for (Record extRec : rec.extension(GbifTerm.VernacularName)) {
+          System.out.println(" - " + extRec.value(DwcTerm.vernacularName));
+        }
       }
     }
   }
-
 }

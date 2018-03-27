@@ -2,11 +2,8 @@ package org.gbif.dwc;
 
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwc.Archive;
-import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.StarRecord;
-import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.IOException;
@@ -21,7 +18,7 @@ public class StarIteratorTest {
   @Test
   public void testIterator() throws IOException, UnsupportedArchiveException {
     // test proper archive
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
     assertNotNull(arch.getCore());
     assertEquals(2, arch.getExtensions().size());
     int found = 0;

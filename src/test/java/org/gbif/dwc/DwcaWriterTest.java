@@ -6,7 +6,6 @@ import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.StarRecord;
-import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.BufferedReader;
@@ -160,7 +159,7 @@ public class DwcaWriterTest {
   public void testRoundtrip() throws Exception {
     try {
       // read taxon archive
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
       assertEquals(2, arch.getExtensions().size());
       int coreRecords = 0;
       int allRecords = 0;
@@ -191,7 +190,8 @@ public class DwcaWriterTest {
       writer.close();
 
       // reread and compare
-      Archive arch2 = ArchiveFactory.openArchive(tempArch);
+      Archive arch2 = DwcFiles.fromLocation(tempArch.toPath());
+
       int coreRecords2 = 0;
       int allRecords2 = 0;
       for (StarRecord rec : arch2) {
@@ -224,7 +224,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
     writer.close();
 
-    Archive arch = ArchiveFactory.openArchive(dwcaDir);
+    Archive arch = DwcFiles.fromLocation(dwcaDir.toPath());
     Iterator<Record> recIt = arch.getCore().iterator();
     Record firstRecord = recIt.next();
     assertEquals("dummy1", firstRecord.id());
@@ -274,7 +274,7 @@ public class DwcaWriterTest {
     writer.close();
 
     // validate core content
-    Archive arch = ArchiveFactory.openArchive(dwcaDir);
+    Archive arch = DwcFiles.fromLocation(dwcaDir.toPath());
     Iterator<Record> recIt = arch.getCore().iterator();
     Record firstRecord = recIt.next();
     assertEquals("dummy1", firstRecord.id());
@@ -313,7 +313,7 @@ public class DwcaWriterTest {
     writer.addMetadata("<eml/>", "eml.xml");
     writer.close();
 
-    Archive arch = ArchiveFactory.openArchive(dwcaDir);
+    Archive arch = DwcFiles.fromLocation(dwcaDir.toPath());
     assertEquals("eml.xml", arch.getMetadataLocation());
     assertEquals("<eml/>", arch.getMetadata());
   }

@@ -2,15 +2,10 @@ package org.gbif.dwc;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.gbif.dwc.Archive;
-import org.gbif.dwc.ArchiveField;
-import org.gbif.dwc.ArchiveFile;
-import org.gbif.dwc.MetaDescriptorWriter;
 import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
-import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 import org.junit.Test;
 import org.xml.sax.Attributes;
@@ -65,7 +60,7 @@ public class MetaDescriptorTest {
   @Test
   public void testXml() throws Exception {
     // read archive
-    Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
 
     // write meta.xml
     File tmpMeta = File.createTempFile("meta", ".xml");
@@ -94,7 +89,7 @@ public class MetaDescriptorTest {
   public void testRoundtrip() {
     try {
       // read archive
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("archive-dwc"));
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
       assertNotNull(arch);
       assertNotNull(arch.getCore());
       assertTrue(arch.getCore().getId().getIndex() == 0);
@@ -112,7 +107,7 @@ public class MetaDescriptorTest {
       Files.createFile(tmpDwca.toPath().resolve("VernacularName.txt"));
       Files.createFile(tmpDwca.toPath().resolve("media.txt"));
 
-      Archive arch2 = ArchiveFactory.openArchive(tmpDwca);
+      Archive arch2 = DwcFiles.fromLocation(tmpDwca.toPath());
       // core props
       ArchiveFile core = arch2.getCore();
       assertNotNull(core);
@@ -157,7 +152,7 @@ public class MetaDescriptorTest {
   public void testRoundtripQuotes() {
     try {
       // read archive
-      Archive arch = ArchiveFactory.openArchive(FileUtils.getClasspathFile("xml-entity-meta"));
+      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("xml-entity-meta").toPath());
       assertNotNull(arch);
       assertNotNull(arch.getCore());
       assertNotNull(arch.getCore().getId());
@@ -168,7 +163,7 @@ public class MetaDescriptorTest {
       File tmpDwca = createTmpMeta(arch);
       Files.createFile(tmpDwca.toPath().resolve("test"));
       Files.createFile(tmpDwca.toPath().resolve("test2"));
-      Archive arch2 = ArchiveFactory.openArchive(tmpDwca);
+      Archive arch2 = DwcFiles.fromLocation(tmpDwca.toPath());
 
       // core props
       ArchiveFile core = arch2.getCore();

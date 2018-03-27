@@ -1,10 +1,7 @@
 package org.gbif.dwc;
 
-import org.gbif.dwc.Archive;
-import org.gbif.dwc.DwcaStreamWriter;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
-import org.gbif.dwca.io.ArchiveFactory;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
@@ -49,7 +46,7 @@ public class DwcaStreamWriterTest {
           .build()
       );
 
-      Archive arch = ArchiveFactory.openArchive(dwca);
+      Archive arch = DwcFiles.fromLocation(dwca.toPath());
       assertEquals("eml.xml", arch.getMetadataLocation());
       assertEquals("<eml/>", arch.getMetadata());
 

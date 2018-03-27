@@ -1,10 +1,7 @@
 package org.gbif.dwc;
 
-import org.gbif.dwc.terms.Term;
-import org.gbif.dwc.record.Record;
-import org.gbif.dwc.record.RecordIterator;
 import org.gbif.dwc.record.StarRecord;
-import org.gbif.dwc.record.StarRecordImpl;
+import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 
@@ -13,17 +10,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
-import com.google.common.collect.PeekingIterator;
 import org.gbif.utils.file.InputStreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,146 +22,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a Darwin Core star archive and its components (metadata, core, extensions).
  *
- * Note: This class contains @Deprecated classes and methods. Everything related to the iteration over the archive
- * is now @Deprecated and {@link DwcFiles} should be used instead.
- *
  * @see <a href="http://tdwg.github.io/dwc/terms/guides/text/">Darwin Core Text Guide</a>
  */
 public class Archive implements Iterable<StarRecord> {
   public static final String CONSTITUENT_DIR = "dataset";
   public static final String META_FN = "meta.xml";
-
-  /**
-   * This class is kept for legacy reason, See {@link DwcFiles} for new usage.
-   *
-   * An iterator over core records of the archive that returns StarRecords, i.e. a single core record with all its
-   * related extension records attached. This is a convenient way to iterate over an entire archive accessing all
-   * information including all extensions.
-   *
-   * Requires underlying data files to be sorted by the coreid column if iteration spans multiple data files, i.e. if
-   * extensions exist.
-   * Extension rows with a non existing coreid are skipped. This requires that we use the same sorting order in the
-   * java code as we use for sorting the data files!
-   */
-  @Deprecated
-  class ArchiveIterator implements ClosableIterator<StarRecord> {
-
-    private final StarRecordImpl rec;
-    private RecordIterator coreIter;
-    private Set<RecordIterator> closables = new HashSet<RecordIterator>();
-    private Map<Term, PeekingIterator<Record>> extensionIters = new HashMap<Term, PeekingIterator<Record>>();
-    private Map<Term, Integer> extensionRecordsSkipped = new HashMap<Term, Integer>();
-
-    /**
-     * @param replaceNulls if true replaces common literal null values in all records
-     */
-    ArchiveIterator(Archive archive, boolean replaceNulls, boolean replaceEntities) {
-      List<Term> rowTypes = new ArrayList<Term>();
-
-      try {
-        if (extensions.isEmpty()) {
-          // no need to sort
-          coreIter = RecordIterator.build(archive.getCore(), replaceNulls, replaceEntities);
-        } else {
-          // sort data files to align extension records into a single star record
-          if (!archive.sorted) {
-            archive.sortFiles();
-          }
-          coreIter = buildSortedIterator(archive.getCore(), replaceNulls, replaceEntities);
-        }
-      } catch (IOException e) {
-        LOG.warn("IOException opening core file", e);
-      }
-
-      for (ArchiveFile af : archive.getExtensions()) {
-        rowTypes.add(af.getRowType());
-        RecordIterator iter =
-          extensions.isEmpty() ? RecordIterator.build(af, replaceNulls, replaceEntities) : buildSortedIterator(af,
-            replaceNulls, replaceNulls);
-        closables.add(iter);
-        extensionIters.put(af.getRowType(), Iterators.peekingIterator(iter));
-        extensionRecordsSkipped.put(af.getRowType(), 0);
-      }
-
-      rec = new StarRecordImpl(rowTypes);
-    }
-
-    private RecordIterator buildSortedIterator(ArchiveFile af, boolean replaceNulls, boolean replaceEntities) {
-      // we need to sort the data files
-      String original = af.getLocation();
-      // temporarily modify archive file to create iterator over sorted file
-      af.getLocations().clear();
-      af.addLocation(ArchiveFile.getLocationSorted(original));
-      RecordIterator iter = RecordIterator.build(af, replaceNulls, replaceEntities);
-      // revert to original
-      af.getLocations().clear();
-      af.addLocation(original);
-      return iter;
-    }
-
-    @Override
-    public void close() {
-      coreIter.close();
-      for (ClosableIterator<Record> it : closables) {
-        try {
-          it.close();
-        } catch (Exception e) {
-          LOG.debug("Can't close ClosableIterator", e);
-        }
-      }
-      for (Map.Entry<Term, Integer> stringIntegerEntry : extensionRecordsSkipped.entrySet()) {
-        Integer skipped = stringIntegerEntry.getValue();
-        if (skipped > 0) {
-          LOG.debug("{} {} extension records without matching core", skipped, stringIntegerEntry.getKey());
-        }
-      }
-    }
-
-    public boolean hasNext() {
-      return coreIter.hasNext();
-    }
-
-    public StarRecord next() {
-      Record core = coreIter.next();
-      rec.newCoreRecord(core);
-      // add extension records if core id exists
-      if (core.id() != null) {
-        String id = core.id();
-        for (Map.Entry<Term, PeekingIterator<Record>> ext : extensionIters.entrySet()) {
-          PeekingIterator<Record> it = ext.getValue();
-          Term rowType = ext.getKey();
-          while (it.hasNext()) {
-            String extId = it.peek().id();
-            // make sure we have an extid
-            if (Strings.isNullOrEmpty(extId)) {
-              it.next();
-              continue;
-            }
-            if (id.equals(extId)) {
-              // extension row belongs to this core record
-              rec.addRecord(rowType, it.next());
-            } else if (id.compareTo(extId) > 0) {
-              // TODO: we need to use the exact same sorting order, ie comparator, as we use for sorting the data files!!!
-              // this extension id is smaller than the core id and should have been picked up by a core record already
-              // seems to have no matching core record, so lets skip it
-              it.next();
-              extensionRecordsSkipped.put(rowType, extensionRecordsSkipped.get(rowType) + 1);
-            } else {
-              // higher id, we need to wait for this one
-              break;
-            }
-          }
-        }
-      }
-
-      return rec;
-    }
-
-    public void remove() {
-      throw new UnsupportedOperationException("Cannot remove a row from archive files");
-    }
-
-  }
 
   private static final Logger LOG = LoggerFactory.getLogger(Archive.class);
 
@@ -287,26 +143,23 @@ public class Archive implements Iterable<StarRecord> {
     LOG.debug("Archive contains {} core properties", core.getFields().size());
   }
 
+  // TODO: tidy up.
+  private NormalizedDwcArchive ndwca;
+
   /**
    * This method is kept for legacy reason, See {@link DwcFiles} for new usage.
    *
    * @return a complete iterator using star records with all extension records that replace literal null values and
    * html entities.
    */
-  @Deprecated
   public ClosableIterator<StarRecord> iterator() {
-    return new ArchiveIterator(this, true, true);
-  }
-
-  /**
-   * This method is kept for legacy reason, See {@link DwcFiles} for new usage.
-   *
-   * @return a complete iterator using star records with all extension records that are not replacing literal null
-   *         values or html entities.
-   */
-  @Deprecated
-  public ClosableIterator<StarRecord> iteratorRaw() {
-    return new ArchiveIterator(this, false, false);
+    try {
+      if (ndwca == null) {
+        ndwca = DwcFiles.prepareArchive(this);
+      }
+      return ndwca.iterator();
+    } catch (Exception e) {}
+    return null;
   }
 
   public void setCore(ArchiveFile core) {
