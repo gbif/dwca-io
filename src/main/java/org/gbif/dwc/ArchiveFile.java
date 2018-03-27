@@ -51,6 +51,9 @@ public class ArchiveFile implements Iterable<Record> {
   public static final String DEFAULT_FIELDS_TERMINATED_BY = ",";
   public static final String DEFAULT_LINES_TERMINATED_BY = "\n";
 
+  /**
+   * Comparator to sort by column index, then term name.
+   */
   private static final Comparator<ArchiveField> AF_IDX_COMPARATOR = (o1, o2) -> {
     if (o1.getIndex() == null && o2.getIndex() == null) {
       return 0;
@@ -59,7 +62,7 @@ public class ArchiveFile implements Iterable<Record> {
     } else if (o2.getIndex() == null) {
       return 1;
     } else if (o1.getIndex().equals(o2.getIndex())) {
-      return o1.getTerm().qualifiedName().compareToIgnoreCase(o2.getTerm().qualifiedName());
+      return o1.getTerm().qualifiedName().compareTo(o2.getTerm().qualifiedName());
     } else {
       return o1.getIndex().compareTo(o2.getIndex());
     }
