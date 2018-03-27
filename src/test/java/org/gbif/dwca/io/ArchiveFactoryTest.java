@@ -10,11 +10,8 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.StarRecord;
-import org.gbif.util.CSVReaderHelper;
-import org.gbif.utils.collection.IterableUtils;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
-import org.gbif.utils.file.csv.CSVReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.gbif.utils.file.tabular.TabularDataFileReader;
+import org.gbif.utils.file.tabular.TabularFiles;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -212,10 +211,16 @@ public class ArchiveFactoryTest {
     assertEquals("Core taxon file has 356 unique ids", 356, ids.size());
 
     // read extension file on its own and extract core ids to be cross checked with core id set
-    CSVReader occReader = CSVReaderHelper.build(arch.getExtension(DwcTerm.Occurrence));
+    File file = arch.getExtension(DwcTerm.Occurrence).getLocationFile();
+
+    TabularDataFileReader<List<String>> occReader = TabularFiles.newTabularFileReader(
+        Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8),
+          ';', "\n", null,true, 0);
+
     int occCounter2 = 0;
-    for (String[] rec : IterableUtils.iterable(occReader)) {
-      String id = rec[1];
+    List<String> rec;
+    while ((rec = occReader.read()) != null) {
+      String id = rec.get(1);
       occCounter2++;
       assertTrue("Occurrence coreid " + id + " not existing", ids.contains(id));
     }
