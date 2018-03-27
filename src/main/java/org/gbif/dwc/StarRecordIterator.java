@@ -112,7 +112,6 @@ class StarRecordIterator implements ClosableIterator<StarRecord> {
             // extension row belongs to this core record
             rec.addRecord(rowType, it.next());
           } else if (id.compareTo(extId) > 0) {
-            // TODO: we need to use the exact same sorting order, ie comparator, as we use for sorting the data files!!!
             // this extension id is smaller than the core id and should have been picked up by a core record already
             // seems to have no matching core record, so lets skip it
             it.next();

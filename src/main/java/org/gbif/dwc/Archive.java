@@ -188,6 +188,10 @@ public class Archive implements Iterable<StarRecord> {
    * <p>
    * Replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL", and replaces HTML & XML entities in
    * record values with the interpreted value.
+   * <p>
+   * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.
+   * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,
+   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)
    */
   public ClosableIterator<StarRecord> iterator() {
     return iterator(true, true);
@@ -196,6 +200,10 @@ public class Archive implements Iterable<StarRecord> {
   /**
    * @return a complete iterator using star records with all extension records that may replace literal null values and
    * HTML entities.
+   * <p>
+   * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.
+   * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,
+   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)
    *
    * @param replaceNulls if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
    * @param replaceEntities if true HTML & XML entities in record values will be replaced with the interpreted value.
