@@ -550,14 +550,14 @@ public class ArchiveFactoryTest {
   public void testFallbackToDefaultsArchives() throws IOException {
     try {
       Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/meta-file-encoding-missing").toPath());
-      assertEquals("utf8", arch.getCore().getEncoding());
+      assertEquals("UTF-8", arch.getCore().getEncoding());
     } catch (UnsupportedArchiveException e) {
       fail("Core file encoding defaults to UTF-8 if missing in meta.xml.");
     }
 
     try {
       Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/extension-encoding-missing").toPath());
-      assertEquals("utf8", arch.getExtension(GbifTerm.Multimedia).getEncoding());
+      assertEquals("UTF-8", arch.getExtension(GbifTerm.Multimedia).getEncoding());
     } catch (UnsupportedArchiveException e) {
       fail("Extension file encoding defaults to UTF-8 if missing in meta.xml.");
     }

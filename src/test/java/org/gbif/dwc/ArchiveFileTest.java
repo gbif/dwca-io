@@ -22,6 +22,7 @@ import org.gbif.dwc.record.Record;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -74,18 +75,18 @@ public class ArchiveFileTest {
   @Test
   public void testGetHeader() throws UnsupportedArchiveException, IOException {
     ArchiveFile core = getCore("archive-dwc/DarwinCore.txt");
-    Term[] header = core.getHeader();
-    assertEquals(12, header.length);
-    assertEquals(DwcTerm.scientificName, header[2]);
+    List<List<Term>> header = core.getHeader();
+    assertEquals(12, header.size());
+    assertEquals(DwcTerm.scientificName, header.get(2).get(0));
   }
 
   @Test
   public void testIdWithTermAssociated() throws UnsupportedArchiveException, IOException {
     ArchiveFile core = getCore("meta-xml-variants/dwca-id-with-term");
-    Term[] header = core.getHeader();
-    assertEquals(6, header.length);
-    assertEquals(DwcTerm.occurrenceID, header[0]);
-    assertNull(header[3]);
+    List<List<Term>> header = core.getHeader();
+    assertEquals(6, header.size());
+    assertEquals(DwcTerm.occurrenceID, header.get(0).get(0));
+    assertEquals(0, header.get(3).size());
   }
 
   @Test
@@ -101,8 +102,8 @@ public class ArchiveFileTest {
   @Test
   public void testEmptyArchiveFile() {
     ArchiveFile archiveFile = new ArchiveFile();
-    Term[] header = archiveFile.getHeader();
-    assertNotNull(header);
+    List<List<Term>> header = archiveFile.getHeader();
+    assertEquals(0, header.size());
     assertFalse(archiveFile.getDefaultValues().isPresent());
   }
 

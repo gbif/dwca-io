@@ -177,4 +177,8 @@ public class ArchiveField {
     this.vocabulary = vocabulary;
   }
 
+  @Override
+  public String toString() {
+    return String.format("ArchiveField %d: %s (%s, %s, %s, %s)", index, term, vocabulary, type, delimitedBy, defaultValue);
+  }
 }

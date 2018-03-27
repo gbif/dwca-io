@@ -18,6 +18,7 @@ import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.RecordIterator;
 import org.gbif.util.CSVReaderHelper;
+import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.csv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * This class can be used to encapsulate information about a file contained within a Darwin Core Archive. It generally
+ * This class encapsulates information about a file contained within a Darwin Core Archive. It
  * represents the fileType object described in the Darwin Core Archive XSD.
  *
  * @see <a href="http://rs.tdwg.org/dwc/text/tdwg_dwc_text.xsd">Darwin Core Archive XSD</a>
@@ -66,12 +67,13 @@ public class ArchiveFile implements Iterable<Record> {
   private String fieldsTerminatedBy = DEFAULT_FIELDS_TERMINATED_BY;
   private Character fieldsEnclosedBy = DEFAULT_FIELDS_ENCLOSED_BY;
   private String linesTerminatedBy = DEFAULT_LINES_TERMINATED_BY;
-  private String encoding = "utf8";
-  private Term rowType;
+  private String encoding = FileUtils.UTF8;
+  private Term rowType; // Default is http://rs.tdwg.org/dwc/xsd/simpledarwincore/SimpleDarwinRecord
   private Integer ignoreHeaderLines = 0;
 
   private String dateFormat = "YYYY-MM-DD";
 
+  // TODO: Change to SortedMap and remove rawArchiveFields?
   private final Map<Term, ArchiveField> fields = new HashMap<>();
   private final List<ArchiveField> rawArchiveFields = new ArrayList<>();
 
@@ -181,8 +183,10 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   /**
+   * Provides the List of {@link ArchiveField}s, ordered by the column they are mapped to, with unmapped (default/fixed value)
+   * columns first.
    *
-   * @return
+   * @return Ordered data structure of archive fields.
    */
   public List<ArchiveField> getFieldsSorted() {
     List<ArchiveField> list = new ArrayList<>(fields.values());
@@ -201,35 +205,36 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   /**
-   * Deprecated: use getFieldsSorted(), see https://github.com/gbif/dwca-io/issues/41 for details
+   * Generates a list of {@link Term}s mapped to each column in the underlying file.
    *
-   * Generates an ordered array representing all the {@link Term} matching the position in the underlying file.
-   * The array can contain {@code null} if no {@link Term} is mapped at a specific position.
-   * The size of the array is defined by the maximum index used within {@link ArchiveField} + 1 (since indices are 0
-   * based).
+   * A list may be empty when no Term is mapped at a specific position, or may contain more than one Term where
+   * the same column is mapped more than once.
    *
-   * @return Array of {@link Term} representing the header or an empty Array if no headers are present.
+   * The length of the list is the maximum index used in the {@link ArchiveField}s + 1.
+   *
+   * @return Data structure representing the header of the file.
    */
-  @Deprecated
-  public Term[] getHeader() {
+  public List<List<Term>> getHeader() {
     List<ArchiveField> archiveFieldsWithIndex = getFieldsSorted()
             .stream().filter(af -> af.getIndex() != null)
             .collect(Collectors.toList());
 
     Optional<Integer> idIndex = id != null ? Optional.of(id.getIndex()) : Optional.empty();
 
-    if(archiveFieldsWithIndex.isEmpty() && !idIndex.isPresent()){
-      return new Term[0];
+    if (archiveFieldsWithIndex.isEmpty() && !idIndex.isPresent()){
+      return new ArrayList<>();
     }
 
-    int maxIndex = archiveFieldsWithIndex.stream()
-            .mapToInt(ArchiveField::getIndex).max().getAsInt();
+    int maxIndex = archiveFieldsWithIndex.stream().mapToInt(ArchiveField::getIndex).max().getAsInt();
     maxIndex = Math.max(maxIndex, idIndex.orElse(-1));
 
-    Term[] terms = new Term[maxIndex + 1];
-    // handle id column, assign default Term, it will be rewritten below if assigned to a term
-    idIndex.ifPresent(idx -> terms[idx] = DEFAULT_ID_TERM);
-    archiveFieldsWithIndex.stream().forEach(af -> terms[af.getIndex()] = af.getTerm());
+    List<List<Term>> terms = new ArrayList<>();
+    for (int i = 0; i <= maxIndex; i++) {
+      terms.add(new ArrayList<Term>());
+    }
+    archiveFieldsWithIndex.stream().forEach(af -> terms.get(af.getIndex()).add(af.getTerm()));
+    // Assign default term for id column.
+    idIndex.ifPresent(idx -> terms.get(idx).add(DEFAULT_ID_TERM));
     return terms;
   }
 
