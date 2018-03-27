@@ -30,7 +30,7 @@ public class DwcFilesTest {
   public void testNormalizeIfRequired() throws Exception {
     ArchiveFile testArchiveFile = new ArchiveFile();
     testArchiveFile.setFieldsEnclosedBy(null);
-    assertNull(DwcFiles.normalizeIfRequired(testArchiveFile));
+    assertNull(testArchiveFile.normalizeIfRequired());
   }
 
   @Test
@@ -51,18 +51,18 @@ public class DwcFilesTest {
   }
 
   @Test
-  public void testStartRecordIterator() throws IOException {
+  public void testStarRecordIterator() throws IOException {
 
     Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
-    NormalizedDwcArchive nda = DwcFiles.prepareArchive(arch, false, false);
-    try(ClosableIterator<StarRecord> it = nda.iterator()){
+
+    try (ClosableIterator<StarRecord> it = arch.iterator(false, false)) {
       assertNotNull(arch.getCore());
       assertEquals(2, arch.getExtensions().size());
       int found = 0;
       int extensionRecords = 0;
       while (it.hasNext()) {
         StarRecord rec = it.next();
-        //System.out.println(rec.core().id() + " --> " + rec.size());
+        //System.out.println(rec.core().id() + " → " + rec.size());
         // count all extension records
         extensionRecords += rec.size();
 
@@ -146,11 +146,11 @@ public class DwcFilesTest {
     if(sortedFile.exists()) {
       sortedFile.delete();
     }
-    assertTrue(DwcFiles.normalizeAndSort(arch.getCore()));
+    assertTrue(arch.getCore().normalizeAndSort());
     assertTrue(sortedFile.exists());
 
     //call the method again. Should return false since we already have the sorted file available.
-    assertFalse(DwcFiles.normalizeAndSort(arch.getCore()));
+    assertFalse(arch.getCore().normalizeAndSort());
   }
 
   /**

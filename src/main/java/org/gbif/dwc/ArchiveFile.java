@@ -12,6 +12,7 @@
  */
 package org.gbif.dwc;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
@@ -21,6 +22,7 @@ import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.csv.CSVReader;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
+import org.gbif.utils.file.tabular.TabularFileNormalizer;
 import org.gbif.utils.file.tabular.TabularFiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import java.util.stream.Collectors;
 public class ArchiveFile implements Iterable<Record> {
   private static final Logger LOG = LoggerFactory.getLogger(ArchiveFile.class);
 
+  private static final FileUtils FILE_UTILS = new FileUtils();
   private static final TermFactory TERM_FACTORY = TermFactory.instance();
 
   public static final Term DEFAULT_ID_TERM = TERM_FACTORY.findPropertyTerm("ARCHIVE_RECORD_ID");
@@ -123,15 +126,74 @@ public class ArchiveFile implements Iterable<Record> {
     if (encoding == null) {
       throw new UnsupportedArchiveException("DwC-A data file »" + title + "« requires a character encoding");
     }
-    System.out.println(encoding + " ENCODING");
   }
 
-  public static File getLocationFileSorted(File location) {
+  /**
+   * Normalizes and sorts the data file, so it is suitable for in-order iteration as a core or extension file.
+   *
+   * @return the file was sorted or not. If the file was not sorted it simply means it was not required.
+   */
+  /*
+   * Sorting implies a normalization phase to ensure we sort the file properly.
+   * Note that the file will not be sorted if the sorted file is already there and its date is later than the file
+   * we want to sort.
+   */
+  protected boolean normalizeAndSort() throws IOException {
+    File fileToSort = getLocationFile();
+    File sortedFile = getLocationFileSorted(getLocationFile());
+
+    // If we already sorted the file and its source didn't change we can avoid doing it again
+    if (sortedFile.exists() && Files.getLastModifiedTime(sortedFile.toPath()).toInstant().isAfter(
+        Files.getLastModifiedTime(fileToSort.toPath()).toInstant())) {
+      return false;
+    }
+
+    File normalizedFile = normalizeIfRequired();
+    if (normalizedFile != null) {
+      fileToSort = normalizedFile;
+    }
+
+    FILE_UTILS.sort(fileToSort, ArchiveFile.getLocationFileSorted(getLocationFile()), getEncoding(),
+        getId().getIndex(), getFieldsTerminatedBy(), getFieldsEnclosedBy(),
+        TabularFileNormalizer.NORMALIZED_END_OF_LINE, getIgnoreHeaderLines());
+
+    if (normalizedFile != null) {
+      Files.deleteIfExists(normalizedFile.toPath());
+    }
+
+    return true;
+  }
+
+  /**
+   * Apply file normalization if required.
+   **
+   * @return normalizedFile or null if normalization was not applied
+   *
+   * @throws IOException
+   */
+  @VisibleForTesting
+  protected File normalizeIfRequired() throws IOException {
+    // If the linesTerminatedBy used is the same as TabularFileNormalizer and no quoted cells are used
+    // we can skip normalization
+    boolean normalizationRequired = ! TabularFileNormalizer.NORMALIZED_END_OF_LINE.equals(getLinesTerminatedBy())
+        || getFieldsEnclosedBy() != null;
+
+    if (normalizationRequired) {
+      File normalizedFile = getLocationFileNormalized(getLocationFile());
+      TabularFileNormalizer.normalizeFile(getLocationFile().toPath(), normalizedFile.toPath(),
+          Charset.forName(getEncoding()), getFieldsTerminatedByChar(),
+          getLinesTerminatedBy(), getFieldsEnclosedBy());
+      return normalizedFile;
+    }
+    return null;
+  }
+
+  protected static File getLocationFileNormalized(File location) {
+    return new File(location.getParentFile(), location.getName() + "-normalized");
+  }
+
+  protected static File getLocationFileSorted(File location) {
     return new File(location.getParentFile(), location.getName() + "-sorted");
-  }
-
-  public static String getLocationSorted(String location) {
-    return location + "-sorted";
   }
 
   public void addField(ArchiveField field) {
@@ -373,6 +435,15 @@ public class ArchiveFile implements Iterable<Record> {
     return iterator(true, true);
   }
 
+  private Reader getReader(boolean sorted) throws IOException {
+    // ArchiveFile location, or Archive in case this is a fake single-file "archive".
+    File file = getLocationFile() != null ? getLocationFile() : getArchive().getLocation();
+    if (sorted) {
+      file = getLocationFileSorted(file);
+    }
+    return Files.newBufferedReader(file.toPath(), Charset.forName(getEncoding()));
+  }
+
   /**
    * Get a {@link ClosableIterator} over the records in this file, optionally replacing nulls and entities.
    *
@@ -381,17 +452,31 @@ public class ArchiveFile implements Iterable<Record> {
    */
   public ClosableIterator<Record> iterator(boolean replaceNulls, boolean replaceEntities) {
     try {
-      // ArchiveFile location, or Archive in case this is a fake single-file "archive".
-      Path fileLocation = getLocationFile() != null ? getLocationFile().toPath() : getArchive().getLocation().toPath();
-      Reader reader = Files.newBufferedReader(fileLocation, Charset.forName(getEncoding()));
-
-      TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(reader,
+      TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(getReader(false),
           getFieldsTerminatedByChar(), getLinesTerminatedBy(), getFieldsEnclosedBy(),
           areHeaderLinesIncluded(), getLinesToSkipBeforeHeader());
       return new DwcRecordIterator(tabularFileReader, getId(), getFields(), getRowType(), replaceNulls, replaceEntities);
     } catch (IOException e) {
       throw new UnsupportedArchiveException(e);
     }
+  }
+
+  /**
+   * Build an iterator pointing to the sorted tabular file.
+   * The sorted tabular file is also assumed to have been normalized.
+   *
+   * @param replaceNulls
+   * @param replaceEntities
+   *
+   * @return
+   *
+   * @throws IOException
+   */
+  protected ClosableIterator<Record> sortedIterator(boolean replaceNulls, boolean replaceEntities) throws IOException {
+    TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(getReader(true),
+            getFieldsTerminatedByChar(), TabularFileNormalizer.NORMALIZED_END_OF_LINE, getFieldsEnclosedBy(),
+            areHeaderLinesIncluded(), getLinesToSkipBeforeHeader());
+    return new DwcRecordIterator(tabularFileReader, getId(), getFields(), getRowType(), replaceNulls, replaceEntities);
   }
 
   public void setArchive(Archive archive) {
