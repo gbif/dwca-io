@@ -3,10 +3,10 @@
 *Formerly known as dwca-reader*
 
 The dwca-io library provides:
- * Reader for [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/index.htm) file with or without extensions.
+ * Reader for [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/) file with or without extensions.
  * Reader for single tabular file using [Darwin Core terms](http://rs.tdwg.org/dwc/terms/#theterms) as headers
  * Support for discovery of metadata document (e.g. [EML](https://knb.ecoinformatics.org/#tools/eml)).
- * Writer for simple [DarwinCore Archive](http://rs.tdwg.org/dwc/terms/guides/text/index.htm) file with or without extensions
+ * Writer for simple DarwinCore Archive file with or without extensions
 
 ## To build the project
 Note: this project requires Java 8.
@@ -49,7 +49,11 @@ for (StarRecord rec : dwcArchive) {
 
 ### Other supported file types
 The `DwcFiles.fromLocation` method also supports the following file types:
- * Single tabular data file with [Darwin Core terms](http://rs.tdwg.org/dwc/terms/#theterms) as header
+* Single tabular data file with [Darwin Core terms](http://rs.tdwg.org/dwc/terms/#theterms) as header
+
+## Notes
+* The `delimitedBy` attribute of a field is not supported.
+* The `dateFormat` attribute of a file is not supported.
  
 ## Maven
 Ensure you have the GBIF repository in your `pom.xml`
