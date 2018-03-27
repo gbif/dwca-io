@@ -35,7 +35,7 @@ import static org.junit.Assert.fail;
 
 public class ArchiveFactoryTest {
 
-  private void assertNumberOfCoreRecords(Archive arch, int expectedRecords) throws IOException {
+  private void assertNumberOfCoreRecords(Archive arch, int expectedRecords) {
     int rows = 0;
     for (Record rec : arch.getCore()) {
       assertNotNull(rec);
@@ -53,29 +53,8 @@ public class ArchiveFactoryTest {
   }
 
   @Test
-  public void testBuildReaderFile() throws IOException {
-    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("TDB_104.csv").toPath());
-    CSVReader reader = arch.getCore().getCSVReader();
-    assertEquals(7, reader.next().length);
-    reader.close();
-
-    reader = DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.tab.txt").toPath()).getCore().getCSVReader();
-    assertEquals(8, reader.next().length);
-    reader.close();
-
-    reader = DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.pipe.txt").toPath()).getCore().getCSVReader();
-    assertEquals(8, reader.next().length);
-    reader.close();
-
-    reader = DwcFiles.fromLocation(FileUtils.getClasspathFile("csv_quoted-unquoted_headers.csv").toPath()).getCore()
-      .getCSVReader();
-    assertEquals(4, reader.next().length);
-    reader.close();
-  }
-
-  @Test
   public void testCoreRecords() throws IOException {
-    // note that we dont read a dwc archive, but only test the csvreader!
+    // note that we don't read a DWC archive, but only test the csvreader!
     // we therefore do not detect header rows and count *all* rows instead
 
     assertNumberOfCoreRecords(DwcFiles.fromLocation(FileUtils.getClasspathFile("iucn100.tab.txt").toPath()), 99);
@@ -137,29 +116,6 @@ public class ArchiveFactoryTest {
     Record rec = arch.getCore().iterator().next();
     assertEquals("246daa62-6fce-448f-88b4-94b0ccc89cf1", rec.id());
   }
-
-  @Test
-  public void testCsvExcelStyle() throws UnsupportedArchiveException, IOException {
-    File csv = FileUtils.getClasspathFile("csv_optional_quotes_excel2008CSV.csv");
-    // read archive from this tmp dir
-    Archive arch = DwcFiles.fromLocation(csv.toPath());
-    CSVReader reader = arch.getCore().getCSVReader();
-
-    String[] atom = reader.next();
-    assertEquals(3, atom.length);
-    assertEquals("1", atom[0]);
-    assertEquals("This has a, comma", atom[2]);
-    atom = reader.next();
-    assertEquals("I say this is only a \"quote\"", atom[2]);
-    atom = reader.next();
-    assertEquals("What though, \"if you have a quote\" and a comma", atom[2]);
-    atom = reader.next();
-    assertEquals("What, if we have a \"quote, which has a comma, or 2\"", atom[2]);
-
-    reader.close();
-
-  }
-
 
   /**
    * Testing CSV with optional quotes

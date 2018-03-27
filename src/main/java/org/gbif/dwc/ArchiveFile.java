@@ -17,10 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.dwc.record.Record;
-import org.gbif.util.CSVReaderHelper;
 import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.FileUtils;
-import org.gbif.utils.file.csv.CSVReader;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 import org.gbif.utils.file.tabular.TabularFileNormalizer;
 import org.gbif.utils.file.tabular.TabularFiles;
@@ -214,10 +212,6 @@ public class ArchiveFile implements Iterable<Record> {
 
   public Archive getArchive() {
     return archive;
-  }
-
-  public CSVReader getCSVReader() throws IOException {
-    return CSVReaderHelper.build(this);
   }
 
   public String getDateFormat() {
