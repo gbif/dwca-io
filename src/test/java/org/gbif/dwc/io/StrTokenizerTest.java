@@ -14,7 +14,7 @@
  * the License.
  ***************************************************************************/
 
-package org.gbif.io;
+package org.gbif.dwc.io;
 
 import java.io.IOException;
 

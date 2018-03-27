@@ -1,4 +1,4 @@
-package org.gbif.digester;
+package org.gbif.dwc.digester;
 
 import org.apache.commons.digester3.CallParamRule;
 import org.xml.sax.Attributes;

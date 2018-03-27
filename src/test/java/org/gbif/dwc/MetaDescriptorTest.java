@@ -6,6 +6,7 @@ import org.gbif.dwc.meta.DwcMetaFiles;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
+import org.gbif.dwc.terms.TermFactory;
 import org.gbif.utils.file.FileUtils;
 import org.junit.Test;
 import org.xml.sax.Attributes;
@@ -24,7 +25,6 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
-import static org.gbif.TestUtils.TERM_FACTORY;
 import static org.junit.Assert.*;
 
 /**
@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  */
 public class MetaDescriptorTest {
-
+  public static TermFactory TERM_FACTORY = TermFactory.instance();
 
   private static final String NOMENCLATURAL_CODE_VOCABULARY = "http://rs.gbif.org/vocabulary/gbif/nomenclatural_code.xml";
   //for testing only, language vocabulary doesn't exist at rs.gbif.org

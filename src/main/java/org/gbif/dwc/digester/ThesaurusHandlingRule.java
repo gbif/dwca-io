@@ -1,5 +1,4 @@
-package org.gbif.digester;
-
+package org.gbif.dwc.digester;
 
 import org.gbif.dwc.extensions.ExtensionProperty;
 import org.gbif.dwc.extensions.VocabulariesManager;

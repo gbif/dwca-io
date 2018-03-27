@@ -14,7 +14,7 @@
  * the License.
  ***************************************************************************/
 
-package org.gbif.io;
+package org.gbif.dwc.io;
 
 import org.gbif.utils.file.FileUtils;
 

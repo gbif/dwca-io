@@ -1,4 +1,4 @@
-package org.gbif.xml;
+package org.gbif.dwc.xml;
 
 import javax.xml.parsers.SAXParserFactory;
 

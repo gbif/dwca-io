@@ -9,7 +9,7 @@ package org.gbif.dwc.extensions;
  * specific language governing permissions and limitations under the License.
  */
 
-import org.gbif.digester.CallParamNoNSRule;
+import org.gbif.dwc.digester.CallParamNoNSRule;
 
 import java.io.IOException;
 import java.io.InputStream;

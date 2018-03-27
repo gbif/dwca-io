@@ -1,9 +1,9 @@
 package org.gbif.dwc.extensions;
 
-import org.gbif.digester.ThesaurusHandlingRule;
+import org.gbif.dwc.digester.ThesaurusHandlingRule;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.utils.file.FileUtils;
-import org.gbif.xml.SAXUtils;
+import org.gbif.dwc.xml.SAXUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

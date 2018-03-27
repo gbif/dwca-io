@@ -1,4 +1,4 @@
-package org.gbif.io;
+package org.gbif.dwc;
 
 import java.io.*;
 import java.util.regex.Pattern;

@@ -25,7 +25,6 @@ import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.record.Record;
-import org.gbif.io.TabWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

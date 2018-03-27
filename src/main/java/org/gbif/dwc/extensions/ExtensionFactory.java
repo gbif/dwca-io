@@ -1,7 +1,7 @@
 package org.gbif.dwc.extensions;
 
-import org.gbif.digester.CallParamNoNSRule;
-import org.gbif.digester.ThesaurusHandlingRule;
+import org.gbif.dwc.digester.CallParamNoNSRule;
+import org.gbif.dwc.digester.ThesaurusHandlingRule;
 
 import java.io.IOException;
 import java.io.InputStream;
