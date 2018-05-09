@@ -1,8 +1,12 @@
 # Change Log
 
-## 2.0 (not yet released)
- * Removal of all iterable interface from [Archive](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwca/io/Archive.html)
- in favour of [DwcFiles](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwc/DwcFiles.html).
+## 2.0-RC1 (2018-05-09)
+ * Removal of all deprecated classes and methods, and a refactoring of the package structure.
+ * Removal of obsolete classes DarwinCoreRecord and DarwinCoreTaxon, DownloadUtil.
+ * Remove dependency on GBIF Registry Metadata and EML parsing.
+ * Guava dependency now shaded.
+ * Lock files for parallel access with a single process, or between processes.
+ * Removal of all iterable interface from [Archive](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwca/io/Archive.html) in favour of [DwcFiles](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwc/DwcFiles.html).
  * [DwcFiles](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwc/DwcFiles.html) can now create [Archive](http://gbif.github.io/dwca-io/apidocs/org/gbif/dwca/io/Archive.html) objects.
 
 ## 1.31 (2017-06-16)
