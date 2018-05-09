@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.io.Reader;
+import java.nio.channels.FileLock;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -138,31 +140,48 @@ public class ArchiveFile implements Iterable<Record> {
    * Sorting implies a normalization phase to ensure we sort the file properly.
    * Note that the file will not be sorted if the sorted file is already there and its date is later than the file
    * we want to sort.
+   *
+   * This method is synchronized to prevent multiple threads trying to normalize/sort a file at the same time,
+   * and uses an advisory lock to avoid conflict between multiple processes.
    */
-  protected boolean normalizeAndSort() throws IOException {
+  protected synchronized boolean normalizeAndSort() throws IOException {
     File fileToSort = getLocationFile();
     File sortedFile = getLocationFileSorted(getLocationFile());
 
-    // If we already sorted the file and its source didn't change we can avoid doing it again
-    if (sortedFile.exists() && Files.getLastModifiedTime(sortedFile.toPath()).toInstant().isAfter(
-        Files.getLastModifiedTime(fileToSort.toPath()).toInstant())) {
-      return false;
+    File lockFile = getLocationLockFile(getLocationFile());
+    RandomAccessFile lockFileRA = new RandomAccessFile(lockFile, "rw");
+
+    FileLock lock = lockFileRA.getChannel().tryLock();
+    if (lock == null) {
+      LOG.warn("Another process has locked this DWCA for initialization; waiting until the lock is released.");
+      lock = lockFileRA.getChannel().lock();
+      LOG.warn("Other process has released lock; lock taken, proceeding.");
     }
 
-    File normalizedFile = normalizeIfRequired();
-    if (normalizedFile != null) {
-      fileToSort = normalizedFile;
+    try {
+      // If we already sorted the file and its source didn't change we can avoid doing it again
+      if (sortedFile.exists() && Files.getLastModifiedTime(sortedFile.toPath()).toInstant().isAfter(
+          Files.getLastModifiedTime(fileToSort.toPath()).toInstant())) {
+        return false;
+      }
+
+      File normalizedFile = normalizeIfRequired();
+      if (normalizedFile != null) {
+        fileToSort = normalizedFile;
+      }
+
+      FILE_UTILS.sort(fileToSort, getLocationFileSorted(getLocationFile()), getEncoding(),
+          getId().getIndex(), getFieldsTerminatedBy(), getFieldsEnclosedBy(),
+          TabularFileNormalizer.NORMALIZED_END_OF_LINE, getIgnoreHeaderLines());
+
+      if (normalizedFile != null) {
+        Files.deleteIfExists(normalizedFile.toPath());
+      }
+
+      return true;
+    } finally {
+      lock.release();
     }
-
-    FILE_UTILS.sort(fileToSort, ArchiveFile.getLocationFileSorted(getLocationFile()), getEncoding(),
-        getId().getIndex(), getFieldsTerminatedBy(), getFieldsEnclosedBy(),
-        TabularFileNormalizer.NORMALIZED_END_OF_LINE, getIgnoreHeaderLines());
-
-    if (normalizedFile != null) {
-      Files.deleteIfExists(normalizedFile.toPath());
-    }
-
-    return true;
   }
 
   /**
@@ -195,6 +214,10 @@ public class ArchiveFile implements Iterable<Record> {
 
   protected static File getLocationFileSorted(File location) {
     return new File(location.getParentFile(), location.getName() + "-sorted");
+  }
+
+  private static File getLocationLockFile(File location) {
+    return new File(location.getParentFile(), location.getName() + "-lock");
   }
 
   public void addField(ArchiveField field) {

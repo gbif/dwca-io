@@ -87,5 +87,9 @@ class DwcRecordIterator implements ClosableIterator<Record> {
     return record;
   }
 
+  @Override
+  public String toString() {
+    return String.format("DwcRecordIterator %s, %s, %s, %s, %s, %s",
+        id, fields, rowType, replaceNulls, replaceEntities, tabularFileReader);
+  }
 }
-

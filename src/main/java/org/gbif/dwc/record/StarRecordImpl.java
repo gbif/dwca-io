@@ -96,4 +96,9 @@ public class StarRecordImpl implements StarRecord {
     }
     return x;
   }
+
+  @Override
+  public String toString() {
+    return "StarRecord with core "+core.toString()+" and extensions "+extensions;
+  }
 }

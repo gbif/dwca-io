@@ -1,4 +1,4 @@
-# dwca-io
+# Darwin Core Archive I/O (dwca-io)
 
 *Formerly known as dwca-reader*
 
@@ -15,9 +15,9 @@ mvn clean install
 ```
 
 ## Usage
-### Reading a Darwin Core Archive
+### Reading a simple Darwin Core Archive
 Read an archive and display data from the core record:
-```java
+```
 Path myArchiveFile = Paths.get("myArchive.zip");
 Path extractToFolder = Paths.get("/tmp/myarchive");
 Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
@@ -29,7 +29,7 @@ for (Record rec : dwcArchive.getCore()) {
 ```
 ### Reading DarwinCore archive + extensions
 Read from a folder (extracted archive) and display data from the core and the extension:
-```java
+```
 Path myArchiveFile = Paths.get("myArchive.zip");
 Path extractToFolder = Paths.get("/tmp/myarchive");
 Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
@@ -54,7 +54,10 @@ The `DwcFiles.fromLocation` method also supports the following file types:
 ## Notes
 * The `delimitedBy` attribute of a field is not supported.
 * The `dateFormat` attribute of a file is not supported.
- 
+* Iterating over an Archive with extensions requires pre-sorting the data files.  This can take seconds to minutes,
+  depending on the size of the archive.  If you prefer, you can use `Archive#initialize()` to sort the archive beforehand.
+* Archives with data from a single core/extension split across multiple files are not supported.
+
 ## Maven
 Ensure you have the GBIF repository in your `pom.xml`
 ```xml
