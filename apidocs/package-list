@@ -1,15 +1,11 @@
-org.gbif.digester
 org.gbif.dwc
+org.gbif.dwc.digester
 org.gbif.dwc.extensions
 org.gbif.dwc.meta
+org.gbif.dwc.record
 org.gbif.dwc.terms
 org.gbif.dwc.terms.jackson
-org.gbif.dwca.io
-org.gbif.dwca.record
-org.gbif.dwca.tools
-org.gbif.io
-org.gbif.tabular
-org.gbif.util
+org.gbif.dwc.xml
 org.gbif.utils
 org.gbif.utils.collection
 org.gbif.utils.concurrent
@@ -21,4 +17,3 @@ org.gbif.utils.html
 org.gbif.utils.number
 org.gbif.utils.rs
 org.gbif.utils.text
-org.gbif.xml

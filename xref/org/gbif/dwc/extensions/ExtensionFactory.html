@@ -8,8 +8,8 @@
 <div id="overview"><a href="../../../../../apidocs/org/gbif/dwc/extensions/ExtensionFactory.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> org.gbif.dwc.extensions;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
-<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.digester.CallParamNoNSRule;
-<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.digester.ThesaurusHandlingRule;
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.digester.CallParamNoNSRule;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.gbif.dwc.digester.ThesaurusHandlingRule;
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> java.io.InputStream;
@@ -29,10 +29,10 @@
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>    <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> Logger log = LoggerFactory.getLogger(ExtensionFactory.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String EXTENSION_NAMESPACE = <span class="jxr_string">"http://rs.gbif.org/extension/"</span>;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>    <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/digester/ThesaurusHandlingRule.html">ThesaurusHandlingRule</a> thesaurusRule;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>    <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwc/digester/ThesaurusHandlingRule.html">ThesaurusHandlingRule</a> thesaurusRule;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>    <strong class="jxr_keyword">private</strong> SAXParserFactory saxf;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>    <strong class="jxr_keyword">public</strong> <a href="../../../../org/gbif/dwc/extensions/ExtensionFactory.html">ExtensionFactory</a>(<a href="../../../../org/gbif/digester/ThesaurusHandlingRule.html">ThesaurusHandlingRule</a> thesaurusRule, SAXParserFactory factory) {
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>    <strong class="jxr_keyword">public</strong> <a href="../../../../org/gbif/dwc/extensions/ExtensionFactory.html">ExtensionFactory</a>(<a href="../../../../org/gbif/dwc/digester/ThesaurusHandlingRule.html">ThesaurusHandlingRule</a> thesaurusRule, SAXParserFactory factory) {
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>      <strong class="jxr_keyword">super</strong>();
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>      <strong class="jxr_keyword">this</strong>.thesaurusRule = thesaurusRule;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>      <strong class="jxr_keyword">this</strong>.saxf = factory;
@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      digester.push(e);
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      digester.addCallMethod(<span class="jxr_string">"*/extension"</span>, <span class="jxr_string">"setTitle"</span>, 1);
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"title"</span>));
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"title"</span>));
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      digester.addCallMethod(<span class="jxr_string">"*/extension"</span>, <span class="jxr_string">"setName"</span>, 1);
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      digester.addCallParam(<span class="jxr_string">"*/extension"</span>, 0, <span class="jxr_string">"name"</span>);
@@ -69,13 +69,13 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      digester.addCallParam(<span class="jxr_string">"*/extension"</span>, 0, <span class="jxr_string">"rowType"</span>);
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      digester.addCallMethod(<span class="jxr_string">"*/extension"</span>, <span class="jxr_string">"setLink"</span>, 1);
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"relation"</span>));
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"relation"</span>));
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      digester.addCallMethod(<span class="jxr_string">"*/extension"</span>, <span class="jxr_string">"setDescription"</span>, 1);
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"description"</span>));
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"description"</span>));
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      digester.addCallMethod(<span class="jxr_string">"*/extension"</span>, <span class="jxr_string">"setSubject"</span>, 1);
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"subject"</span>));
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      digester.addRule(<span class="jxr_string">"*/extension"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"subject"</span>));
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <em class="jxr_comment">// build the properties</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      digester.addObjectCreate(<span class="jxr_string">"*/property"</span>, ExtensionProperty.<strong class="jxr_keyword">class</strong>);
@@ -99,10 +99,10 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      digester.addCallParam(<span class="jxr_string">"*/property"</span>, 0, <span class="jxr_string">"required"</span>);
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      digester.addCallMethod(<span class="jxr_string">"*/property"</span>, <span class="jxr_string">"setLink"</span>, 1);
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      digester.addRule(<span class="jxr_string">"*/property"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"relation"</span>));
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      digester.addRule(<span class="jxr_string">"*/property"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"relation"</span>));
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      digester.addCallMethod(<span class="jxr_string">"*/property"</span>, <span class="jxr_string">"setDescription"</span>, 1);
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      digester.addRule(<span class="jxr_string">"*/property"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"description"</span>));
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      digester.addRule(<span class="jxr_string">"*/property"</span>, <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/digester/CallParamNoNSRule.html">CallParamNoNSRule</a>(0, <span class="jxr_string">"description"</span>));
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      digester.addCallMethod(<span class="jxr_string">"*/property"</span>, <span class="jxr_string">"setExamples"</span>, 1);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     digester.addCallParam(<span class="jxr_string">"*/property"</span>, 0, <span class="jxr_string">"examples"</span>);
@@ -122,6 +122,6 @@
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2017 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2018 <a href="http://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>
 </body>
 </html>
