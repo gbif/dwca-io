@@ -451,6 +451,30 @@ public class ArchiveFactoryTest {
   }
 
   /**
+   * Test extracting a CSV file containing embedded JSON, which itself contains escaped quotes.
+   *
+   * JSON value: { "test": "value, \"like\" this" }
+   *
+   * As a column in CSV: "{ ""test"": ""value, \""like\"" this"" }"
+   */
+  @Test
+  public void testCsvJsonEscapedQuotes() throws UnsupportedArchiveException, IOException {
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("issues/csv-json-escaped-quotes").toPath());
+
+    arch.initialize();
+
+    arch.validate();
+
+    // Archive only has one record.
+    Record rec = arch.getCore().iterator().next();
+
+    assertEquals("779", rec.id());
+    assertEquals("Cambridge, Cambridge", rec.value(DwcTerm.locality));
+    // Without the Java escapes: {"chronostratigraphy": "Cretaceous, Early Cretaceous, Albian - Late Cretaceous, Cenomanian", "cataloguedescription": "Very worn vertebra. Old catalogue says \"fragments of bone\".", "created": "2009-05-13", "barcode": "010039076", "project": "eMesozoic", "determinationnames": "Ornithocheirus", "subdepartment": "Vertebrates", "lithostratigraphy": "Selborne Group, Upper Greensand Formation, Cambridge Greensand Member", "imagecategory": ["Register;Specimen"]}
+    assertEquals("{\"chronostratigraphy\": \"Cretaceous, Early Cretaceous, Albian - Late Cretaceous, Cenomanian\", \"cataloguedescription\": \"Very worn vertebra. Old catalogue says \\\"fragments of bone\\\".\", \"created\": \"2009-05-13\", \"barcode\": \"010039076\", \"project\": \"eMesozoic\", \"determinationnames\": \"Ornithocheirus\", \"subdepartment\": \"Vertebrates\", \"lithostratigraphy\": \"Selborne Group, Upper Greensand Formation, Cambridge Greensand Member\", \"imagecategory\": [\"Register;Specimen\"]}", rec.value(DwcTerm.dynamicProperties));
+  }
+
+  /**
    * Ensure that extensions are just skipped for archives that do not have the core id in the mapped extension.
    * https://code.google.com/p/darwincore/issues/detail?id=232
    */
