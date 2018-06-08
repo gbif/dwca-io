@@ -31,6 +31,20 @@ public class DwcFiles {
   }
 
   /**
+   * Build a Darwin Core {@link Archive} from a location. The location can be an uncompressed directory or an uncompressed file.
+   *
+   * This method skips basic validation, and should only be used by a tool that does its own validation.
+   *
+   * @param dwcLocation the location of an expanded Darwin Core Archive directory, or a single Darwin Core text file
+   *
+   * @return new {@link Archive}, never null. But, the {@link Archive} can be empty (e.g. no core)
+   */
+  public static Archive fromLocationSkipValidation(Path dwcLocation) throws IOException, UnsupportedArchiveException {
+    // delegate to InternalDwcFileFactory
+    return InternalDwcFileFactory.fromLocation(dwcLocation);
+  }
+
+  /**
    * Build an {@link Archive} from a compressed file. The compressed file will be extracted in the provided directory.
    * The supported compressions are zip and gzip.
    *
