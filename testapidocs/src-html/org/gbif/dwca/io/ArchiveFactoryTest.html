@@ -459,121 +459,145 @@
 <span class="sourceLineNo">451</span>  }<a name="line.451"></a>
 <span class="sourceLineNo">452</span><a name="line.452"></a>
 <span class="sourceLineNo">453</span>  /**<a name="line.453"></a>
-<span class="sourceLineNo">454</span>   * Ensure that extensions are just skipped for archives that do not have the core id in the mapped extension.<a name="line.454"></a>
-<span class="sourceLineNo">455</span>   * https://code.google.com/p/darwincore/issues/detail?id=232<a name="line.455"></a>
-<span class="sourceLineNo">456</span>   */<a name="line.456"></a>
-<span class="sourceLineNo">457</span>  @Test<a name="line.457"></a>
-<span class="sourceLineNo">458</span>  public void testNullCoreID() throws IOException {<a name="line.458"></a>
-<span class="sourceLineNo">459</span>    try {<a name="line.459"></a>
-<span class="sourceLineNo">460</span>      File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();<a name="line.460"></a>
-<span class="sourceLineNo">461</span>      tmpDir.deleteOnExit();<a name="line.461"></a>
-<span class="sourceLineNo">462</span><a name="line.462"></a>
-<span class="sourceLineNo">463</span>      Archive archive = DwcFiles.fromCompressed(FileUtils.getClasspathFile("nullCoreID.zip").toPath(), tmpDir.toPath());<a name="line.463"></a>
-<span class="sourceLineNo">464</span>      Iterator&lt;StarRecord&gt; iter = archive.iterator();<a name="line.464"></a>
-<span class="sourceLineNo">465</span>      while (iter.hasNext()) {<a name="line.465"></a>
-<span class="sourceLineNo">466</span>        iter.next();<a name="line.466"></a>
-<span class="sourceLineNo">467</span>      }<a name="line.467"></a>
-<span class="sourceLineNo">468</span>    } catch (UnsupportedArchiveException e) {<a name="line.468"></a>
-<span class="sourceLineNo">469</span>      fail("Extensions with no core IDs should be ignored");<a name="line.469"></a>
-<span class="sourceLineNo">470</span>    }<a name="line.470"></a>
-<span class="sourceLineNo">471</span>  }<a name="line.471"></a>
-<span class="sourceLineNo">472</span><a name="line.472"></a>
-<span class="sourceLineNo">473</span>  /**<a name="line.473"></a>
-<span class="sourceLineNo">474</span>   * Test opening a single data file with both eventID column, meaning it has dwc:Event rowType.<a name="line.474"></a>
-<span class="sourceLineNo">475</span>   */<a name="line.475"></a>
-<span class="sourceLineNo">476</span>  @Test<a name="line.476"></a>
-<span class="sourceLineNo">477</span>  public void testOpenArchiveForEventCore() throws IOException, UnsupportedArchiveException {<a name="line.477"></a>
-<span class="sourceLineNo">478</span>    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("event.txt").toPath());<a name="line.478"></a>
-<span class="sourceLineNo">479</span>    assertNotNull(arch.getCore());<a name="line.479"></a>
-<span class="sourceLineNo">480</span>    assertNotNull(arch.getCore().getId());<a name="line.480"></a>
-<span class="sourceLineNo">481</span>    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());<a name="line.481"></a>
-<span class="sourceLineNo">482</span>    assertNotNull(arch.getCore().getRowType());<a name="line.482"></a>
-<span class="sourceLineNo">483</span>    assertEquals(DwcTerm.Event, arch.getCore().getRowType());<a name="line.483"></a>
-<span class="sourceLineNo">484</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.484"></a>
-<span class="sourceLineNo">485</span>    assertEquals(0, arch.getExtensions().size());<a name="line.485"></a>
-<span class="sourceLineNo">486</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.486"></a>
-<span class="sourceLineNo">487</span>    StarRecord star = dwci.next();<a name="line.487"></a>
-<span class="sourceLineNo">488</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.488"></a>
-<span class="sourceLineNo">489</span>    assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());<a name="line.489"></a>
-<span class="sourceLineNo">490</span>  }<a name="line.490"></a>
-<span class="sourceLineNo">491</span><a name="line.491"></a>
-<span class="sourceLineNo">492</span>  /**<a name="line.492"></a>
-<span class="sourceLineNo">493</span>   * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term<a name="line.493"></a>
-<span class="sourceLineNo">494</span>   * gets set to (DwcTerm.eventID and its rowType gets set to DwcTerm.Event.<a name="line.494"></a>
-<span class="sourceLineNo">495</span>   */<a name="line.495"></a>
-<span class="sourceLineNo">496</span>  @Test<a name="line.496"></a>
-<span class="sourceLineNo">497</span>  public void testOpenArchiveForGenericCore() throws IOException, UnsupportedArchiveException {<a name="line.497"></a>
-<span class="sourceLineNo">498</span>    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("event-plus-id.txt").toPath());<a name="line.498"></a>
-<span class="sourceLineNo">499</span>    assertNotNull(arch.getCore());<a name="line.499"></a>
-<span class="sourceLineNo">500</span>    assertNotNull(arch.getCore().getId());<a name="line.500"></a>
-<span class="sourceLineNo">501</span>    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());<a name="line.501"></a>
-<span class="sourceLineNo">502</span>    assertEquals(DwcTerm.Event, arch.getCore().getRowType());<a name="line.502"></a>
-<span class="sourceLineNo">503</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.503"></a>
-<span class="sourceLineNo">504</span>    assertEquals(0, arch.getExtensions().size());<a name="line.504"></a>
-<span class="sourceLineNo">505</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.505"></a>
-<span class="sourceLineNo">506</span>    StarRecord star = dwci.next();<a name="line.506"></a>
-<span class="sourceLineNo">507</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.507"></a>
-<span class="sourceLineNo">508</span>    assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());<a name="line.508"></a>
-<span class="sourceLineNo">509</span>  }<a name="line.509"></a>
-<span class="sourceLineNo">510</span><a name="line.510"></a>
-<span class="sourceLineNo">511</span>  /**<a name="line.511"></a>
-<span class="sourceLineNo">512</span>   * Basic validation of archives, where we rely on falling back to defaults from the DWC-A metadata schema.<a name="line.512"></a>
-<span class="sourceLineNo">513</span>   */<a name="line.513"></a>
-<span class="sourceLineNo">514</span>  @Test<a name="line.514"></a>
-<span class="sourceLineNo">515</span>  public void testFallbackToDefaultsArchives() throws IOException {<a name="line.515"></a>
-<span class="sourceLineNo">516</span>    try {<a name="line.516"></a>
-<span class="sourceLineNo">517</span>      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/meta-file-encoding-missing").toPath());<a name="line.517"></a>
-<span class="sourceLineNo">518</span>      assertEquals("UTF-8", arch.getCore().getEncoding());<a name="line.518"></a>
-<span class="sourceLineNo">519</span>    } catch (UnsupportedArchiveException e) {<a name="line.519"></a>
-<span class="sourceLineNo">520</span>      fail("Core file encoding defaults to UTF-8 if missing in meta.xml.");<a name="line.520"></a>
-<span class="sourceLineNo">521</span>    }<a name="line.521"></a>
-<span class="sourceLineNo">522</span><a name="line.522"></a>
-<span class="sourceLineNo">523</span>    try {<a name="line.523"></a>
-<span class="sourceLineNo">524</span>      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/extension-encoding-missing").toPath());<a name="line.524"></a>
-<span class="sourceLineNo">525</span>      assertEquals("UTF-8", arch.getExtension(GbifTerm.Multimedia).getEncoding());<a name="line.525"></a>
-<span class="sourceLineNo">526</span>    } catch (UnsupportedArchiveException e) {<a name="line.526"></a>
-<span class="sourceLineNo">527</span>      fail("Extension file encoding defaults to UTF-8 if missing in meta.xml.");<a name="line.527"></a>
-<span class="sourceLineNo">528</span>    }<a name="line.528"></a>
-<span class="sourceLineNo">529</span>  }<a name="line.529"></a>
-<span class="sourceLineNo">530</span><a name="line.530"></a>
-<span class="sourceLineNo">531</span>  /**<a name="line.531"></a>
-<span class="sourceLineNo">532</span>   * Basic validation of archives, that the declared files exist and have basic, valid structure.<a name="line.532"></a>
-<span class="sourceLineNo">533</span>   */<a name="line.533"></a>
-<span class="sourceLineNo">534</span>  @Test<a name="line.534"></a>
-<span class="sourceLineNo">535</span>  public void testInvalidArchives() throws IOException {<a name="line.535"></a>
-<span class="sourceLineNo">536</span>    // Simple archive problems<a name="line.536"></a>
-<span class="sourceLineNo">537</span>    try {<a name="line.537"></a>
-<span class="sourceLineNo">538</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/empty").toPath());<a name="line.538"></a>
-<span class="sourceLineNo">539</span>      fail("Empty archive should not be opened.");<a name="line.539"></a>
-<span class="sourceLineNo">540</span>    } catch (UnsupportedArchiveException e) {}<a name="line.540"></a>
-<span class="sourceLineNo">541</span><a name="line.541"></a>
-<span class="sourceLineNo">542</span>    try {<a name="line.542"></a>
-<span class="sourceLineNo">543</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/meta-file-location-missing").toPath());<a name="line.543"></a>
-<span class="sourceLineNo">544</span>      fail("Archive with missing file location in meta.xml should not be opened.");<a name="line.544"></a>
-<span class="sourceLineNo">545</span>    } catch (UnsupportedArchiveException e) {}<a name="line.545"></a>
+<span class="sourceLineNo">454</span>   * Test extracting a CSV file containing embedded JSON, which itself contains escaped quotes.<a name="line.454"></a>
+<span class="sourceLineNo">455</span>   *<a name="line.455"></a>
+<span class="sourceLineNo">456</span>   * JSON value: { "test": "value, \"like\" this" }<a name="line.456"></a>
+<span class="sourceLineNo">457</span>   *<a name="line.457"></a>
+<span class="sourceLineNo">458</span>   * As a column in CSV: "{ ""test"": ""value, \""like\"" this"" }"<a name="line.458"></a>
+<span class="sourceLineNo">459</span>   */<a name="line.459"></a>
+<span class="sourceLineNo">460</span>  @Test<a name="line.460"></a>
+<span class="sourceLineNo">461</span>  public void testCsvJsonEscapedQuotes() throws UnsupportedArchiveException, IOException {<a name="line.461"></a>
+<span class="sourceLineNo">462</span>    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("issues/csv-json-escaped-quotes").toPath());<a name="line.462"></a>
+<span class="sourceLineNo">463</span><a name="line.463"></a>
+<span class="sourceLineNo">464</span>    arch.initialize();<a name="line.464"></a>
+<span class="sourceLineNo">465</span><a name="line.465"></a>
+<span class="sourceLineNo">466</span>    arch.validate();<a name="line.466"></a>
+<span class="sourceLineNo">467</span><a name="line.467"></a>
+<span class="sourceLineNo">468</span>    // Archive only has one record.<a name="line.468"></a>
+<span class="sourceLineNo">469</span>    Record rec = arch.getCore().iterator().next();<a name="line.469"></a>
+<span class="sourceLineNo">470</span><a name="line.470"></a>
+<span class="sourceLineNo">471</span>    assertEquals("779", rec.id());<a name="line.471"></a>
+<span class="sourceLineNo">472</span>    assertEquals("Cambridge, Cambridge", rec.value(DwcTerm.locality));<a name="line.472"></a>
+<span class="sourceLineNo">473</span>    // Without the Java escapes: {"chronostratigraphy": "Cretaceous, Early Cretaceous, Albian - Late Cretaceous, Cenomanian", "cataloguedescription": "Very worn vertebra. Old catalogue says \"fragments of bone\".", "created": "2009-05-13", "barcode": "010039076", "project": "eMesozoic", "determinationnames": "Ornithocheirus", "subdepartment": "Vertebrates", "lithostratigraphy": "Selborne Group, Upper Greensand Formation, Cambridge Greensand Member", "imagecategory": ["Register;Specimen"]}<a name="line.473"></a>
+<span class="sourceLineNo">474</span>    assertEquals("{\"chronostratigraphy\": \"Cretaceous, Early Cretaceous, Albian - Late Cretaceous, Cenomanian\", \"cataloguedescription\": \"Very worn vertebra. Old catalogue says \\\"fragments of bone\\\".\", \"created\": \"2009-05-13\", \"barcode\": \"010039076\", \"project\": \"eMesozoic\", \"determinationnames\": \"Ornithocheirus\", \"subdepartment\": \"Vertebrates\", \"lithostratigraphy\": \"Selborne Group, Upper Greensand Formation, Cambridge Greensand Member\", \"imagecategory\": [\"Register;Specimen\"]}", rec.value(DwcTerm.dynamicProperties));<a name="line.474"></a>
+<span class="sourceLineNo">475</span>  }<a name="line.475"></a>
+<span class="sourceLineNo">476</span><a name="line.476"></a>
+<span class="sourceLineNo">477</span>  /**<a name="line.477"></a>
+<span class="sourceLineNo">478</span>   * Ensure that extensions are just skipped for archives that do not have the core id in the mapped extension.<a name="line.478"></a>
+<span class="sourceLineNo">479</span>   * https://code.google.com/p/darwincore/issues/detail?id=232<a name="line.479"></a>
+<span class="sourceLineNo">480</span>   */<a name="line.480"></a>
+<span class="sourceLineNo">481</span>  @Test<a name="line.481"></a>
+<span class="sourceLineNo">482</span>  public void testNullCoreID() throws IOException {<a name="line.482"></a>
+<span class="sourceLineNo">483</span>    try {<a name="line.483"></a>
+<span class="sourceLineNo">484</span>      File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();<a name="line.484"></a>
+<span class="sourceLineNo">485</span>      tmpDir.deleteOnExit();<a name="line.485"></a>
+<span class="sourceLineNo">486</span><a name="line.486"></a>
+<span class="sourceLineNo">487</span>      Archive archive = DwcFiles.fromCompressed(FileUtils.getClasspathFile("nullCoreID.zip").toPath(), tmpDir.toPath());<a name="line.487"></a>
+<span class="sourceLineNo">488</span>      Iterator&lt;StarRecord&gt; iter = archive.iterator();<a name="line.488"></a>
+<span class="sourceLineNo">489</span>      while (iter.hasNext()) {<a name="line.489"></a>
+<span class="sourceLineNo">490</span>        iter.next();<a name="line.490"></a>
+<span class="sourceLineNo">491</span>      }<a name="line.491"></a>
+<span class="sourceLineNo">492</span>    } catch (UnsupportedArchiveException e) {<a name="line.492"></a>
+<span class="sourceLineNo">493</span>      fail("Extensions with no core IDs should be ignored");<a name="line.493"></a>
+<span class="sourceLineNo">494</span>    }<a name="line.494"></a>
+<span class="sourceLineNo">495</span>  }<a name="line.495"></a>
+<span class="sourceLineNo">496</span><a name="line.496"></a>
+<span class="sourceLineNo">497</span>  /**<a name="line.497"></a>
+<span class="sourceLineNo">498</span>   * Test opening a single data file with both eventID column, meaning it has dwc:Event rowType.<a name="line.498"></a>
+<span class="sourceLineNo">499</span>   */<a name="line.499"></a>
+<span class="sourceLineNo">500</span>  @Test<a name="line.500"></a>
+<span class="sourceLineNo">501</span>  public void testOpenArchiveForEventCore() throws IOException, UnsupportedArchiveException {<a name="line.501"></a>
+<span class="sourceLineNo">502</span>    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("event.txt").toPath());<a name="line.502"></a>
+<span class="sourceLineNo">503</span>    assertNotNull(arch.getCore());<a name="line.503"></a>
+<span class="sourceLineNo">504</span>    assertNotNull(arch.getCore().getId());<a name="line.504"></a>
+<span class="sourceLineNo">505</span>    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());<a name="line.505"></a>
+<span class="sourceLineNo">506</span>    assertNotNull(arch.getCore().getRowType());<a name="line.506"></a>
+<span class="sourceLineNo">507</span>    assertEquals(DwcTerm.Event, arch.getCore().getRowType());<a name="line.507"></a>
+<span class="sourceLineNo">508</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.508"></a>
+<span class="sourceLineNo">509</span>    assertEquals(0, arch.getExtensions().size());<a name="line.509"></a>
+<span class="sourceLineNo">510</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.510"></a>
+<span class="sourceLineNo">511</span>    StarRecord star = dwci.next();<a name="line.511"></a>
+<span class="sourceLineNo">512</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.512"></a>
+<span class="sourceLineNo">513</span>    assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());<a name="line.513"></a>
+<span class="sourceLineNo">514</span>  }<a name="line.514"></a>
+<span class="sourceLineNo">515</span><a name="line.515"></a>
+<span class="sourceLineNo">516</span>  /**<a name="line.516"></a>
+<span class="sourceLineNo">517</span>   * Test opening a single data file with a generic ID column and an eventID column meaning the Archive's ID-term<a name="line.517"></a>
+<span class="sourceLineNo">518</span>   * gets set to (DwcTerm.eventID and its rowType gets set to DwcTerm.Event.<a name="line.518"></a>
+<span class="sourceLineNo">519</span>   */<a name="line.519"></a>
+<span class="sourceLineNo">520</span>  @Test<a name="line.520"></a>
+<span class="sourceLineNo">521</span>  public void testOpenArchiveForGenericCore() throws IOException, UnsupportedArchiveException {<a name="line.521"></a>
+<span class="sourceLineNo">522</span>    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("event-plus-id.txt").toPath());<a name="line.522"></a>
+<span class="sourceLineNo">523</span>    assertNotNull(arch.getCore());<a name="line.523"></a>
+<span class="sourceLineNo">524</span>    assertNotNull(arch.getCore().getId());<a name="line.524"></a>
+<span class="sourceLineNo">525</span>    assertEquals(DwcTerm.eventID, arch.getCore().getId().getTerm());<a name="line.525"></a>
+<span class="sourceLineNo">526</span>    assertEquals(DwcTerm.Event, arch.getCore().getRowType());<a name="line.526"></a>
+<span class="sourceLineNo">527</span>    assertTrue(arch.getCore().hasTerm(DwcTerm.samplingProtocol));<a name="line.527"></a>
+<span class="sourceLineNo">528</span>    assertEquals(0, arch.getExtensions().size());<a name="line.528"></a>
+<span class="sourceLineNo">529</span>    Iterator&lt;StarRecord&gt; dwci = arch.iterator();<a name="line.529"></a>
+<span class="sourceLineNo">530</span>    StarRecord star = dwci.next();<a name="line.530"></a>
+<span class="sourceLineNo">531</span>    assertEquals("Aubach above Wiesthal", star.core().value(DwcTerm.locality));<a name="line.531"></a>
+<span class="sourceLineNo">532</span>    assertEquals(DwcLayout.FILE_ROOT, arch.getDwcLayout());<a name="line.532"></a>
+<span class="sourceLineNo">533</span>  }<a name="line.533"></a>
+<span class="sourceLineNo">534</span><a name="line.534"></a>
+<span class="sourceLineNo">535</span>  /**<a name="line.535"></a>
+<span class="sourceLineNo">536</span>   * Basic validation of archives, where we rely on falling back to defaults from the DWC-A metadata schema.<a name="line.536"></a>
+<span class="sourceLineNo">537</span>   */<a name="line.537"></a>
+<span class="sourceLineNo">538</span>  @Test<a name="line.538"></a>
+<span class="sourceLineNo">539</span>  public void testFallbackToDefaultsArchives() throws IOException {<a name="line.539"></a>
+<span class="sourceLineNo">540</span>    try {<a name="line.540"></a>
+<span class="sourceLineNo">541</span>      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/meta-file-encoding-missing").toPath());<a name="line.541"></a>
+<span class="sourceLineNo">542</span>      assertEquals("UTF-8", arch.getCore().getEncoding());<a name="line.542"></a>
+<span class="sourceLineNo">543</span>    } catch (UnsupportedArchiveException e) {<a name="line.543"></a>
+<span class="sourceLineNo">544</span>      fail("Core file encoding defaults to UTF-8 if missing in meta.xml.");<a name="line.544"></a>
+<span class="sourceLineNo">545</span>    }<a name="line.545"></a>
 <span class="sourceLineNo">546</span><a name="line.546"></a>
-<span class="sourceLineNo">547</span>    // Extension archive problems<a name="line.547"></a>
-<span class="sourceLineNo">548</span>    try {<a name="line.548"></a>
-<span class="sourceLineNo">549</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-missing").toPath());<a name="line.549"></a>
-<span class="sourceLineNo">550</span>      fail("Archive with missing extension file should not be opened.");<a name="line.550"></a>
-<span class="sourceLineNo">551</span>    } catch (UnsupportedArchiveException e) {}<a name="line.551"></a>
-<span class="sourceLineNo">552</span><a name="line.552"></a>
-<span class="sourceLineNo">553</span>    try {<a name="line.553"></a>
-<span class="sourceLineNo">554</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-location-missing").toPath());<a name="line.554"></a>
-<span class="sourceLineNo">555</span>      fail("Archive with missing extension file location in meta.xml should not be opened.");<a name="line.555"></a>
-<span class="sourceLineNo">556</span>    } catch (UnsupportedArchiveException e) {}<a name="line.556"></a>
-<span class="sourceLineNo">557</span><a name="line.557"></a>
-<span class="sourceLineNo">558</span>    try {<a name="line.558"></a>
-<span class="sourceLineNo">559</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-core-id-missing").toPath());<a name="line.559"></a>
-<span class="sourceLineNo">560</span>      fail("Archive with extension lacking coreid in meta.xml should not be opened.");<a name="line.560"></a>
-<span class="sourceLineNo">561</span>    } catch (UnsupportedArchiveException e) {}<a name="line.561"></a>
-<span class="sourceLineNo">562</span><a name="line.562"></a>
-<span class="sourceLineNo">563</span>    try {<a name="line.563"></a>
-<span class="sourceLineNo">564</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-id-missing").toPath());<a name="line.564"></a>
-<span class="sourceLineNo">565</span>      fail("Archive with extension and core missing id in meta.xml should not be opened.");<a name="line.565"></a>
-<span class="sourceLineNo">566</span>    } catch (UnsupportedArchiveException e) {}<a name="line.566"></a>
-<span class="sourceLineNo">567</span>  }<a name="line.567"></a>
-<span class="sourceLineNo">568</span>}<a name="line.568"></a>
+<span class="sourceLineNo">547</span>    try {<a name="line.547"></a>
+<span class="sourceLineNo">548</span>      Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("defaults/extension-encoding-missing").toPath());<a name="line.548"></a>
+<span class="sourceLineNo">549</span>      assertEquals("UTF-8", arch.getExtension(GbifTerm.Multimedia).getEncoding());<a name="line.549"></a>
+<span class="sourceLineNo">550</span>    } catch (UnsupportedArchiveException e) {<a name="line.550"></a>
+<span class="sourceLineNo">551</span>      fail("Extension file encoding defaults to UTF-8 if missing in meta.xml.");<a name="line.551"></a>
+<span class="sourceLineNo">552</span>    }<a name="line.552"></a>
+<span class="sourceLineNo">553</span>  }<a name="line.553"></a>
+<span class="sourceLineNo">554</span><a name="line.554"></a>
+<span class="sourceLineNo">555</span>  /**<a name="line.555"></a>
+<span class="sourceLineNo">556</span>   * Basic validation of archives, that the declared files exist and have basic, valid structure.<a name="line.556"></a>
+<span class="sourceLineNo">557</span>   */<a name="line.557"></a>
+<span class="sourceLineNo">558</span>  @Test<a name="line.558"></a>
+<span class="sourceLineNo">559</span>  public void testInvalidArchives() throws IOException {<a name="line.559"></a>
+<span class="sourceLineNo">560</span>    // Simple archive problems<a name="line.560"></a>
+<span class="sourceLineNo">561</span>    try {<a name="line.561"></a>
+<span class="sourceLineNo">562</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/empty").toPath());<a name="line.562"></a>
+<span class="sourceLineNo">563</span>      fail("Empty archive should not be opened.");<a name="line.563"></a>
+<span class="sourceLineNo">564</span>    } catch (UnsupportedArchiveException e) {}<a name="line.564"></a>
+<span class="sourceLineNo">565</span><a name="line.565"></a>
+<span class="sourceLineNo">566</span>    try {<a name="line.566"></a>
+<span class="sourceLineNo">567</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/meta-file-location-missing").toPath());<a name="line.567"></a>
+<span class="sourceLineNo">568</span>      fail("Archive with missing file location in meta.xml should not be opened.");<a name="line.568"></a>
+<span class="sourceLineNo">569</span>    } catch (UnsupportedArchiveException e) {}<a name="line.569"></a>
+<span class="sourceLineNo">570</span><a name="line.570"></a>
+<span class="sourceLineNo">571</span>    // Extension archive problems<a name="line.571"></a>
+<span class="sourceLineNo">572</span>    try {<a name="line.572"></a>
+<span class="sourceLineNo">573</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-missing").toPath());<a name="line.573"></a>
+<span class="sourceLineNo">574</span>      fail("Archive with missing extension file should not be opened.");<a name="line.574"></a>
+<span class="sourceLineNo">575</span>    } catch (UnsupportedArchiveException e) {}<a name="line.575"></a>
+<span class="sourceLineNo">576</span><a name="line.576"></a>
+<span class="sourceLineNo">577</span>    try {<a name="line.577"></a>
+<span class="sourceLineNo">578</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-location-missing").toPath());<a name="line.578"></a>
+<span class="sourceLineNo">579</span>      fail("Archive with missing extension file location in meta.xml should not be opened.");<a name="line.579"></a>
+<span class="sourceLineNo">580</span>    } catch (UnsupportedArchiveException e) {}<a name="line.580"></a>
+<span class="sourceLineNo">581</span><a name="line.581"></a>
+<span class="sourceLineNo">582</span>    try {<a name="line.582"></a>
+<span class="sourceLineNo">583</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-core-id-missing").toPath());<a name="line.583"></a>
+<span class="sourceLineNo">584</span>      fail("Archive with extension lacking coreid in meta.xml should not be opened.");<a name="line.584"></a>
+<span class="sourceLineNo">585</span>    } catch (UnsupportedArchiveException e) {}<a name="line.585"></a>
+<span class="sourceLineNo">586</span><a name="line.586"></a>
+<span class="sourceLineNo">587</span>    try {<a name="line.587"></a>
+<span class="sourceLineNo">588</span>      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-id-missing").toPath());<a name="line.588"></a>
+<span class="sourceLineNo">589</span>      fail("Archive with extension and core missing id in meta.xml should not be opened.");<a name="line.589"></a>
+<span class="sourceLineNo">590</span>    } catch (UnsupportedArchiveException e) {}<a name="line.590"></a>
+<span class="sourceLineNo">591</span>  }<a name="line.591"></a>
+<span class="sourceLineNo">592</span>}<a name="line.592"></a>
 
 
 
