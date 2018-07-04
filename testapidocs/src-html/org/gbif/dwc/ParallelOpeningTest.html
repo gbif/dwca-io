@@ -9,70 +9,77 @@
 <pre><span class="sourceLineNo">001</span>package org.gbif.dwc;<a name="line.1"></a>
 <span class="sourceLineNo">002</span><a name="line.2"></a>
 <span class="sourceLineNo">003</span>import org.gbif.dwc.record.StarRecord;<a name="line.3"></a>
-<span class="sourceLineNo">004</span>import org.gbif.utils.file.FileUtils;<a name="line.4"></a>
-<span class="sourceLineNo">005</span>import org.junit.Assert;<a name="line.5"></a>
-<span class="sourceLineNo">006</span>import org.junit.Test;<a name="line.6"></a>
-<span class="sourceLineNo">007</span>import org.slf4j.Logger;<a name="line.7"></a>
-<span class="sourceLineNo">008</span>import org.slf4j.LoggerFactory;<a name="line.8"></a>
-<span class="sourceLineNo">009</span><a name="line.9"></a>
-<span class="sourceLineNo">010</span>import java.net.URL;<a name="line.10"></a>
-<span class="sourceLineNo">011</span>import java.nio.file.Files;<a name="line.11"></a>
-<span class="sourceLineNo">012</span>import java.nio.file.Path;<a name="line.12"></a>
-<span class="sourceLineNo">013</span><a name="line.13"></a>
-<span class="sourceLineNo">014</span>public class ParallelOpeningTest implements Runnable {<a name="line.14"></a>
-<span class="sourceLineNo">015</span>  private static final Logger LOG = LoggerFactory.getLogger(ParallelOpeningTest.class);<a name="line.15"></a>
-<span class="sourceLineNo">016</span><a name="line.16"></a>
-<span class="sourceLineNo">017</span>  private Archive arch;<a name="line.17"></a>
-<span class="sourceLineNo">018</span><a name="line.18"></a>
-<span class="sourceLineNo">019</span>  /**<a name="line.19"></a>
-<span class="sourceLineNo">020</span>   * Check we don't get a race condition when opening an archive which needs sorting.<a name="line.20"></a>
-<span class="sourceLineNo">021</span>   *<a name="line.21"></a>
-<span class="sourceLineNo">022</span>   * This downloads a large archive (we don't want it in Git) and checks it has at least one extension.<a name="line.22"></a>
-<span class="sourceLineNo">023</span>   */<a name="line.23"></a>
-<span class="sourceLineNo">024</span>  @Test<a name="line.24"></a>
-<span class="sourceLineNo">025</span>  public void testParallelOpening() throws Exception {<a name="line.25"></a>
-<span class="sourceLineNo">026</span>    URL ipni = new URL("http://rs.gbif.org/datasets/itis.zip");<a name="line.26"></a>
-<span class="sourceLineNo">027</span>    Path archivePath = FileUtils.createTempDir().toPath().resolve("itis.zip");<a name="line.27"></a>
-<span class="sourceLineNo">028</span>    Files.copy(ipni.openStream(), archivePath);<a name="line.28"></a>
+<span class="sourceLineNo">004</span>import org.junit.Assert;<a name="line.4"></a>
+<span class="sourceLineNo">005</span>import org.slf4j.Logger;<a name="line.5"></a>
+<span class="sourceLineNo">006</span>import org.slf4j.LoggerFactory;<a name="line.6"></a>
+<span class="sourceLineNo">007</span><a name="line.7"></a>
+<span class="sourceLineNo">008</span>import java.net.URL;<a name="line.8"></a>
+<span class="sourceLineNo">009</span>import java.nio.file.Files;<a name="line.9"></a>
+<span class="sourceLineNo">010</span>import java.nio.file.Path;<a name="line.10"></a>
+<span class="sourceLineNo">011</span>import java.nio.file.Paths;<a name="line.11"></a>
+<span class="sourceLineNo">012</span><a name="line.12"></a>
+<span class="sourceLineNo">013</span>/**<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * This test checks we don't get a race condition between two &lt;strong&gt;processes&lt;/strong&gt; opening the same DWC-A at the<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * same time.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> *<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * It needs to be run from the command line, in parallel.<a name="line.17"></a>
+<span class="sourceLineNo">018</span> *<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * mvn exec:java -Dexec.mainClass=org.gbif.dwc.ParallelOpeningTest<a name="line.19"></a>
+<span class="sourceLineNo">020</span> *<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * Monitor open files with something like:<a name="line.21"></a>
+<span class="sourceLineNo">022</span> *<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * while :; do for i in `pgrep -f ParallelOpeningTest`; do echo $i &amp;&amp; ls -l /proc/$i/fd | grep /tmp/par &amp;&amp; echo; sleep 1; done; done<a name="line.23"></a>
+<span class="sourceLineNo">024</span> */<a name="line.24"></a>
+<span class="sourceLineNo">025</span>public class ParallelOpeningTest {<a name="line.25"></a>
+<span class="sourceLineNo">026</span>  private static final Logger LOG = LoggerFactory.getLogger(ParallelOpeningTest.class);<a name="line.26"></a>
+<span class="sourceLineNo">027</span><a name="line.27"></a>
+<span class="sourceLineNo">028</span>  private Archive arch;<a name="line.28"></a>
 <span class="sourceLineNo">029</span><a name="line.29"></a>
-<span class="sourceLineNo">030</span>    Path extractToFolder = FileUtils.createTempDir().toPath();<a name="line.30"></a>
-<span class="sourceLineNo">031</span>    extractToFolder.toFile().deleteOnExit();<a name="line.31"></a>
-<span class="sourceLineNo">032</span><a name="line.32"></a>
-<span class="sourceLineNo">033</span>    arch = DwcFiles.fromCompressed(archivePath, extractToFolder);<a name="line.33"></a>
-<span class="sourceLineNo">034</span><a name="line.34"></a>
-<span class="sourceLineNo">035</span>    Assert.assertFalse(arch.getExtensions().isEmpty());<a name="line.35"></a>
-<span class="sourceLineNo">036</span><a name="line.36"></a>
-<span class="sourceLineNo">037</span>    // Initialize (i.e. normalize and sort) the archive in the background.<a name="line.37"></a>
-<span class="sourceLineNo">038</span>    new Thread(this).start();<a name="line.38"></a>
-<span class="sourceLineNo">039</span>    // Wait ½s, which should be enough for the CSV header to be written, but not the sorted data rows.<a name="line.39"></a>
-<span class="sourceLineNo">040</span>    Thread.sleep(500);<a name="line.40"></a>
-<span class="sourceLineNo">041</span><a name="line.41"></a>
-<span class="sourceLineNo">042</span>    int counter = 0;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>    for (StarRecord rec : arch) {<a name="line.43"></a>
-<span class="sourceLineNo">044</span>      if (counter == 0) {<a name="line.44"></a>
-<span class="sourceLineNo">045</span>        LOG.info("Read first record {}", rec);<a name="line.45"></a>
-<span class="sourceLineNo">046</span>      }<a name="line.46"></a>
-<span class="sourceLineNo">047</span>      counter++;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>    }<a name="line.48"></a>
-<span class="sourceLineNo">049</span><a name="line.49"></a>
-<span class="sourceLineNo">050</span>    LOG.info("Counted {} records", counter);<a name="line.50"></a>
-<span class="sourceLineNo">051</span><a name="line.51"></a>
-<span class="sourceLineNo">052</span>    Assert.assertTrue("Many records extracted", counter &gt; 500000);<a name="line.52"></a>
+<span class="sourceLineNo">030</span>  /**<a name="line.30"></a>
+<span class="sourceLineNo">031</span>   * Check we don't get a race condition when opening an archive which needs sorting.<a name="line.31"></a>
+<span class="sourceLineNo">032</span>   *<a name="line.32"></a>
+<span class="sourceLineNo">033</span>   * This downloads a large archive (we don't want it in Git) and checks it has at least one extension.<a name="line.33"></a>
+<span class="sourceLineNo">034</span>   */<a name="line.34"></a>
+<span class="sourceLineNo">035</span>  public void testParallelOpening() throws Exception {<a name="line.35"></a>
+<span class="sourceLineNo">036</span>    Path archivePath = Paths.get("/tmp/parallel-opening-test-archive.zip");<a name="line.36"></a>
+<span class="sourceLineNo">037</span>    Path extractToFolder = Paths.get("/tmp/parallel-opening-test-archive");<a name="line.37"></a>
+<span class="sourceLineNo">038</span>    if (!archivePath.toFile().exists()) {<a name="line.38"></a>
+<span class="sourceLineNo">039</span>      URL download = new URL("http://api.gbif.org/v1/occurrence/download/request/0012957-180131172636756.zip");<a name="line.39"></a>
+<span class="sourceLineNo">040</span>      Files.copy(download.openStream(), archivePath);<a name="line.40"></a>
+<span class="sourceLineNo">041</span>      extractToFolder.toFile().mkdir();<a name="line.41"></a>
+<span class="sourceLineNo">042</span>      arch = DwcFiles.fromCompressed(archivePath, extractToFolder);<a name="line.42"></a>
+<span class="sourceLineNo">043</span>    }<a name="line.43"></a>
+<span class="sourceLineNo">044</span><a name="line.44"></a>
+<span class="sourceLineNo">045</span>    arch = DwcFiles.fromLocation(extractToFolder);<a name="line.45"></a>
+<span class="sourceLineNo">046</span><a name="line.46"></a>
+<span class="sourceLineNo">047</span>    Assert.assertFalse(arch.getExtensions().isEmpty());<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>    // Initialize (i.e. normalize and sort) the archive in the background.<a name="line.49"></a>
+<span class="sourceLineNo">050</span>    LOG.info("Initializing archive");<a name="line.50"></a>
+<span class="sourceLineNo">051</span>    arch.initialize();<a name="line.51"></a>
+<span class="sourceLineNo">052</span>    LOG.info("Initialization completed, locks should have been released.");<a name="line.52"></a>
 <span class="sourceLineNo">053</span><a name="line.53"></a>
-<span class="sourceLineNo">054</span>    Files.delete(archivePath);<a name="line.54"></a>
-<span class="sourceLineNo">055</span>    FileUtils.deleteDirectoryRecursively(extractToFolder.toFile());<a name="line.55"></a>
-<span class="sourceLineNo">056</span>  }<a name="line.56"></a>
-<span class="sourceLineNo">057</span><a name="line.57"></a>
-<span class="sourceLineNo">058</span>  @Override<a name="line.58"></a>
-<span class="sourceLineNo">059</span>  public void run() {<a name="line.59"></a>
-<span class="sourceLineNo">060</span>    LOG.info("Initializing archive in a background thread");<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    try {<a name="line.61"></a>
-<span class="sourceLineNo">062</span>      arch.initialize();<a name="line.62"></a>
-<span class="sourceLineNo">063</span>    } catch (Exception e) {<a name="line.63"></a>
-<span class="sourceLineNo">064</span>      throw new RuntimeException(e);<a name="line.64"></a>
-<span class="sourceLineNo">065</span>    }<a name="line.65"></a>
-<span class="sourceLineNo">066</span>  }<a name="line.66"></a>
-<span class="sourceLineNo">067</span>}<a name="line.67"></a>
+<span class="sourceLineNo">054</span>    int counter = 0;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>    for (StarRecord rec : arch) {<a name="line.55"></a>
+<span class="sourceLineNo">056</span>      if (counter == 0) {<a name="line.56"></a>
+<span class="sourceLineNo">057</span>        LOG.info("Read first record {}", rec);<a name="line.57"></a>
+<span class="sourceLineNo">058</span>      }<a name="line.58"></a>
+<span class="sourceLineNo">059</span>      counter++;<a name="line.59"></a>
+<span class="sourceLineNo">060</span>    }<a name="line.60"></a>
+<span class="sourceLineNo">061</span><a name="line.61"></a>
+<span class="sourceLineNo">062</span>    LOG.info("Counted {} records", counter);<a name="line.62"></a>
+<span class="sourceLineNo">063</span><a name="line.63"></a>
+<span class="sourceLineNo">064</span>    LOG.info("All files should have been closed.");<a name="line.64"></a>
+<span class="sourceLineNo">065</span>    Thread.sleep(30_000);<a name="line.65"></a>
+<span class="sourceLineNo">066</span><a name="line.66"></a>
+<span class="sourceLineNo">067</span>    Assert.assertTrue("Many records extracted", counter &gt; 500000);<a name="line.67"></a>
+<span class="sourceLineNo">068</span>  }<a name="line.68"></a>
+<span class="sourceLineNo">069</span><a name="line.69"></a>
+<span class="sourceLineNo">070</span>  public static void main(String... args) throws Exception {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>    ParallelOpeningTest pot = new ParallelOpeningTest();<a name="line.71"></a>
+<span class="sourceLineNo">072</span>    pot.testParallelOpening();<a name="line.72"></a>
+<span class="sourceLineNo">073</span>  }<a name="line.73"></a>
+<span class="sourceLineNo">074</span>}<a name="line.74"></a>
 
 
 
