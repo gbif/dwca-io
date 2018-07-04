@@ -162,6 +162,7 @@ public class ArchiveFile implements Iterable<Record> {
       // If we already sorted the file and its source didn't change we can avoid doing it again
       if (sortedFile.exists() && Files.getLastModifiedTime(sortedFile.toPath()).toInstant().isAfter(
           Files.getLastModifiedTime(fileToSort.toPath()).toInstant())) {
+        LOG.debug("File {} is already sorted ({}B)", sortedFile, sortedFile.length());
         return false;
       }
 
@@ -181,6 +182,7 @@ public class ArchiveFile implements Iterable<Record> {
       return true;
     } finally {
       lock.release();
+      lockFileRA.close();
     }
   }
 

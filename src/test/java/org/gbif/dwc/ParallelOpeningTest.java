@@ -1,17 +1,28 @@
 package org.gbif.dwc;
 
 import org.gbif.dwc.record.StarRecord;
-import org.gbif.utils.file.FileUtils;
 import org.junit.Assert;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-public class ParallelOpeningTest implements Runnable {
+/**
+ * This test checks we don't get a race condition between two <strong>processes</strong> opening the same DWC-A at the
+ * same time.
+ *
+ * It needs to be run from the command line, in parallel.
+ *
+ * mvn exec:java -Dexec.mainClass=org.gbif.dwc.ParallelOpeningTest
+ *
+ * Monitor open files with something like:
+ *
+ * while :; do for i in `pgrep -f ParallelOpeningTest`; do echo $i && ls -l /proc/$i/fd | grep /tmp/par && echo; sleep 1; done; done
+ */
+public class ParallelOpeningTest {
   private static final Logger LOG = LoggerFactory.getLogger(ParallelOpeningTest.class);
 
   private Archive arch;
@@ -21,23 +32,24 @@ public class ParallelOpeningTest implements Runnable {
    *
    * This downloads a large archive (we don't want it in Git) and checks it has at least one extension.
    */
-  @Test
   public void testParallelOpening() throws Exception {
-    URL ipni = new URL("http://rs.gbif.org/datasets/itis.zip");
-    Path archivePath = FileUtils.createTempDir().toPath().resolve("itis.zip");
-    Files.copy(ipni.openStream(), archivePath);
+    Path archivePath = Paths.get("/tmp/parallel-opening-test-archive.zip");
+    Path extractToFolder = Paths.get("/tmp/parallel-opening-test-archive");
+    if (!archivePath.toFile().exists()) {
+      URL download = new URL("http://api.gbif.org/v1/occurrence/download/request/0012957-180131172636756.zip");
+      Files.copy(download.openStream(), archivePath);
+      extractToFolder.toFile().mkdir();
+      arch = DwcFiles.fromCompressed(archivePath, extractToFolder);
+    }
 
-    Path extractToFolder = FileUtils.createTempDir().toPath();
-    extractToFolder.toFile().deleteOnExit();
-
-    arch = DwcFiles.fromCompressed(archivePath, extractToFolder);
+    arch = DwcFiles.fromLocation(extractToFolder);
 
     Assert.assertFalse(arch.getExtensions().isEmpty());
 
     // Initialize (i.e. normalize and sort) the archive in the background.
-    new Thread(this).start();
-    // Wait ½s, which should be enough for the CSV header to be written, but not the sorted data rows.
-    Thread.sleep(500);
+    LOG.info("Initializing archive");
+    arch.initialize();
+    LOG.info("Initialization completed, locks should have been released.");
 
     int counter = 0;
     for (StarRecord rec : arch) {
@@ -49,19 +61,14 @@ public class ParallelOpeningTest implements Runnable {
 
     LOG.info("Counted {} records", counter);
 
-    Assert.assertTrue("Many records extracted", counter > 500000);
+    LOG.info("All files should have been closed.");
+    Thread.sleep(30_000);
 
-    Files.delete(archivePath);
-    FileUtils.deleteDirectoryRecursively(extractToFolder.toFile());
+    Assert.assertTrue("Many records extracted", counter > 500000);
   }
 
-  @Override
-  public void run() {
-    LOG.info("Initializing archive in a background thread");
-    try {
-      arch.initialize();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+  public static void main(String... args) throws Exception {
+    ParallelOpeningTest pot = new ParallelOpeningTest();
+    pot.testParallelOpening();
   }
 }
