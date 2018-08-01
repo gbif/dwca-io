@@ -34,8 +34,8 @@
     <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>3.6</commons-lang.version>
     <commons-digester.version>3.2</commons-digester.version>
-    <dwc-api.version>1.18</dwc-api.version>
-    <freemarker.version>2.3.25-incubating</freemarker.version>
+    <dwc-api.version>1.19</dwc-api.version>
+    <freemarker.version>2.3.26-incubating</freemarker.version>
     <gbif-common.version>0.41</gbif-common.version>
     <gbif-registry-metadata.version>2.59</gbif-registry-metadata.version>
     <guava.version>23.0</guava.version>
