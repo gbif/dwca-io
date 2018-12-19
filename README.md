@@ -83,3 +83,13 @@ Add the dwca-io artifact
 
 ## Documentation
 [JavaDocs](http://gbif.github.io/dwca-io/apidocs/)
+
+## Unsupported archives
+
+[Darwin Core Text](https://dwc.tdwg.org/text/) specifies several features which are not supported by this library.
+
+* A `<core>` or `<extension>` setting a `dateFormat`
+* A `<files>` `<location>` which is a URL
+* Multiple `<location>`s for a single `<files>` element
+
+These features are very rarely used, and will not be implemented without good reason.
