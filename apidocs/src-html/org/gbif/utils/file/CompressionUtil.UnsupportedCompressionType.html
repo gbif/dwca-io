@@ -357,43 +357,43 @@
 <span class="sourceLineNo">349</span><a name="line.349"></a>
 <span class="sourceLineNo">350</span>    // This is changed from using ZipFile to a ZipInputStream since Java 8u192 can't open certain Zip64 files.<a name="line.350"></a>
 <span class="sourceLineNo">351</span>    // https://bugs.openjdk.java.net/browse/JDK-8186464<a name="line.351"></a>
-<span class="sourceLineNo">352</span>    FileInputStream fInput = new FileInputStream(zipFile);<a name="line.352"></a>
-<span class="sourceLineNo">353</span>    ZipInputStream zipInput = new ZipInputStream(fInput);<a name="line.353"></a>
-<span class="sourceLineNo">354</span>    ZipEntry entry;<a name="line.354"></a>
+<span class="sourceLineNo">352</span>    try (FileInputStream fInput = new FileInputStream(zipFile);<a name="line.352"></a>
+<span class="sourceLineNo">353</span>         ZipInputStream zipInput = new ZipInputStream(fInput)) {<a name="line.353"></a>
+<span class="sourceLineNo">354</span>      ZipEntry entry;<a name="line.354"></a>
 <span class="sourceLineNo">355</span><a name="line.355"></a>
-<span class="sourceLineNo">356</span>    while ((entry = zipInput.getNextEntry()) != null) {<a name="line.356"></a>
-<span class="sourceLineNo">357</span>      // ignore resource fork directories and subfiles<a name="line.357"></a>
-<span class="sourceLineNo">358</span>      if (entry.getName().toUpperCase().contains(APPLE_RESOURCE_FORK)) {<a name="line.358"></a>
-<span class="sourceLineNo">359</span>        LOG.debug("Ignoring resource fork file: " + entry.getName());<a name="line.359"></a>
-<span class="sourceLineNo">360</span>      }<a name="line.360"></a>
-<span class="sourceLineNo">361</span>      // ignore directories and hidden directories (e.g. .svn) (based on flag)<a name="line.361"></a>
-<span class="sourceLineNo">362</span>      else if (entry.isDirectory()) {<a name="line.362"></a>
-<span class="sourceLineNo">363</span>        if (isHiddenFile(new File(entry.getName()))) {<a name="line.363"></a>
-<span class="sourceLineNo">364</span>          LOG.debug("Ignoring hidden directory: " + entry.getName());<a name="line.364"></a>
-<span class="sourceLineNo">365</span>        } else if (keepSubdirectories) {<a name="line.365"></a>
-<span class="sourceLineNo">366</span>          new File(directory, entry.getName()).mkdir();<a name="line.366"></a>
-<span class="sourceLineNo">367</span>        } else {<a name="line.367"></a>
-<span class="sourceLineNo">368</span>          LOG.debug("Ignoring (sub)directory: " + entry.getName());<a name="line.368"></a>
-<span class="sourceLineNo">369</span>        }<a name="line.369"></a>
-<span class="sourceLineNo">370</span>      }<a name="line.370"></a>
-<span class="sourceLineNo">371</span>      // ignore hidden files<a name="line.371"></a>
-<span class="sourceLineNo">372</span>      else {<a name="line.372"></a>
-<span class="sourceLineNo">373</span>        if (isHiddenFile(new File(entry.getName()))) {<a name="line.373"></a>
-<span class="sourceLineNo">374</span>          LOG.debug("Ignoring hidden file: " + entry.getName());<a name="line.374"></a>
-<span class="sourceLineNo">375</span>        } else {<a name="line.375"></a>
-<span class="sourceLineNo">376</span>          File targetFile = (keepSubdirectories) ? new File(directory, entry.getName())<a name="line.376"></a>
-<span class="sourceLineNo">377</span>            : new File(directory, new File(entry.getName()).getName());<a name="line.377"></a>
-<span class="sourceLineNo">378</span>          // ensure parent folder always exists, and extract file<a name="line.378"></a>
-<span class="sourceLineNo">379</span>          createParentFolder(targetFile);<a name="line.379"></a>
+<span class="sourceLineNo">356</span>      while ((entry = zipInput.getNextEntry()) != null) {<a name="line.356"></a>
+<span class="sourceLineNo">357</span>        // ignore resource fork directories and subfiles<a name="line.357"></a>
+<span class="sourceLineNo">358</span>        if (entry.getName().toUpperCase().contains(APPLE_RESOURCE_FORK)) {<a name="line.358"></a>
+<span class="sourceLineNo">359</span>          LOG.debug("Ignoring resource fork file: " + entry.getName());<a name="line.359"></a>
+<span class="sourceLineNo">360</span>        }<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        // ignore directories and hidden directories (e.g. .svn) (based on flag)<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        else if (entry.isDirectory()) {<a name="line.362"></a>
+<span class="sourceLineNo">363</span>          if (isHiddenFile(new File(entry.getName()))) {<a name="line.363"></a>
+<span class="sourceLineNo">364</span>            LOG.debug("Ignoring hidden directory: " + entry.getName());<a name="line.364"></a>
+<span class="sourceLineNo">365</span>          } else if (keepSubdirectories) {<a name="line.365"></a>
+<span class="sourceLineNo">366</span>            new File(directory, entry.getName()).mkdir();<a name="line.366"></a>
+<span class="sourceLineNo">367</span>          } else {<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            LOG.debug("Ignoring (sub)directory: " + entry.getName());<a name="line.368"></a>
+<span class="sourceLineNo">369</span>          }<a name="line.369"></a>
+<span class="sourceLineNo">370</span>        }<a name="line.370"></a>
+<span class="sourceLineNo">371</span>        // ignore hidden files<a name="line.371"></a>
+<span class="sourceLineNo">372</span>        else {<a name="line.372"></a>
+<span class="sourceLineNo">373</span>          if (isHiddenFile(new File(entry.getName()))) {<a name="line.373"></a>
+<span class="sourceLineNo">374</span>            LOG.debug("Ignoring hidden file: " + entry.getName());<a name="line.374"></a>
+<span class="sourceLineNo">375</span>          } else {<a name="line.375"></a>
+<span class="sourceLineNo">376</span>            File targetFile = (keepSubdirectories) ? new File(directory, entry.getName())<a name="line.376"></a>
+<span class="sourceLineNo">377</span>              : new File(directory, new File(entry.getName()).getName());<a name="line.377"></a>
+<span class="sourceLineNo">378</span>            // ensure parent folder always exists, and extract file<a name="line.378"></a>
+<span class="sourceLineNo">379</span>            createParentFolder(targetFile);<a name="line.379"></a>
 <span class="sourceLineNo">380</span><a name="line.380"></a>
-<span class="sourceLineNo">381</span>          LOG.debug("Extracting file: {} to: {}", entry.getName(), targetFile.getAbsolutePath());<a name="line.381"></a>
-<span class="sourceLineNo">382</span>          try (OutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile))) {<a name="line.382"></a>
-<span class="sourceLineNo">383</span>            IOUtils.copy(zipInput, out);<a name="line.383"></a>
-<span class="sourceLineNo">384</span>          }<a name="line.384"></a>
-<span class="sourceLineNo">385</span>        }<a name="line.385"></a>
-<span class="sourceLineNo">386</span>      }<a name="line.386"></a>
-<span class="sourceLineNo">387</span>    }<a name="line.387"></a>
-<span class="sourceLineNo">388</span>    zipInput.close();<a name="line.388"></a>
+<span class="sourceLineNo">381</span>            LOG.debug("Extracting file: {} to: {}", entry.getName(), targetFile.getAbsolutePath());<a name="line.381"></a>
+<span class="sourceLineNo">382</span>            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile))) {<a name="line.382"></a>
+<span class="sourceLineNo">383</span>              IOUtils.copy(zipInput, out);<a name="line.383"></a>
+<span class="sourceLineNo">384</span>            }<a name="line.384"></a>
+<span class="sourceLineNo">385</span>          }<a name="line.385"></a>
+<span class="sourceLineNo">386</span>        }<a name="line.386"></a>
+<span class="sourceLineNo">387</span>      }<a name="line.387"></a>
+<span class="sourceLineNo">388</span>    }<a name="line.388"></a>
 <span class="sourceLineNo">389</span>    // remove the wrapping root directory and flatten structure<a name="line.389"></a>
 <span class="sourceLineNo">390</span>    if (keepSubdirectories) {<a name="line.390"></a>
 <span class="sourceLineNo">391</span>      removeRootDirectory(directory);<a name="line.391"></a>
