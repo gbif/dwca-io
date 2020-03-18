@@ -34,7 +34,7 @@
     <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>3.9</commons-lang.version>
     <commons-digester.version>3.2</commons-digester.version>
-    <dwc-api.version>1.25-SNAPSHOT</dwc-api.version>
+    <dwc-api.version>1.25</dwc-api.version>
     <freemarker.version>2.3.28</freemarker.version>
     <gbif-common.version>0.45</gbif-common.version>
     <gbif-registry-metadata.version>2.59</gbif-registry-metadata.version>
