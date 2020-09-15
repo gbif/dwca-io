@@ -310,7 +310,7 @@ public class DwcaWriterTest {
 
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
 
-    writer.addMetadata("<eml/>", "eml.xml");
+    writer.setMetadata("<eml/>", "eml.xml");
     writer.close();
 
     Archive arch = DwcFiles.fromLocation(dwcaDir.toPath());

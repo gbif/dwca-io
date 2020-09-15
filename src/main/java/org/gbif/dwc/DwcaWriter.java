@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -396,16 +398,25 @@ public class DwcaWriter {
     }
   }
 
-  protected static void writeMetadata(String m, File f) throws IOException {
-    if (m != null) {
-      try (Writer writer = new FileWriter(f)){
-        writer.write(m);
+  protected static void writeMetadata(String metadata, File f) throws IOException {
+    writeMetadata(IOUtils.toInputStream(metadata, StandardCharsets.UTF_8), f);
+  }
+
+  protected static void writeMetadata(InputStream metadata, File f) throws IOException {
+    if (metadata != null) {
+      try (FileOutputStream out = new FileOutputStream(f)){
+        IOUtils.copy(metadata, out);
       }
     }
   }
 
-  public void addMetadata(String metadata, String metadataLocation) throws IOException {
+  public void setMetadata(InputStream metadata, String metadataLocation) throws IOException {
+    this.metadataLocation = metadataLocation;
     writeMetadata(metadata, new File(dir, metadataLocation));
+  }
+
+  public void setMetadata(String metadata, String metadataLocation) throws IOException {
+    setMetadata(IOUtils.toInputStream(metadata, StandardCharsets.UTF_8), metadataLocation);
   }
 
   private void addConstituents() throws IOException {

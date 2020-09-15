@@ -37,7 +37,7 @@ public class DwcaStreamWriterTest {
         DwcTerm.taxonRank, 2);
     try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true)){
       String m = "<eml/>";
-      dwcaWriter.addMetadata(m, "eml.xml");
+      dwcaWriter.setMetadata(m, "eml.xml");
       dwcaWriter.write(DwcTerm.Taxon, 0, mapping, ImmutableList.<String[]>builder()
           .add(new String[] { "tax-1", "Abies Mill.", "genus" })
           .add(new String[] { "tax-2", "Abies alba Mill.", "species" })

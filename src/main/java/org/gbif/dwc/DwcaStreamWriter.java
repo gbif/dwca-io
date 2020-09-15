@@ -3,6 +3,7 @@ package org.gbif.dwc;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import org.apache.commons.io.IOUtils;
 import org.gbif.dwc.terms.Term;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -172,7 +175,11 @@ public class DwcaStreamWriter implements AutoCloseable {
     }
   }
 
-  public void addMetadata(String metadata, String metadataLocation) throws IOException {
+  public void setMetadata(String metadata, String metadataLocation) throws IOException {
+    setMetadata(IOUtils.toInputStream(metadata, StandardCharsets.UTF_8), metadataLocation);
+  }
+
+  public void setMetadata(InputStream metadata, String metadataLocation) throws IOException {
     DwcaWriter.writeMetadata(metadata, new File(dir, metadataLocation));
     archive.setMetadataLocation(metadataLocation);
   }
