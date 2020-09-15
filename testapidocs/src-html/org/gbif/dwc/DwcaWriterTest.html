@@ -318,7 +318,7 @@
 <span class="sourceLineNo">310</span><a name="line.310"></a>
 <span class="sourceLineNo">311</span>    DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);<a name="line.311"></a>
 <span class="sourceLineNo">312</span><a name="line.312"></a>
-<span class="sourceLineNo">313</span>    writer.addMetadata("&lt;eml/&gt;", "eml.xml");<a name="line.313"></a>
+<span class="sourceLineNo">313</span>    writer.setMetadata("&lt;eml/&gt;", "eml.xml");<a name="line.313"></a>
 <span class="sourceLineNo">314</span>    writer.close();<a name="line.314"></a>
 <span class="sourceLineNo">315</span><a name="line.315"></a>
 <span class="sourceLineNo">316</span>    Archive arch = DwcFiles.fromLocation(dwcaDir.toPath());<a name="line.316"></a>

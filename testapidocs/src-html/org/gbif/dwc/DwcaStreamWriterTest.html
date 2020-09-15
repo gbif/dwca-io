@@ -45,7 +45,7 @@
 <span class="sourceLineNo">037</span>        DwcTerm.taxonRank, 2);<a name="line.37"></a>
 <span class="sourceLineNo">038</span>    try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true)){<a name="line.38"></a>
 <span class="sourceLineNo">039</span>      String m = "&lt;eml/&gt;";<a name="line.39"></a>
-<span class="sourceLineNo">040</span>      dwcaWriter.addMetadata(m, "eml.xml");<a name="line.40"></a>
+<span class="sourceLineNo">040</span>      dwcaWriter.setMetadata(m, "eml.xml");<a name="line.40"></a>
 <span class="sourceLineNo">041</span>      dwcaWriter.write(DwcTerm.Taxon, 0, mapping, ImmutableList.&lt;String[]&gt;builder()<a name="line.41"></a>
 <span class="sourceLineNo">042</span>          .add(new String[] { "tax-1", "Abies Mill.", "genus" })<a name="line.42"></a>
 <span class="sourceLineNo">043</span>          .add(new String[] { "tax-2", "Abies alba Mill.", "species" })<a name="line.43"></a>

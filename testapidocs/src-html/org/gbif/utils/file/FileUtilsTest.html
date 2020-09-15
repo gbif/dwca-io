@@ -326,46 +326,78 @@
 <span class="sourceLineNo">318</span>  }<a name="line.318"></a>
 <span class="sourceLineNo">319</span><a name="line.319"></a>
 <span class="sourceLineNo">320</span>  /**<a name="line.320"></a>
-<span class="sourceLineNo">321</span>   * Test that ensures the chunk file is deleted at the end of sortInJava method. Otherwise, unwanted chunk files<a name="line.321"></a>
-<span class="sourceLineNo">322</span>   * will be left over.<a name="line.322"></a>
-<span class="sourceLineNo">323</span>   */<a name="line.323"></a>
-<span class="sourceLineNo">324</span>  @Test<a name="line.324"></a>
-<span class="sourceLineNo">325</span>  public void testSortInJava() throws IOException {<a name="line.325"></a>
-<span class="sourceLineNo">326</span>    File source = FileUtils.getClasspathFile("sorting/taxon.txt");<a name="line.326"></a>
-<span class="sourceLineNo">327</span>    File sorted = File.createTempFile("gbif-common-file-sort", "taxon_sorted.txt");<a name="line.327"></a>
-<span class="sourceLineNo">328</span>    sorted.deleteOnExit();<a name="line.328"></a>
-<span class="sourceLineNo">329</span>    FileUtils futils = new FileUtils();<a name="line.329"></a>
-<span class="sourceLineNo">330</span>    Comparator&lt;String&gt; lineComparator = new LineComparator(0, "\t");<a name="line.330"></a>
-<span class="sourceLineNo">331</span>    futils.sortInJava(source, sorted, ENCODING, lineComparator, 1);<a name="line.331"></a>
+<span class="sourceLineNo">321</span>   * If only columns containing delimiters are quoted in CSV, we can't use GNU sort.<a name="line.321"></a>
+<span class="sourceLineNo">322</span>   *   X,"Look, now!",1<a name="line.322"></a>
+<span class="sourceLineNo">323</span>   *   X,Why should I,2<a name="line.323"></a>
+<span class="sourceLineNo">324</span>   */<a name="line.324"></a>
+<span class="sourceLineNo">325</span>  @Test<a name="line.325"></a>
+<span class="sourceLineNo">326</span>  public void testSortingWithQuotedDelimiters() throws IOException {<a name="line.326"></a>
+<span class="sourceLineNo">327</span>    File source = FileUtils.getClasspathFile("sorting/csv_quoted_delimiters.csv");<a name="line.327"></a>
+<span class="sourceLineNo">328</span>    File sorted = File.createTempFile("gbif-common-file-sort", "sorted.txt");<a name="line.328"></a>
+<span class="sourceLineNo">329</span>    sorted.deleteOnExit();<a name="line.329"></a>
+<span class="sourceLineNo">330</span>    FileUtils futils = new FileUtils();<a name="line.330"></a>
+<span class="sourceLineNo">331</span>    futils.sort(source, sorted, ENCODING, 19, ",", '"', "\n", 1);<a name="line.331"></a>
 <span class="sourceLineNo">332</span><a name="line.332"></a>
-<span class="sourceLineNo">333</span>    // the chunk file should NOT exist<a name="line.333"></a>
-<span class="sourceLineNo">334</span>    File chunkFile = new File(source.getParent(), "taxon_0txt");<a name="line.334"></a>
-<span class="sourceLineNo">335</span>    assertFalse(chunkFile.exists());<a name="line.335"></a>
-<span class="sourceLineNo">336</span><a name="line.336"></a>
-<span class="sourceLineNo">337</span>    // the sorted file should exist<a name="line.337"></a>
-<span class="sourceLineNo">338</span>    System.out.println(sorted.getAbsolutePath());<a name="line.338"></a>
-<span class="sourceLineNo">339</span>    assertTrue(sorted.exists());<a name="line.339"></a>
-<span class="sourceLineNo">340</span><a name="line.340"></a>
-<span class="sourceLineNo">341</span>    // read file<a name="line.341"></a>
-<span class="sourceLineNo">342</span>    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sorted), "UTF-8"));<a name="line.342"></a>
-<span class="sourceLineNo">343</span>    int line = 0;<a name="line.343"></a>
-<span class="sourceLineNo">344</span>    while (true) {<a name="line.344"></a>
-<span class="sourceLineNo">345</span>      line++;<a name="line.345"></a>
-<span class="sourceLineNo">346</span>      String row = br.readLine();<a name="line.346"></a>
-<span class="sourceLineNo">347</span>      if (row == null) {<a name="line.347"></a>
-<span class="sourceLineNo">348</span>        break;<a name="line.348"></a>
-<span class="sourceLineNo">349</span>      }<a name="line.349"></a>
-<span class="sourceLineNo">350</span>      // first line (smallest ID)<a name="line.350"></a>
-<span class="sourceLineNo">351</span>      if (line == 2) {<a name="line.351"></a>
-<span class="sourceLineNo">352</span>        assertTrue(row.startsWith("118701359"));<a name="line.352"></a>
-<span class="sourceLineNo">353</span>      }<a name="line.353"></a>
-<span class="sourceLineNo">354</span>      // last line (largest ID)<a name="line.354"></a>
-<span class="sourceLineNo">355</span>      else if (line == 8) {<a name="line.355"></a>
-<span class="sourceLineNo">356</span>        assertTrue(row.startsWith("120320038"));<a name="line.356"></a>
-<span class="sourceLineNo">357</span>      }<a name="line.357"></a>
-<span class="sourceLineNo">358</span>    }<a name="line.358"></a>
-<span class="sourceLineNo">359</span>  }<a name="line.359"></a>
-<span class="sourceLineNo">360</span>}<a name="line.360"></a>
+<span class="sourceLineNo">333</span>    // read file<a name="line.333"></a>
+<span class="sourceLineNo">334</span>    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sorted), "UTF-8"));<a name="line.334"></a>
+<span class="sourceLineNo">335</span>    int line = 30950;<a name="line.335"></a>
+<span class="sourceLineNo">336</span>    while (true) {<a name="line.336"></a>
+<span class="sourceLineNo">337</span>      String row = br.readLine();<a name="line.337"></a>
+<span class="sourceLineNo">338</span>      if (row == null) {<a name="line.338"></a>
+<span class="sourceLineNo">339</span>        break;<a name="line.339"></a>
+<span class="sourceLineNo">340</span>      }<a name="line.340"></a>
+<span class="sourceLineNo">341</span><a name="line.341"></a>
+<span class="sourceLineNo">342</span>      if (line == 30950) {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>        assertEquals("catalogNumber", row.substring(0, 13));<a name="line.343"></a>
+<span class="sourceLineNo">344</span>      } else {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>        // Catalog number ends in 30951 to 30961.<a name="line.345"></a>
+<span class="sourceLineNo">346</span>        assertEquals("ZMA.COL.P." + line, row.substring(0, 15));<a name="line.346"></a>
+<span class="sourceLineNo">347</span>      }<a name="line.347"></a>
+<span class="sourceLineNo">348</span>      line++;<a name="line.348"></a>
+<span class="sourceLineNo">349</span>    }<a name="line.349"></a>
+<span class="sourceLineNo">350</span>  }<a name="line.350"></a>
+<span class="sourceLineNo">351</span><a name="line.351"></a>
+<span class="sourceLineNo">352</span>  /**<a name="line.352"></a>
+<span class="sourceLineNo">353</span>   * Test that ensures the chunk file is deleted at the end of sortInJava method. Otherwise, unwanted chunk files<a name="line.353"></a>
+<span class="sourceLineNo">354</span>   * will be left over.<a name="line.354"></a>
+<span class="sourceLineNo">355</span>   */<a name="line.355"></a>
+<span class="sourceLineNo">356</span>  @Test<a name="line.356"></a>
+<span class="sourceLineNo">357</span>  public void testSortInJava() throws IOException {<a name="line.357"></a>
+<span class="sourceLineNo">358</span>    File source = FileUtils.getClasspathFile("sorting/taxon.txt");<a name="line.358"></a>
+<span class="sourceLineNo">359</span>    File sorted = File.createTempFile("gbif-common-file-sort", "taxon_sorted.txt");<a name="line.359"></a>
+<span class="sourceLineNo">360</span>    sorted.deleteOnExit();<a name="line.360"></a>
+<span class="sourceLineNo">361</span>    FileUtils futils = new FileUtils();<a name="line.361"></a>
+<span class="sourceLineNo">362</span>    Comparator&lt;String&gt; lineComparator = new LineComparator(0, "\t");<a name="line.362"></a>
+<span class="sourceLineNo">363</span>    futils.sortInJava(source, sorted, ENCODING, lineComparator, 1);<a name="line.363"></a>
+<span class="sourceLineNo">364</span><a name="line.364"></a>
+<span class="sourceLineNo">365</span>    // the chunk file should NOT exist<a name="line.365"></a>
+<span class="sourceLineNo">366</span>    File chunkFile = new File(source.getParent(), "taxon_0txt");<a name="line.366"></a>
+<span class="sourceLineNo">367</span>    assertFalse(chunkFile.exists());<a name="line.367"></a>
+<span class="sourceLineNo">368</span><a name="line.368"></a>
+<span class="sourceLineNo">369</span>    // the sorted file should exist<a name="line.369"></a>
+<span class="sourceLineNo">370</span>    System.out.println(sorted.getAbsolutePath());<a name="line.370"></a>
+<span class="sourceLineNo">371</span>    assertTrue(sorted.exists());<a name="line.371"></a>
+<span class="sourceLineNo">372</span><a name="line.372"></a>
+<span class="sourceLineNo">373</span>    // read file<a name="line.373"></a>
+<span class="sourceLineNo">374</span>    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(sorted), "UTF-8"));<a name="line.374"></a>
+<span class="sourceLineNo">375</span>    int line = 0;<a name="line.375"></a>
+<span class="sourceLineNo">376</span>    while (true) {<a name="line.376"></a>
+<span class="sourceLineNo">377</span>      line++;<a name="line.377"></a>
+<span class="sourceLineNo">378</span>      String row = br.readLine();<a name="line.378"></a>
+<span class="sourceLineNo">379</span>      if (row == null) {<a name="line.379"></a>
+<span class="sourceLineNo">380</span>        break;<a name="line.380"></a>
+<span class="sourceLineNo">381</span>      }<a name="line.381"></a>
+<span class="sourceLineNo">382</span>      // first line (smallest ID)<a name="line.382"></a>
+<span class="sourceLineNo">383</span>      if (line == 2) {<a name="line.383"></a>
+<span class="sourceLineNo">384</span>        assertTrue(row.startsWith("118701359"));<a name="line.384"></a>
+<span class="sourceLineNo">385</span>      }<a name="line.385"></a>
+<span class="sourceLineNo">386</span>      // last line (largest ID)<a name="line.386"></a>
+<span class="sourceLineNo">387</span>      else if (line == 8) {<a name="line.387"></a>
+<span class="sourceLineNo">388</span>        assertTrue(row.startsWith("120320038"));<a name="line.388"></a>
+<span class="sourceLineNo">389</span>      }<a name="line.389"></a>
+<span class="sourceLineNo">390</span>    }<a name="line.390"></a>
+<span class="sourceLineNo">391</span>  }<a name="line.391"></a>
+<span class="sourceLineNo">392</span>}<a name="line.392"></a>
 
 
 

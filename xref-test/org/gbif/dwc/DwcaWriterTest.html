@@ -318,7 +318,7 @@
 <a class="jxr_linenumber" name="L310" href="#L310">310</a> 
 <a class="jxr_linenumber" name="L311" href="#L311">311</a>     DwcaWriter writer = <strong class="jxr_keyword">new</strong> DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L312" href="#L312">312</a> 
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     writer.addMetadata(<span class="jxr_string">"&lt;eml/&gt;"</span>, <span class="jxr_string">"eml.xml"</span>);
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     writer.setMetadata(<span class="jxr_string">"&lt;eml/&gt;"</span>, <span class="jxr_string">"eml.xml"</span>);
 <a class="jxr_linenumber" name="L314" href="#L314">314</a>     writer.close();
 <a class="jxr_linenumber" name="L315" href="#L315">315</a> 
 <a class="jxr_linenumber" name="L316" href="#L316">316</a>     Archive arch = DwcFiles.fromLocation(dwcaDir.toPath());
