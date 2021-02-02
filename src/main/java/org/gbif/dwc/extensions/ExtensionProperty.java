@@ -52,6 +52,7 @@ public class ExtensionProperty implements Comparable<org.gbif.dwc.extensions.Ext
    *
    * @see Comparable#compareTo(Object)
    */
+  @Override
   public int compareTo(org.gbif.dwc.extensions.ExtensionProperty prop) {
     if (group != null) {
       int x = this.group.compareTo(prop.group);
@@ -249,6 +250,7 @@ public class ExtensionProperty implements Comparable<org.gbif.dwc.extensions.Ext
    * (non-Javadoc)
    * @see org.gbif.dwc.terms.ConceptTerm#simpleName()
    */
+  @Override
   public String simpleName() {
     return name;
   }

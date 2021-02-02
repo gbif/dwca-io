@@ -193,6 +193,7 @@ public class Archive implements Iterable<StarRecord> {
    * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,
    * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)
    */
+  @Override
   public ClosableIterator<StarRecord> iterator() {
     return iterator(true, true);
   }

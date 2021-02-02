@@ -58,6 +58,7 @@ public class RecordImpl implements Record {
     this.replaceEntities = replaceEntities;
   }
 
+  @Override
   public String column(int index) {
     if (row.length > index) {
       // if requested return column value cleaned
@@ -70,6 +71,7 @@ public class RecordImpl implements Record {
     return this.row != null;
   }
 
+  @Override
   public String id() {
     if (id != null) {
       return column(id.getIndex());
@@ -77,6 +79,7 @@ public class RecordImpl implements Record {
     return null;
   }
 
+  @Override
   public Term rowType() {
     return rowType;
   }
@@ -112,6 +115,7 @@ public class RecordImpl implements Record {
    *
    * @return the value of the term in the core data file
    */
+  @Override
   public String value(Term term) {
     if (term == null) {
       return null;
@@ -119,6 +123,7 @@ public class RecordImpl implements Record {
     return value(fields.get(term));
   }
 
+  @Override
   public Set<Term> terms() {
     return fields.keySet();
   }

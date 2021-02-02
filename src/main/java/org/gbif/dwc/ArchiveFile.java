@@ -117,9 +117,6 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   protected void validate() throws UnsupportedArchiveException {
-    if (this == null) {
-      throw new UnsupportedArchiveException("DwC-A data file is NULL");
-    }
     if (getLocation() == null) {
       throw new UnsupportedArchiveException("DwC-A data file »" + title + "« requires a location");
     }
@@ -453,6 +450,7 @@ public class ArchiveFile implements Iterable<Record> {
    *
    * @return
    */
+  @Override
   public ClosableIterator<Record> iterator() {
     return iterator(true, true);
   }

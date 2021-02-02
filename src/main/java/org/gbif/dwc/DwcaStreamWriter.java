@@ -139,6 +139,7 @@ public class DwcaStreamWriter implements AutoCloseable {
       this.minColumns = minColumns;
     }
 
+    @Override
     public void write(String[] row) {
       if (row != null && row.length < minColumns) {
         throw new IllegalArgumentException("Input rows are smaller than the defined mapping of " + minColumns + " columns.");

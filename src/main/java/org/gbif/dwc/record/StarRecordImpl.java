@@ -32,10 +32,12 @@ public class StarRecordImpl implements StarRecord {
   /**
    * @return the core record
    */
+  @Override
   public Record core() {
     return core;
   }
 
+  @Override
   public boolean hasExtension(Term rowType) {
     return extensions.containsKey(rowType) && !extensions.get(rowType).isEmpty();
   }
@@ -48,6 +50,7 @@ public class StarRecordImpl implements StarRecord {
    *
    * @return possibly empty list of extension record or null if extension is not mapped at all
    */
+  @Override
   public List<Record> extension(Term rowType) {
     return extensions.get(rowType);
   }
@@ -55,6 +58,7 @@ public class StarRecordImpl implements StarRecord {
   /**
    * Retrieves all extension records related to the core record across all extensions as a map.
    */
+  @Override
   public Map<Term, List<Record>> extensions() {
     return extensions;
   }
@@ -64,8 +68,9 @@ public class StarRecordImpl implements StarRecord {
    *
    * @return the ExtensionRecord iterator, reusing the same instance for each call
    */
+  @Override
   public Iterator<Record> iterator() {
-    List<Record> records = new ArrayList<Record>();
+    List<Record> records = new ArrayList<>();
     for (List<Record> recs : extensions.values()) {
       records.addAll(recs);
     }
@@ -82,6 +87,7 @@ public class StarRecordImpl implements StarRecord {
   /**
    * @return set of extension rowTypes associated with this star record
    */
+  @Override
   public Set<Term> rowTypes() {
     return extensions.keySet();
   }
@@ -89,6 +95,7 @@ public class StarRecordImpl implements StarRecord {
   /**
    * @return the number of associated extension records across all rowTypes
    */
+  @Override
   public int size() {
     int x = 0;
     for (List<Record> recs : extensions.values()) {
