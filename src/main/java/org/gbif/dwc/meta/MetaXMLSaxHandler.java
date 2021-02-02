@@ -28,7 +28,6 @@ import org.xml.sax.SAXException;
 
 import com.google.common.base.Strings;
 
-
 /**
  * SAX handler to parse a meta.xml descriptor for Darwin Core Archives. It populates a given archive instance and ignores
  * namespaces. The parser needs to be namespace aware!

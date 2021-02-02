@@ -29,9 +29,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * the buffer with every element start and storing the string version of the buffer in this.content when the end of the
  * element is reached.
  * Make sure to call the super methods when implementing this handler!
- *
- * @author markus
- *
  */
 public abstract class SimpleSaxHandler extends DefaultHandler {
   protected final Logger log = LoggerFactory.getLogger(getClass());

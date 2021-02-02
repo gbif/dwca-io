@@ -23,10 +23,6 @@ import javax.validation.constraints.NotNull;
  * Container object representing a metafile content &lt;field&gt; element as defined in the Darwin Core Text Guide.
  *
  * @see <a href="http://rs.tdwg.org/dwc/terms/guides/text/#fieldTag">Darwin Core Text Guide - Field element</a>
- *
- * @author mdoering
- * @author cgendreau
- *
  */
 public class ArchiveField {
 

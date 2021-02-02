@@ -20,8 +20,6 @@ import java.nio.file.Path;
 
 /**
  * Collections of static methods to work with Darwin Core (archive) files.
- *
- * TODO: methods without validation, probably for use with the validator.
  */
 public class DwcFiles {
 

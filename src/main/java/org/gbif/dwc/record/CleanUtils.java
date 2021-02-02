@@ -37,5 +37,4 @@ public class CleanUtils {
     }
     return entities ? StringEscapeUtils.unescapeHtml4(value) : value;
   }
-
 }

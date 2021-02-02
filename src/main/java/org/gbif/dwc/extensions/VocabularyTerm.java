@@ -15,9 +15,7 @@
  */
 package org.gbif.dwc.extensions;
 
-
 import java.util.Objects;
-
 
 /**
  * A single literal representation of a vocabulary concept in a given language.
@@ -66,5 +64,4 @@ public class VocabularyTerm {
   public String toString() {
     return String.format("%s [%s]", title, lang);
   }
-
 }

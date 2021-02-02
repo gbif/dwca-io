@@ -43,7 +43,11 @@ import org.xml.sax.ext.DefaultHandler2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Integration tests related to the MetaDescriptor operations.
