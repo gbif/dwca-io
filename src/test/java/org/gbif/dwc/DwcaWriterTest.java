@@ -17,23 +17,25 @@ import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DwcaWriterTest {
-  private static Logger LOG = LoggerFactory.getLogger(DwcaWriterTest.class);
+
+  private static final Logger LOG = LoggerFactory.getLogger(DwcaWriterTest.class);
   
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testAddingCoreIdTermTwice() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
     dwcaDir.deleteOnExit();
     DwcaWriter writer = new DwcaWriter(DwcTerm.Taxon, DwcTerm.taxonID, dwcaDir, true);
     writer.newRecord("dummy1");
-    writer.addCoreColumn(DwcTerm.taxonID, "dummy1");
+    assertThrows(IllegalStateException.class, () -> writer.addCoreColumn(DwcTerm.taxonID, "dummy1"));
   }
   
   @Test
@@ -50,7 +52,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testHeaders2() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
     dwcaDir.deleteOnExit();
@@ -60,10 +62,10 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.parentNameUsageID);
     writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
     writer.newRecord("dummy2");
-    writer.addCoreColumn(DwcTerm.scientificName);
+    assertThrows(IllegalStateException.class, () -> writer.addCoreColumn(DwcTerm.scientificName));
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testHeaders3() throws Exception {
     File dwcaDir = FileUtils.createTempDir();
     dwcaDir.deleteOnExit();
@@ -80,7 +82,7 @@ public class DwcaWriterTest {
     writer.addExtensionRecord(GbifTerm.Distribution, eData);
 
     eData.put(DwcTerm.establishmentMeans, "alien");
-    writer.addExtensionRecord(GbifTerm.Distribution, eData);
+    assertThrows(IllegalStateException.class, () -> writer.addExtensionRecord(GbifTerm.Distribution, eData));
   }
 
 
@@ -156,7 +158,7 @@ public class DwcaWriterTest {
   }
 
   @Test
-  public void testRoundtrip() throws Exception {
+  public void testRoundtrip() {
     try {
       // read taxon archive
       Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
@@ -233,8 +235,6 @@ public class DwcaWriterTest {
   
   /**
    * Test the writing of an archive that includes some default values in the core and in one extension.
-   * 
-   * @throws Exception
    */
   @Test
   public void testWriterUsingDefaultValues() throws Exception {
@@ -250,7 +250,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.countryCode);
     
     // add a VernacularName extension record
-    Map<Term,String> extensionRecord = new HashMap<Term, String>();
+    Map<Term,String> extensionRecord = new HashMap<>();
     extensionRecord.put(DwcTerm.vernacularName, "Komodo Dragon");
     extensionRecord.put(DcTerm.language, null);
     writer.addExtensionRecord(GbifTerm.VernacularName, extensionRecord);
@@ -266,7 +266,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.countryCode, "ID");
     
     // add a VernacularName extension record
-    extensionRecord = new HashMap<Term, String>();
+    extensionRecord = new HashMap<>();
     extensionRecord.put(DwcTerm.vernacularName, "Varano De Komodo");
     extensionRecord.put(DcTerm.language, "es");
     writer.addExtensionRecord(GbifTerm.VernacularName, extensionRecord);
@@ -317,5 +317,4 @@ public class DwcaWriterTest {
     assertEquals("eml.xml", arch.getMetadataLocation());
     assertEquals("<eml/>", arch.getMetadata());
   }
-
 }

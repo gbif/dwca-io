@@ -16,19 +16,16 @@
 
 package org.gbif.dwc.io;
 
-import java.io.IOException;
-
 import org.apache.commons.lang3.text.StrTokenizer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class StrTokenizerTest {
 
   @Test
-  public void testCsvQuoted() throws IOException {
+  public void testCsvQuoted() {
     StrTokenizer tokenizer = new StrTokenizer();
     tokenizer.setDelimiterString(",");
     tokenizer.setQuoteChar('"');
@@ -66,7 +63,7 @@ public class StrTokenizerTest {
   }
 
   @Test
-  public void testCsvUnquoted() throws IOException {
+  public void testCsvUnquoted() {
     StrTokenizer tokenizer = new StrTokenizer();
     tokenizer.setDelimiterString(",");
     tokenizer.setEmptyTokenAsNull(true);
@@ -91,7 +88,7 @@ public class StrTokenizerTest {
   }
 
   @Test
-  public void testPipes() throws IOException {
+  public void testPipes() {
     StrTokenizer tokenizer = new StrTokenizer();
     tokenizer.setDelimiterChar('|');
     tokenizer.setQuoteChar('"');
@@ -129,7 +126,7 @@ public class StrTokenizerTest {
   }
 
   @Test
-  public void testTabQuoted() throws IOException {
+  public void testTabQuoted() {
     StrTokenizer tokenizer = new StrTokenizer();
     tokenizer.setDelimiterString("\t");
     tokenizer.setQuoteChar('"');
@@ -167,7 +164,7 @@ public class StrTokenizerTest {
   }
 
   @Test
-  public void testTabUnquoted() throws IOException {
+  public void testTabUnquoted() {
     StrTokenizer tokenizer = new StrTokenizer();
     tokenizer.setDelimiterString("\t");
     tokenizer.setEmptyTokenAsNull(true);

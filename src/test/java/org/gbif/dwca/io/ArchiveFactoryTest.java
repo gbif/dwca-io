@@ -25,12 +25,13 @@ import java.util.Set;
 
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 import org.gbif.utils.file.tabular.TabularFiles;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ArchiveFactoryTest {
 
@@ -207,8 +208,8 @@ public class ArchiveFactoryTest {
       List<Record> occs = rec.extension(DwcTerm.Occurrence);
       occCounter += occs.size();
     }
-    assertEquals("Core taxon file has 356 records", 356, counter);
-    assertEquals("Core taxon file has 356 unique ids", 356, ids.size());
+    assertEquals(356, counter, "Core taxon file has 356 records");
+    assertEquals(356, ids.size(), "Core taxon file has 356 unique ids");
 
     // read extension file on its own and extract core ids to be cross checked with core id set
     File file = arch.getExtension(DwcTerm.Occurrence).getLocationFile();
@@ -222,10 +223,10 @@ public class ArchiveFactoryTest {
     while ((rec = occReader.read()) != null) {
       String id = rec.get(1);
       occCounter2++;
-      assertTrue("Occurrence coreid " + id + " not existing", ids.contains(id));
+      assertTrue(ids.contains(id), "Occurrence coreid " + id + " not existing");
     }
-    assertEquals("Occurrence extension file has 740 records", 740, occCounter2);
-    assertEquals("Occurrence start extensions should be 740 records", 740, occCounter);
+    assertEquals(740, occCounter2, "Occurrence extension file has 740 records");
+    assertEquals(740, occCounter, "Occurrence start extensions should be 740 records");
   }
 
   /**
@@ -318,9 +319,9 @@ public class ArchiveFactoryTest {
     assertEquals(0, arch.getExtensions().size());
     Iterator<StarRecord> dwci = arch.iterator();
     StarRecord star = dwci.next();
-    star = dwci.next();
-    star = dwci.next();
-    star = dwci.next();
+    dwci.next();
+    dwci.next();
+    dwci.next();
     star = dwci.next();
     assertEquals("Delphinus delphis var. delphis", star.core().value(DwcTerm.scientificName));
     int i = 0;
@@ -379,7 +380,7 @@ public class ArchiveFactoryTest {
         assertEquals("105849", rec.value(DwcTerm.parentNameUsageID));
       }
     }
-    assertTrue(arch.getCore().getIgnoreHeaderLines() == 1);
+    assertEquals(1, arch.getCore().getIgnoreHeaderLines());
     assertEquals(0, arch.getExtensions().size());
     assertEquals(24, count);
     assertTrue(found);
@@ -415,7 +416,7 @@ public class ArchiveFactoryTest {
         assertEquals("17.304666", rec.value(DwcTerm.decimalLongitude));
       }
     }
-    assertTrue(arch.getCore().getIgnoreHeaderLines() == 1);
+    assertEquals(1, arch.getCore().getIgnoreHeaderLines());
     assertEquals(435, count);
     assertTrue(found);
   }
@@ -445,7 +446,7 @@ public class ArchiveFactoryTest {
         assertEquals("familyx", rec.value(DwcTerm.family));
       }
     }
-    assertTrue(arch.getCore().getIgnoreHeaderLines() == 1);
+    assertEquals(1, arch.getCore().getIgnoreHeaderLines());
     assertEquals(3, count);
     assertTrue(found);
   }
@@ -556,37 +557,40 @@ public class ArchiveFactoryTest {
    * Basic validation of archives, that the declared files exist and have basic, valid structure.
    */
   @Test
-  public void testInvalidArchives() throws IOException {
+  public void testInvalidArchives() {
     // Simple archive problems
-    try {
-      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/empty").toPath());
-      fail("Empty archive should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
+    assertThrows(
+        UnsupportedArchiveException.class,
+        () -> DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/empty").toPath()),
+        "Empty archive should not be opened.");
 
-    try {
-      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/meta-file-location-missing").toPath());
-      fail("Archive with missing file location in meta.xml should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
+    assertThrows(
+        UnsupportedArchiveException.class,
+        () -> DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/meta-file-location-missing").toPath()),
+        "Archive with missing file location in meta.xml should not be opened.");
 
     // Extension archive problems
-    try {
-      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-missing").toPath());
-      fail("Archive with missing extension file should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
+    assertThrows(
+        UnsupportedArchiveException.class,
+        () -> DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-missing").toPath()),
+        "Archive with missing extension file should not be opened.");
 
-    try {
-      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-location-missing").toPath());
-      fail("Archive with missing extension file location in meta.xml should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
+    assertThrows(
+        UnsupportedArchiveException.class,
+        () -> DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-location-missing").toPath()),
+        "Archive with missing extension file location in meta.xml should not be opened."
+    );
 
-    try {
-      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-core-id-missing").toPath());
-      fail("Archive with extension lacking coreid in meta.xml should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
+    assertThrows(
+        UnsupportedArchiveException.class,
+        () -> DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-core-id-missing").toPath()),
+        "Archive with extension lacking coreid in meta.xml should not be opened."
+    );
 
-    try {
-      DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-id-missing").toPath());
-      fail("Archive with extension and core missing id in meta.xml should not be opened.");
-    } catch (UnsupportedArchiveException e) {}
+    assertThrows(
+        UnsupportedArchiveException.class,
+        () -> DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-id-missing").toPath()),
+        "Archive with extension and core missing id in meta.xml should not be opened."
+    );
   }
 }

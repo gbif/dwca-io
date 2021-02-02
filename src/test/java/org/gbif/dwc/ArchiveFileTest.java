@@ -26,13 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test related to {@link ArchiveFile}.
@@ -60,6 +59,7 @@ public class ArchiveFileTest {
       }
     }
     assertEquals(3248, counter);
+    assertNotNull(last);
     assertEquals("3082", last.id());
   }
 
@@ -68,8 +68,8 @@ public class ArchiveFileTest {
     ArchiveFile af = new ArchiveFile();
     af.setRowType(DwcTerm.Occurrence);
     assertEquals(af.getRowType(), DwcTerm.Occurrence);
-    assertTrue(af.getRowType().equals(DwcTerm.Occurrence));
-    assertTrue(af.getRowType().qualifiedName().equals(DwcTerm.Occurrence.qualifiedName()));
+    assertEquals(DwcTerm.Occurrence, af.getRowType());
+    assertEquals(DwcTerm.Occurrence.qualifiedName(), af.getRowType().qualifiedName());
   }
 
   @Test

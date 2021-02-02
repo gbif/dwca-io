@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="" type="org.gbif.dwc.Archive" -->
 <#macro escapeBackslash value>${value?replace("\n", "\\n")?replace("\r", "\\r")?replace("\t", "\\t")?replace("\f", "\\f")?xml}</#macro>
 <#escape x as x?xml>
 <archive xmlns="http://rs.tdwg.org/dwc/text/"<#if metadataLocation??> metadata="${metadataLocation}"</#if>>

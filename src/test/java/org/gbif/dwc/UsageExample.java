@@ -5,7 +5,7 @@ import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.utils.file.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,12 +26,12 @@ public class UsageExample {
 
     // Loop over core records and display id, basis of record and scientific name
     for (Record rec : dwcArchive.getCore()) {
-      System.out.println(String.format("%s: %s (%s)", rec.id(), rec.value(DwcTerm.basisOfRecord), rec.value(DwcTerm.scientificName)));
+      System.out.printf("%s: %s (%s)%n", rec.id(), rec.value(DwcTerm.basisOfRecord), rec.value(DwcTerm.scientificName));
     }
 
     // Loop over star records and display id, core record data, and extension data
     for (StarRecord rec : dwcArchive) {
-      System.out.println(String.format("%s: %s", rec.core().id(), rec.core().value(DwcTerm.scientificName)));
+      System.out.printf("%s: %s%n", rec.core().id(), rec.core().value(DwcTerm.scientificName));
       if (rec.hasExtension(GbifTerm.VernacularName)) {
         for (Record extRec : rec.extension(GbifTerm.VernacularName)) {
           System.out.println(" - " + extRec.value(DwcTerm.vernacularName));

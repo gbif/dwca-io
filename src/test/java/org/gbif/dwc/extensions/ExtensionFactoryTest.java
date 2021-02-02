@@ -12,32 +12,25 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- *
- */
 public class ExtensionFactoryTest {
-
-  private String VOCAB_URL = "http://rs.gbif.org/vocabulary/gbif/description_type.xml";
-  private InputStream VOCAB = FileUtils.classpathStream("extension/vocabulary_gbif_description_type.xml");
-  private InputStream EXTENSION = FileUtils.classpathStream("extension/extension_gbif_1.0_description.xml");
-
-  private VocabularyFactory VOCAB_FACTORY = new VocabularyFactory(SAXUtils.getNsAwareSaxParserFactory());
-
-  public ExtensionFactoryTest() throws IOException {
-  }
 
   @Test
   public void testExtensionFactory() throws IOException, ParserConfigurationException, SAXException {
+    String vocabUrl = "http://rs.gbif.org/vocabulary/gbif/description_type.xml";
+    InputStream vocab = FileUtils.classpathStream("extension/vocabulary_gbif_description_type.xml");
+    InputStream extension = FileUtils.classpathStream("extension/extension_gbif_1.0_description.xml");
 
-    ThesaurusHandlingRule thr = new ThesaurusHandlingRule(new MockVocabulariesManager(VOCAB_URL, VOCAB_FACTORY.build(VOCAB)));
+    VocabularyFactory vocabFactory = new VocabularyFactory(SAXUtils.getNsAwareSaxParserFactory());
+
+    ThesaurusHandlingRule thr = new ThesaurusHandlingRule(new MockVocabulariesManager(vocabUrl, vocabFactory.build(vocab)));
     ExtensionFactory factory = new ExtensionFactory(thr, SAXUtils.getNsAwareSaxParserFactory());
 
-    Extension ext = factory.build(EXTENSION, new URL(VOCAB_URL), false);
+    Extension ext = factory.build(extension, new URL(vocabUrl), false);
 
     assertNotNull(ext);
     assertNotNull(ext.getProperty(DcTerm.type).getVocabulary());

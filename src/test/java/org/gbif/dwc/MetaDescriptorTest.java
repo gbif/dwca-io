@@ -8,7 +8,7 @@ import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.TermFactory;
 import org.gbif.utils.file.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -25,14 +25,10 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration tests related to the MetaDescriptor operations.
- *
- * @author mdoering
- * @author cgendreau
- *
  */
 public class MetaDescriptorTest {
   public static TermFactory TERM_FACTORY = TermFactory.instance();
@@ -79,9 +75,9 @@ public class MetaDescriptorTest {
     assertEquals(18, terms.size());
     for (String term : terms) {
       URI uri = URI.create(term);
-      assertNotNull(uri + " is no full URI term", uri.getScheme());
-      assertNotNull(uri + " is no full URI term", uri.getAuthority());
-      assertNotNull(uri + " is no full URI term", uri.getPath());
+      assertNotNull(uri.getScheme(), uri + " is no full URI term");
+      assertNotNull(uri.getAuthority(), uri + " is no full URI term");
+      assertNotNull(uri.getPath(), uri + " is no full URI term");
     }
   }
 
@@ -92,7 +88,7 @@ public class MetaDescriptorTest {
       Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
       assertNotNull(arch);
       assertNotNull(arch.getCore());
-      assertTrue(arch.getCore().getId().getIndex() == 0);
+      assertEquals(0, arch.getCore().getId().getIndex());
       assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
       assertEquals(2, arch.getExtensions().size());
       assertEquals("\t", arch.getCore().getFieldsTerminatedBy());
@@ -190,8 +186,6 @@ public class MetaDescriptorTest {
 
   /**
    * Test the reading of a static meta.xml file.
-   *
-   * @throws Exception
    */
   @Test
   public void testMetaDescriptorReading() throws Exception {
@@ -216,5 +210,4 @@ public class MetaDescriptorTest {
     assertNull(arch.getExtension(TERM_FACTORY
             .findTerm("http://rs.tdwg.org/invented/Links")).getFieldsEnclosedBy());
   }
-
 }

@@ -1,7 +1,6 @@
 package org.gbif.dwc;
 
 import org.gbif.dwc.record.StarRecord;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +8,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test checks we don't get a race condition between two <strong>processes</strong> opening the same DWC-A at the
@@ -44,7 +46,7 @@ public class ParallelOpeningTest {
 
     arch = DwcFiles.fromLocation(extractToFolder);
 
-    Assert.assertFalse(arch.getExtensions().isEmpty());
+    assertFalse(arch.getExtensions().isEmpty());
 
     // Initialize (i.e. normalize and sort) the archive in the background.
     LOG.info("Initializing archive");
@@ -64,7 +66,7 @@ public class ParallelOpeningTest {
     LOG.info("All files should have been closed.");
     Thread.sleep(30_000);
 
-    Assert.assertTrue("Many records extracted", counter > 500000);
+    assertTrue(counter > 500000, "Many records extracted");
   }
 
   public static void main(String... args) throws Exception {

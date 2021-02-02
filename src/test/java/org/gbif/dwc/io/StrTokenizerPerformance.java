@@ -23,16 +23,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.text.StrTokenizer;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 
 public class StrTokenizerPerformance {
 
   private long test(StrTokenizer tokenizer, File source) throws IOException {
     FileInputStream fis = new FileInputStream(source);
-    InputStreamReader reader = new InputStreamReader(fis, "utf8");
+    InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
     BufferedReader br = new BufferedReader(reader);
 
     // keep track of time while iterating

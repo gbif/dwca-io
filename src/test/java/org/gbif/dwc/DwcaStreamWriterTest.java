@@ -9,21 +9,23 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * Created by markus on 17/02/2017.
- */
 public class DwcaStreamWriterTest {
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void writeEmpty() throws Exception {
     File dwca = FileUtils.createTempDir();
-    try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true)){
-
+    DwcaStreamWriter dwcaWriter = null;
+    try {
+      dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true);
     } finally {
+      assertNotNull(dwcaWriter);
+      assertThrows(IllegalStateException.class, dwcaWriter::close);
       org.apache.commons.io.FileUtils.deleteQuietly(dwca);
     }
   }
@@ -54,5 +56,4 @@ public class DwcaStreamWriterTest {
       org.apache.commons.io.FileUtils.deleteQuietly(dwca);
     }
   }
-
 }

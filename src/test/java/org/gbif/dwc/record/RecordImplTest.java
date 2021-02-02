@@ -26,14 +26,12 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RecordImplTest {
-
 
   private String setRows(String val, RecordImpl ... recs) {
     for (RecordImpl r : recs) {

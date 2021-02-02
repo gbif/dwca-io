@@ -4,13 +4,13 @@ import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ArchiveTest {
 
@@ -47,7 +47,7 @@ public class ArchiveTest {
   }
 
   @Test
-  public void testConstituents() throws Exception {
+  public void testConstituents() {
     File dir = FileUtils.getClasspathFile("constituentsdwca");
 
     Archive arch = new Archive();
@@ -57,7 +57,7 @@ public class ArchiveTest {
     ArchiveField datasetId = new ArchiveField(1, DwcTerm.datasetID, null, null);
     ArchiveField sciname = new ArchiveField(2, DwcTerm.scientificName, null, null);
 
-    Map<Term, ArchiveField> fields = new HashMap<Term, ArchiveField>();
+    Map<Term, ArchiveField> fields = new HashMap<>();
     fields.put(DwcTerm.taxonomicStatus, sciname);
     fields.put(DwcTerm.datasetID, datasetId);
 

@@ -15,22 +15,22 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests related to {@link InternalDwcFileFactory}.
  */
 public class InternalDwcFileFactoryTest {
 
-  @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  @TempDir
+  public File folder;
 
   @Test
   public void testFromCompressedZip() throws UnsupportedArchiveException, IOException {
@@ -46,28 +46,26 @@ public class InternalDwcFileFactoryTest {
     assertIdInCompressed(gzip.toPath(), "113775");
   }
 
-  @Test(expected = FileNotFoundException.class)
-  public void testNonExistingFileFromCompressed() throws Exception {
+  @Test
+  public void testNonExistingFileFromCompressed() {
     // test zip with 1 extension file
     Path none = Paths.get("/ping/pong/nuts");
     // try to open archive
-    InternalDwcFileFactory.fromCompressed(none, folder.newFolder().toPath());
+    assertThrows(FileNotFoundException.class,
+        () -> InternalDwcFileFactory.fromCompressed(none, folder.toPath()));
   }
 
-  @Test(expected = FileNotFoundException.class)
-  public void testNonExistingFileFromLocation() throws Exception {
+  @Test
+  public void testNonExistingFileFromLocation() {
     File none = new File("/ping/pong/nuts");
-    InternalDwcFileFactory.fromLocation(none.toPath());
+    assertThrows(FileNotFoundException.class, () -> InternalDwcFileFactory.fromLocation(none.toPath()));
   }
 
   /**
    * Givin a compressed file, make sure we can uncompressed it, read the core and find the provided id.
-   * @param compressedFile
-   * @param id
-   * @throws IOException
    */
   private void assertIdInCompressed(Path compressedFile, String id) throws IOException {
-    File tmpDir = folder.newFolder();
+    File tmpDir = folder;
 
     // open archive from zip
     Archive arch = InternalDwcFileFactory.fromCompressed(compressedFile, tmpDir.toPath());
@@ -85,30 +83,35 @@ public class InternalDwcFileFactoryTest {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    assertTrue("Can find the id " + id + " inside the archive " + compressedFile.getFileName(), found);
+    assertTrue(found, "Can find the id " + id + " inside the archive " + compressedFile.getFileName());
   }
 
   @Test
   public void testDetermineRowType() {
     Optional<Term> rowType = InternalDwcFileFactory
             .determineRowType(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
+    assertTrue(rowType.isPresent());
     assertEquals(DwcTerm.Occurrence, rowType.get());
   }
 
   @Test
   public void testDetermineRecordIdentifier() {
     Optional<Term> id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLatitude, DwcTerm.occurrenceID));
+    assertTrue(id.isPresent());
     assertEquals(DwcTerm.occurrenceID, id.get());
 
     id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.taxonID, DwcTerm.scientificName));
+    assertTrue(id.isPresent());
     assertEquals(DwcTerm.taxonID, id.get());
 
     //eventId should be picked even if taxonID is there
     id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.eventID, DwcTerm.scientificName, DwcTerm.taxonID));
+    assertTrue(id.isPresent());
     assertEquals(DwcTerm.taxonID, id.get());
 
     id = InternalDwcFileFactory.determineRecordIdentifier(Arrays.asList(DwcTerm.decimalLongitude, DwcTerm.scientificName,
             DcTerm.identifier));
+    assertTrue(id.isPresent());
     assertEquals(DcTerm.identifier, id.get());
 
     //eventId should be picked even if taxonID is there

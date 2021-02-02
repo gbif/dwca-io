@@ -1,8 +1,8 @@
 package org.gbif.dwc.extensions;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests related to {@link VocabularyConcept}
