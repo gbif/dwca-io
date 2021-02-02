@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 Global Biodiversity Information Facility (GBIF)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.gbif.dwca.io;
 
 import org.gbif.dwc.Archive;
@@ -5,13 +20,15 @@ import org.gbif.dwc.DwcFiles;
 import org.gbif.dwc.DwcLayout;
 import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.meta.DwcMetaFiles;
+import org.gbif.dwc.record.Record;
+import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
-import org.gbif.dwc.record.Record;
-import org.gbif.dwc.record.StarRecord;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
+import org.gbif.utils.file.tabular.TabularDataFileReader;
+import org.gbif.utils.file.tabular.TabularFiles;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +40,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.gbif.utils.file.tabular.TabularDataFileReader;
-import org.gbif.utils.file.tabular.TabularFiles;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
