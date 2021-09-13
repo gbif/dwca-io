@@ -19,13 +19,12 @@ import org.gbif.dwc.ArchiveField;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.Term;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -49,7 +48,9 @@ public class RecordImplTest {
     af.setTerm(t);
     af.setIndex(0);
     af.setType(ArchiveField.DataType.string);
-    List<ArchiveField> fields = Lists.newArrayList(af);
+    List<ArchiveField> fields = new ArrayList<>();
+    fields.add(af);
+
     final RecordImpl r = new RecordImpl(null, fields, null, true, false);
     final RecordImpl r2 = new RecordImpl(null, fields, null, false, false);
 

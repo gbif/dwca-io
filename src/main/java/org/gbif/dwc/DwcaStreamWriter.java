@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -29,15 +31,12 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
-
 /**
  * An archive writer that writes entire data files at once and does not check integrity of coreids.
  * In large archives using extensions this yields a much, much better performance than writing star record by star record.
  */
 public class DwcaStreamWriter implements AutoCloseable {
+
   private static final Logger LOG = LoggerFactory.getLogger(DwcaStreamWriter.class);
 
   private final File dir;
@@ -46,7 +45,7 @@ public class DwcaStreamWriter implements AutoCloseable {
   private final boolean useHeaders;
   private final Archive archive = new Archive();
   private String metadata;
-  private Map<String, String> constituents = Maps.newHashMap();
+  private Map<String, String> constituents = new HashMap<>();
 
   /**
    * @param dir the directory to use as the archive
@@ -76,7 +75,7 @@ public class DwcaStreamWriter implements AutoCloseable {
    * @param mapping zero based indexed of the rows
    */
   public void write(Term rowType, int coreIdColumn, Map<Term, Integer> mapping, Iterable<String[]> rows) {
-    Preconditions.checkNotNull(rows);
+    Objects.requireNonNull(rows);
 
     final int maxMapping = maxMappingColumn(mapping);
     try (TabWriter writer = addArchiveFile(rowType, coreIdColumn, mapping, maxMapping) ) {
@@ -85,7 +84,7 @@ public class DwcaStreamWriter implements AutoCloseable {
         write(writer, row, maxMapping);
       }
     } catch (IOException e) {
-      Throwables.propagate(e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -101,10 +100,11 @@ public class DwcaStreamWriter implements AutoCloseable {
   }
 
   private TabWriter addArchiveFile(Term rowType, int coreIdColumn, Map<Term, Integer> mapping, int maxMapping) throws IOException {
-    Preconditions.checkNotNull(rowType);
-    Preconditions.checkNotNull(mapping);
-    Preconditions.checkArgument(!mapping.isEmpty());
-    Preconditions.checkArgument(coreIdColumn >= 0);
+    Objects.requireNonNull(rowType);
+    Objects.requireNonNull(mapping);
+    if (mapping.isEmpty() || coreIdColumn < 0) {
+      throw new IllegalArgumentException();
+    }
 
     final File dataFile = dataFile(rowType);
     ArchiveFile af = ArchiveFile.buildTabFile();

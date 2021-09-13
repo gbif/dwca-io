@@ -28,8 +28,10 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -40,11 +42,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 /**
  * Simple writer class to create valid Darwin Core Archives using tabular data files.
  * The meta.xml descriptor is generated automatically and an optional metadata document can be added.
@@ -52,7 +49,8 @@ import com.google.common.collect.Sets;
  * For usage of this class please @see DwcaWriterTest.
  */
 public class DwcaWriter {
-  private Logger log = LoggerFactory.getLogger(DwcaWriter.class);
+
+  private final static Logger LOG = LoggerFactory.getLogger(DwcaWriter.class);
 
   private final File dir;
   private final boolean useHeaders;
@@ -61,20 +59,21 @@ public class DwcaWriter {
   private Map<Term, String> coreRow;
   private final Term coreRowType;
   private final Term coreIdTerm;
-  private final Map<Term, TabWriter> writers = Maps.newHashMap();
-  private final Set<Term> headersOut = Sets.newHashSet();
-  private final Map<Term, String> dataFileNames = Maps.newHashMap();
+  private final Map<Term, TabWriter> writers = new HashMap<>();
+  private final Set<Term> headersOut = new HashSet<>();
+  private final Map<Term, String> dataFileNames = new HashMap<>();
   // key=rowType, value=columns
-  private final Map<Term, List<Term>> terms = Maps.newHashMap();
+  private final Map<Term, List<Term>> terms = new HashMap<>();
   // key=rowType, value=default values per column
-  private final Map<Term, Map<Term, String>> defaultValues = Maps.newHashMap();
-  private final Map<Term, Map<Term, String>> multiValueDelimiter = Maps.newHashMap();
+  private final Map<Term, Map<Term, String>> defaultValues = new HashMap<>();
+  private final Map<Term, Map<Term, String>> multiValueDelimiter = new HashMap<>();
   private String metadataLocation;
   private String metadata;
-  private Map<String, String> constituents = Maps.newHashMap();
+  private Map<String, String> constituents = new HashMap<>();
 
   /**
    * Creates a new writer without header rows.
+   *
    * @param coreRowType the core row type.
    * @param dir         the directory to create the archive in.
    */
@@ -86,22 +85,22 @@ public class DwcaWriter {
    * If headers are used the first record must include all terms ever used for that file.
    * If in subsequent rows additional terms are introduced an IllegalArgumentException is thrown.
    *
-   * @param coreRowType    the core row type
-   * @param dir            the directory to create the archive in
-   * @param useHeaders if true the first row in every data file will include headers
+   * @param coreRowType the core row type
+   * @param dir         the directory to create the archive in
+   * @param useHeaders  if true the first row in every data file will include headers
    */
   public DwcaWriter(Term coreRowType, File dir, boolean useHeaders) throws IOException {
     this(coreRowType, null, dir, useHeaders);
   }
-  
+
   /**
    * If headers are used the first record must include all terms ever used for that file.
    * If in subsequent rows additional terms are introduced an IllegalArgumentException is thrown.
-   * 
+   *
    * @param coreRowType the core row type
-   * @param coreIdTerm the term of the id column
-   * @param dir the directory to create the archive in
-   * @param useHeaders if true the first row in every data file will include headers
+   * @param coreIdTerm  the term of the id column
+   * @param dir         the directory to create the archive in
+   * @param useHeaders  if true the first row in every data file will include headers
    */
   public DwcaWriter(Term coreRowType, Term coreIdTerm, File dir, boolean useHeaders) throws IOException {
     this.dir = dir;
@@ -112,7 +111,7 @@ public class DwcaWriter {
   }
 
   public static Map<Term, String> recordToMap(Record rec, ArchiveFile af) {
-    Map<Term, String> map = new HashMap<Term, String>();
+    Map<Term, String> map = new HashMap<>();
     for (Term t : af.getTerms()) {
       map.put(t, rec.value(t));
     }
@@ -124,7 +123,7 @@ public class DwcaWriter {
   }
 
   private void addRowType(Term rowType) throws IOException {
-    terms.put(rowType, new ArrayList<Term>());
+    terms.put(rowType, new ArrayList<>());
 
     String dfn = dataFileName(rowType);
     dataFileNames.put(rowType, dfn);
@@ -137,6 +136,7 @@ public class DwcaWriter {
 
   /**
    * A new core record is started and the last core and all extension records are written.
+   *
    * @param id the new records id
    * @throws IOException
    */
@@ -146,7 +146,7 @@ public class DwcaWriter {
     // start new
     recordNum++;
     coreId = id;
-    coreRow = new HashMap<Term, String>();
+    coreRow = new HashMap<>();
   }
 
   private void flushLastCoreRecord() throws IOException {
@@ -162,14 +162,14 @@ public class DwcaWriter {
   private void writeRow(Map<Term, String> rowMap, Term rowType) throws IOException {
     TabWriter writer = writers.get(rowType);
     List<Term> columns = terms.get(rowType);
-    if (useHeaders && !headersOut.contains(rowType)){
+    if (useHeaders && !headersOut.contains(rowType)) {
       // write header row
       writeHeader(writer, rowType, columns);
     }
 
     // make sure coreId is not null for extensions
-    if (coreRowType != rowType && coreId == null){
-      log.warn("Adding an {} extension record to a core without an Id! Skip this record", rowType);
+    if (coreRowType != rowType && coreId == null) {
+      LOG.warn("Adding an {} extension record to a core without an Id! Skip this record", rowType);
 
     } else {
       String[] row = new String[columns.size() + 1];
@@ -186,13 +186,13 @@ public class DwcaWriter {
     int idx = 0;
     String[] row = new String[columns.size() + 1];
     Term idTerm;
-    if (DwcTerm.Taxon == coreRowType){
+    if (DwcTerm.Taxon == coreRowType) {
       idTerm = DwcTerm.taxonID;
-    } else if (DwcTerm.Occurrence == coreRowType){
+    } else if (DwcTerm.Occurrence == coreRowType) {
       idTerm = DwcTerm.occurrenceID;
-    } else if (DwcTerm.Identification == coreRowType){
+    } else if (DwcTerm.Identification == coreRowType) {
       idTerm = DwcTerm.identificationID;
-    } else if (DwcTerm.Event == coreRowType){
+    } else if (DwcTerm.Event == coreRowType) {
       idTerm = DwcTerm.eventID;
     } else {
       // default to generic dc identifier for id column
@@ -201,7 +201,7 @@ public class DwcaWriter {
     row[idx] = idTerm.simpleName();
 
     for (Term term : columns) {
-      idx ++;
+      idx++;
       row[idx] = term.simpleName();
     }
     writer.write(row);
@@ -214,6 +214,7 @@ public class DwcaWriter {
    * Add a single value for the current core record.
    * Calling this method requires that #newRecord() has been called at least once,
    * otherwise an IllegalStateException is thrown.
+   *
    * @param term
    * @param value
    */
@@ -222,10 +223,10 @@ public class DwcaWriter {
     if (coreIdTerm != null && coreIdTerm.equals(term)) {
       throw new IllegalStateException("You cannot add a term that was specified as coreId term");
     }
-    
+
     List<Term> coreTerms = terms.get(coreRowType);
     if (!coreTerms.contains(term)) {
-      if (useHeaders && recordNum>1){
+      if (useHeaders && recordNum > 1) {
         throw new IllegalStateException("You cannot add new terms after the first row when headers are enabled");
       }
       coreTerms.add(term);
@@ -283,25 +284,25 @@ public class DwcaWriter {
    * @param term
    * @param defaultValue
    */
-  public void addCoreDefaultValue(Term term, String defaultValue){
+  public void addCoreDefaultValue(Term term, String defaultValue) {
     addDefaultValue(coreRowType, term, defaultValue);
   }
-  
+
   /**
    * Add a default value to a term of the provided rowType.
-   * 
+   *
    * @param rowType
    * @param term
    * @param defaultValue
    */
-  public void addDefaultValue(Term rowType, Term term, String defaultValue){
-    
-    if(!defaultValues.containsKey(rowType)){
-      defaultValues.put(rowType, new HashMap<Term, String>());
+  public void addDefaultValue(Term rowType, Term term, String defaultValue) {
+
+    if (!defaultValues.containsKey(rowType)) {
+      defaultValues.put(rowType, new HashMap<>());
     }
-    Map<Term,String> currentDefaultValues= defaultValues.get(rowType);
-    if(currentDefaultValues.containsKey(term)){
-      throw new IllegalStateException("The default value of term "+ term + " is already defined");
+    Map<Term, String> currentDefaultValues = defaultValues.get(rowType);
+    if (currentDefaultValues.containsKey(term)) {
+      throw new IllegalStateException("The default value of term " + term + " is already defined");
     }
     currentDefaultValues.put(term, defaultValue);
   }
@@ -312,21 +313,21 @@ public class DwcaWriter {
    * @param term
    * @param defaultValue
    */
-  public void addCoreMultiValueDelimiter(Term term, String defaultValue){
+  public void addCoreMultiValueDelimiter(Term term, String defaultValue) {
     addMultiValueDelimiter(coreRowType, term, defaultValue);
   }
 
   /**
    * Declares the multi value delimiter for a term of the provided rowType.
    */
-  public void addMultiValueDelimiter(Term rowType, Term term, String delimiter){
+  public void addMultiValueDelimiter(Term rowType, Term term, String delimiter) {
 
-    if(!multiValueDelimiter.containsKey(rowType)){
-      multiValueDelimiter.put(rowType, new HashMap<Term, String>());
+    if (!multiValueDelimiter.containsKey(rowType)) {
+      multiValueDelimiter.put(rowType, new HashMap<>());
     }
-    Map<Term,String> delimiters= multiValueDelimiter.get(rowType);
-    if(delimiters.containsKey(term)){
-      throw new IllegalStateException("The delimiter of term "+ term + " is already defined");
+    Map<Term, String> delimiters = multiValueDelimiter.get(rowType);
+    if (delimiters.containsKey(term)) {
+      throw new IllegalStateException("The delimiter of term " + term + " is already defined");
     }
     delimiters.put(term, delimiter);
   }
@@ -335,12 +336,12 @@ public class DwcaWriter {
    * @return new map of all current data file names by their rowTypes.
    */
   public Map<Term, String> getDataFiles() {
-    return Maps.newHashMap(dataFileNames);
+    return new HashMap<>(dataFileNames);
   }
 
   /**
    * Add an extension record associated with the current core record.
-   * 
+   *
    * @param rowType
    * @param row
    * @throws IOException
@@ -350,13 +351,13 @@ public class DwcaWriter {
     if (!terms.containsKey(rowType)) {
       addRowType(rowType);
     }
-    
+
     // make sure we know all terms
     List<Term> knownTerms = terms.get(rowType);
     final boolean isFirst = knownTerms.isEmpty();
     for (Term term : row.keySet()) {
       if (!knownTerms.contains(term)) {
-        if (useHeaders && !isFirst){
+        if (useHeaders && !isFirst) {
           throw new IllegalStateException("You cannot add new terms after the first row when headers are enabled");
         }
         knownTerms.add(term);
@@ -389,12 +390,11 @@ public class DwcaWriter {
     if (terms.containsKey(rowType)) {
       return terms.get(rowType);
     }
-    return Lists.newArrayList();
+    return new ArrayList<>();
   }
 
   /**
    * Writes meta.xml and eml.xml to the archive and closes tab writers.
-   *
    */
   public void close() throws IOException {
     addConstituents();
@@ -415,7 +415,7 @@ public class DwcaWriter {
 
   protected static void writeMetadata(InputStream metadata, File f) throws IOException {
     if (metadata != null) {
-      try (FileOutputStream out = new FileOutputStream(f)){
+      try (FileOutputStream out = new FileOutputStream(f)) {
         IOUtils.copy(metadata, out);
       }
     }
@@ -435,7 +435,7 @@ public class DwcaWriter {
       File ddir = new File(dir, Archive.CONSTITUENT_DIR);
       ddir.mkdirs();
       for (Map.Entry<String, String> de : constituents.entrySet()) {
-        writeMetadata(de.getValue(), new File(ddir, de.getKey()+".xml"));
+        writeMetadata(de.getValue(), new File(ddir, de.getKey() + ".xml"));
       }
     }
   }
@@ -461,7 +461,7 @@ public class DwcaWriter {
    *
    * @param archive
    * @param rowType
-   * @param idTerm the term of the id column, may be null
+   * @param idTerm  the term of the id column, may be null
    * @return
    */
   private ArchiveFile buildArchiveFile(Archive archive, Term rowType, Term idTerm) {
@@ -480,24 +480,24 @@ public class DwcaWriter {
     if (idTerm != null) {
       af.addField(buildArchiveField(0, idTerm));
     }
-    
-    Map<Term,String> termDefaultValueMap = defaultValues.get(rowType);
-    Map<Term,String> termMultiValueDelimiterMap = multiValueDelimiter.get(rowType);
+
+    Map<Term, String> termDefaultValueMap = defaultValues.get(rowType);
+    Map<Term, String> termMultiValueDelimiterMap = multiValueDelimiter.get(rowType);
     List<Term> rowTypeTerms = terms.get(rowType);
     int idx = 0;
     String defaultValue;
     String mvDelim;
     for (Term c : rowTypeTerms) {
       idx++;
-      defaultValue = (termDefaultValueMap !=null ? termDefaultValueMap.get(c) : null);
-      mvDelim = (termMultiValueDelimiterMap !=null ? termMultiValueDelimiterMap.get(c) : null);
+      defaultValue = (termDefaultValueMap != null ? termDefaultValueMap.get(c) : null);
+      mvDelim = (termMultiValueDelimiterMap != null ? termMultiValueDelimiterMap.get(c) : null);
       af.addField(buildArchiveField(idx, c, defaultValue, mvDelim));
     }
-    
+
     // check if default values are provided for this rowType
-    if(termDefaultValueMap != null){
+    if (termDefaultValueMap != null) {
       for (Term t : termDefaultValueMap.keySet()) {
-        if(!rowTypeTerms.contains(t)){
+        if (!rowTypeTerms.contains(t)) {
           af.addField(buildArchiveFieldDefaultValue(t, termDefaultValueMap.get(t)));
         }
       }
@@ -508,61 +508,50 @@ public class DwcaWriter {
 
   /**
    * Build an ArchiveField with a defaultValue and no index.
-   *
-   * @param term
-   * @param defaultValue
-   * @return
    */
-  private ArchiveField buildArchiveFieldDefaultValue(Term term, String defaultValue){
-    Preconditions.checkNotNull(term, "Can't use a null term");
-    Preconditions.checkNotNull(defaultValue, "Can't use a null defaultValue");
+  private ArchiveField buildArchiveFieldDefaultValue(Term term, String defaultValue) {
+    Objects.requireNonNull(term, "Can't use a null term");
+    Objects.requireNonNull(defaultValue, "Can't use a null defaultValue");
 
     return new ArchiveField(term, defaultValue);
   }
 
   /**
    * Build an ArchiveField with no defaultValue.
-   *
-   * @param idx
-   * @param term
-   * @return
    */
-  private ArchiveField buildArchiveField(Integer idx, Term term){
+  private ArchiveField buildArchiveField(Integer idx, Term term) {
     return buildArchiveField(idx, term, null);
   }
 
   /**
-   *
    * Build an ArchiveField from optional parameters.
    *
-   * @param idx index or null
-   * @param term term or null
+   * @param idx          index or null
+   * @param term         term or null
    * @param defaultValue default value or null
-   * @return
    */
-  private ArchiveField buildArchiveField(Integer idx, Term term, String defaultValue){
+  private ArchiveField buildArchiveField(Integer idx, Term term, String defaultValue) {
     return buildArchiveField(idx, term, defaultValue, null);
   }
 
   /**
-   *
    * Build an ArchiveField from optional parameters.
    *
-   * @param idx index or null
-   * @param term term or null
-   * @param defaultValue default value or null
+   * @param idx                 index or null
+   * @param term                term or null
+   * @param defaultValue        default value or null
    * @param multiValueDelimiter value delimiter or null
    */
-  private ArchiveField buildArchiveField(Integer idx, Term term, String defaultValue, String multiValueDelimiter){
-    Preconditions.checkNotNull(idx, "Can't use a null index");
-    Preconditions.checkNotNull(term, "Can't use a null term");
+  private ArchiveField buildArchiveField(Integer idx, Term term, String defaultValue, String multiValueDelimiter) {
+    Objects.requireNonNull(idx, "Can't use a null index");
+    Objects.requireNonNull(term, "Can't use a null term");
 
     ArchiveField field = new ArchiveField(idx, term);
 
-    if (StringUtils.isNotBlank(defaultValue)){
+    if (StringUtils.isNotBlank(defaultValue)) {
       field.setDefaultValue(defaultValue);
     }
-    if (StringUtils.isNotEmpty(multiValueDelimiter)){
+    if (StringUtils.isNotEmpty(multiValueDelimiter)) {
       field.setDelimitedBy(multiValueDelimiter);
     }
     return field;

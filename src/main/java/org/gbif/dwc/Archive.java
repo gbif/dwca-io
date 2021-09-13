@@ -35,8 +35,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
-
 /**
  * Represents a Darwin Core Archive and its components (metadata, core, extensions).
  *
@@ -136,7 +134,7 @@ public class Archive implements Iterable<StarRecord> {
    * @return map of constituent datasetID to metadata file inside the archive
    */
   public Map<String, File> getConstituentMetadata() {
-    Map<String, File> constituents = Maps.newHashMap();
+    Map<String, File> constituents = new HashMap<>();
     File constDir = new File(location, CONSTITUENT_DIR);
     if (constDir.exists()) {
       File[] files = constDir.listFiles((File dir, String filename) -> filename.endsWith(".xml"));

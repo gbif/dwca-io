@@ -48,8 +48,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.annotations.VisibleForTesting;
-
 /**
  * This class encapsulates information about a file contained within a Darwin Core Archive. It
  * represents the fileType object described in the Darwin Core Archive XSD.
@@ -204,7 +202,6 @@ public class ArchiveFile implements Iterable<Record> {
    *
    * @throws IOException
    */
-  @VisibleForTesting
   protected File normalizeIfRequired() throws IOException {
     // If the linesTerminatedBy used is the same as TabularFileNormalizer and no quoted cells are used
     // we can skip normalization

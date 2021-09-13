@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -92,7 +91,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(DwcTerm.acceptedNameUsageID);
 
     // define extension columns
-    Map<Term, String> eData = Maps.newHashMap();
+    Map<Term, String> eData = new HashMap<>();
     eData.put(DwcTerm.locality, "locality1");
     eData.put(DwcTerm.occurrenceStatus, "present");
     writer.addExtensionRecord(GbifTerm.Distribution, eData);
@@ -137,7 +136,7 @@ public class DwcaWriterTest {
     writer.addCoreColumn(GbifTerm.depthAccuracy, "1");
 
     // define extension columns
-    Map<Term, String> eData = Maps.newHashMap();
+    Map<Term, String> eData = new HashMap<>();
     // distributions
     eData.put(DwcTerm.locality, "locality1");
     eData.put(DwcTerm.occurrenceStatus, "present");

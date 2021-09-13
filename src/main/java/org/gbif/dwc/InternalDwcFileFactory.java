@@ -41,7 +41,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
@@ -52,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -233,7 +231,10 @@ class InternalDwcFileFactory {
    * @throws IOException
    */
   static ArchiveFile fromSingleFile(Path dataFile) throws UnsupportedArchiveException, IOException {
-    Preconditions.checkArgument(Files.isRegularFile(dataFile), "dataFile shall be a file");
+    if (!Files.isRegularFile(dataFile)) {
+      throw new IllegalArgumentException("dataFile shall be a file");
+    }
+
     ArchiveFile dwcFile = new ArchiveFile();
    // dwcFile.addLocation(null);
     dwcFile.setIgnoreHeaderLines(1);
@@ -266,9 +267,7 @@ class InternalDwcFileFactory {
       index++;
     }
 
-    List<Term> headerAsTerm = dwcFile.getFields().keySet()
-            .stream()
-            .collect(Collectors.toList());
+    List<Term> headerAsTerm = new ArrayList<>(dwcFile.getFields().keySet());
 
     determineRecordIdentifier(headerAsTerm).ifPresent(
             t -> dwcFile.setId(dwcFile.getField(t))

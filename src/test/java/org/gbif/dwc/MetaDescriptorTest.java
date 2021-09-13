@@ -27,6 +27,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,12 +38,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,8 +64,11 @@ public class MetaDescriptorTest {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-      for (String attName : Lists.newArrayList("rowType", "term")) {
+    public void startElement(String uri, String localName, String qName, Attributes atts) {
+      List<String> list = new ArrayList<>();
+      list.add("rowType");
+      list.add("term");
+      for (String attName : list) {
         if (atts.getValue(attName) != null) {
           terms.add(atts.getValue(attName));
         }
@@ -86,7 +87,7 @@ public class MetaDescriptorTest {
     MetaDescriptorWriter.writeMetaFile(tmpMeta, arch);
 
     // verify rowType & terms are URIs
-    List<String> terms = Lists.newArrayList();
+    List<String> terms = new ArrayList<>();
     SAXParserFactory spf = SAXParserFactory.newInstance();
     spf.setNamespaceAware(true);
     SAXParser saxParser = spf.newSAXParser();
@@ -144,7 +145,10 @@ public class MetaDescriptorTest {
 
       // extensions props
       assertEquals(2, arch2.getExtensions().size());
-      Set<String> filenames = Sets.newHashSet("VernacularName.txt", "media.txt");
+      Set<String> filenames = new HashSet<>();
+      filenames.add("VernacularName.txt");
+      filenames.add("media.txt");
+
       for (ArchiveFile ext : arch2.getExtensions()) {
         assertTrue(filenames.contains(ext.getLocation()));
         filenames.remove(ext.getLocation());
