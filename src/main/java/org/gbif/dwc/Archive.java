@@ -50,7 +50,7 @@ public class Archive implements Iterable<StarRecord> {
   private String metadata;
   private File location;
   private ArchiveFile core;
-  private Set<ArchiveFile> extensions = new HashSet<ArchiveFile>();
+  private Set<ArchiveFile> extensions = new HashSet<>();
 
   private DwcLayout dwcLayout;
 
@@ -105,9 +105,7 @@ public class Archive implements Iterable<StarRecord> {
           stream = url.openStream();
         }
         metadata = new InputStreamUtils().readEntireStream(stream, FileUtils.UTF8);
-      } catch (IOException e) {
-        throw new MetadataException(e);
-      } catch (RuntimeException e) {
+      } catch (IOException | RuntimeException e) {
         throw new MetadataException(e);
       }
     }

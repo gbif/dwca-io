@@ -31,9 +31,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.PeekingIterator;
+import org.apache.commons.collections4.iterators.PeekingIterator;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * {@link ClosableIterator} of {@link StarRecord} which includes the core record and all its extension records.
@@ -54,7 +53,7 @@ class StarRecordIterator implements ClosableIterator<StarRecord> {
       for (Term extTerm : extensionIts.keySet()) {
         rowTypes.add(extTerm);
         closeable.add(extensionIts.get(extTerm));
-        extensionIters.put(extTerm, Iterators.peekingIterator(extensionIts.get(extTerm)));
+        extensionIters.put(extTerm, new PeekingIterator<>(extensionIts.get(extTerm)));
         extensionRecordsSkipped.put(extTerm, 0);
       }
     }
@@ -119,7 +118,7 @@ class StarRecordIterator implements ClosableIterator<StarRecord> {
         while (it.hasNext()) {
           String extId = it.peek().id();
           // make sure we have an extid
-          if (Strings.isNullOrEmpty(extId)) {
+          if (StringUtils.isBlank(extId)) {
             it.next();
             continue;
           }

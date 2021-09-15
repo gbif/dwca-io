@@ -51,8 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.ImmutableList;
-
 /**
  * Internal class responsible to handle the creation of {@link Archive} objects and related functions.
  */
@@ -83,7 +81,7 @@ class InternalDwcFileFactory {
   private static final List<Term> ID_TERMS = Collections.unmodifiableList(
           Arrays.asList(DwcTerm.occurrenceID, DwcTerm.taxonID, DwcTerm.eventID, DcTerm.identifier));
 
-  private static final List<String> DATA_FILE_SUFFICES = ImmutableList.of(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
+  private static final List<String> DATA_FILE_SUFFICES = Arrays.asList(".csv", ".txt", ".tsv", ".tab", ".text", ".data", ".dwca");
 
   // Utility class
   private InternalDwcFileFactory() {}

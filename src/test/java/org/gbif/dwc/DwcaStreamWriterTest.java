@@ -20,12 +20,11 @@ import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,19 +48,19 @@ public class DwcaStreamWriterTest {
   @Test
   public void write() throws Exception {
     File dwca = FileUtils.createTempDir();
-    Map<Term, Integer> mapping = ImmutableMap.of(
-        DwcTerm.taxonID, 0,
-        DwcTerm.scientificName, 1,
-        DwcTerm.taxonRank, 2);
+    Map<Term, Integer> mapping = new HashMap<>();
+    mapping.put(DwcTerm.taxonID, 0);
+    mapping.put(DwcTerm.scientificName, 1);
+    mapping.put(DwcTerm.taxonRank, 2);
+
     try (DwcaStreamWriter dwcaWriter = new DwcaStreamWriter(dwca, DwcTerm.Taxon, DwcTerm.taxonID, true)){
       String m = "<eml/>";
       dwcaWriter.setMetadata(m, "eml.xml");
-      dwcaWriter.write(DwcTerm.Taxon, 0, mapping, ImmutableList.<String[]>builder()
-          .add(new String[] { "tax-1", "Abies Mill.", "genus" })
-          .add(new String[] { "tax-2", "Abies alba Mill.", "species" })
-          .add(new String[] { "tax-3", "Piceae abies L.", "species" })
-          .add(new String[] { "tax-4", "Piceae abies subsp. helvetica L.", "subspecies" })
-          .build()
+      dwcaWriter.write(DwcTerm.Taxon, 0, mapping, Arrays.asList(
+          new String[] { "tax-1", "Abies Mill.", "genus" },
+          new String[] { "tax-2", "Abies alba Mill.", "species" },
+          new String[] { "tax-3", "Piceae abies L.", "species" },
+          new String[] { "tax-4", "Piceae abies subsp. helvetica L.", "subspecies" })
       );
 
       Archive arch = DwcFiles.fromLocation(dwca.toPath());

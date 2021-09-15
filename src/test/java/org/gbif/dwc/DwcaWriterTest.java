@@ -34,8 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -153,7 +151,7 @@ public class DwcaWriterTest {
 
     // check if taxon file contains headers
     String[] headers = getFirstRow(cf);
-    LOG.debug(Joiner.on("; ").useForNull("NULL").join(headers));
+    LOG.debug(String.join("; ", headers));
     assertEquals(14, headers.length);
     assertEquals("taxonID", headers[0]);
     assertEquals("parentNameUsageID", headers[1]);
@@ -161,7 +159,7 @@ public class DwcaWriterTest {
 
     // check if extension file contains headers
     headers = getFirstRow(df);
-    LOG.debug(Joiner.on("; ").useForNull("NULL").join(headers));
+    LOG.debug(String.join("; ", headers));
     assertEquals(4, headers.length);
     assertEquals("taxonID", headers[0]);
   }

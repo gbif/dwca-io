@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.gbif</groupId>
     <artifactId>motherpom</artifactId>
-    <version>50</version>
+    <version>54</version>
   </parent>
 
   <artifactId>dwca-io</artifactId>
@@ -12,7 +12,7 @@
   <packaging>jar</packaging>
 
   <name>Darwin Core Archive IO Library</name>
-  <url>http://github.com/gbif/dwca-io</url>
+  <url>https://github.com/gbif/dwca-io</url>
 
   <scm>
 	  <connection>scm:git:git@github.com:gbif/dwca-io.git</connection>
@@ -24,61 +24,36 @@
   <distributionManagement>
     <site>
       <id>gh-pages</id>
-      <url>http://gbif.github.io/${project.artifactId}/</url>
+      <url>https://gbif.github.io/${project.artifactId}/</url>
     </site>
   </distributionManagement>
 
   <properties>
-    <jdkLevel>1.8</jdkLevel>
-
-    <commons-io.version>2.6</commons-io.version>
+    <commons-io.version>2.7</commons-io.version>
     <commons-lang.version>3.9</commons-lang.version>
+    <commons-collections.version>4.4</commons-collections.version>
     <commons-digester.version>3.2</commons-digester.version>
     <dwc-api.version>1.31</dwc-api.version>
-    <freemarker.version>2.3.28</freemarker.version>
-    <gbif-common.version>0.50</gbif-common.version>
-    <guava.version>23.0</guava.version>
+    <freemarker.version>2.3.31</freemarker.version>
+    <gbif-common.version>0.51</gbif-common.version>
     <junit.version>5.6.3</junit.version>
     <logback.version>1.2.3</logback.version>
     <slf4j.version>1.7.30</slf4j.version>
     <validation-api.version>2.0.1.Final</validation-api.version>
+
+    <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
   </properties>
 
   <repositories>
     <repository>
       <id>gbif-all</id>
-      <url>http://repository.gbif.org/content/groups/gbif</url>
+      <url>https://repository.gbif.org/content/groups/gbif</url>
     </repository>
   </repositories>
 
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <configuration>
-          <artifactSet>
-            <includes>
-              <include>com.google.guava:guava</include>
-            </includes>
-          </artifactSet>
-          <relocations>
-            <relocation>
-              <pattern>com.google.common</pattern>
-              <shadedPattern>org.gbif.dwcaio.shaded.com.google.common</shadedPattern>
-            </relocation>
-          </relocations>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
@@ -96,7 +71,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
+        <version>${exec-maven-plugin.version}</version>
         <configuration>
           <classpathScope>test</classpathScope>
         </configuration>
@@ -111,26 +86,6 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>spotless-check</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <java>
-            <licenseHeader>
-              <file>${main.basedir}/gbif-license-header</file>
-            </licenseHeader>
-            <removeUnusedImports />
-            <importOrder>
-              <file>${main.basedir}/gbif.importorder</file>
-            </importOrder>
-          </java>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -161,13 +116,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-digester3</artifactId>
-      <version>${commons-digester.version}</version>
+      <artifactId>commons-collections4</artifactId>
+      <version>${commons-collections.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-digester3</artifactId>
+      <version>${commons-digester.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>

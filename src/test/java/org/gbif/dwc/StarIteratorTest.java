@@ -73,6 +73,7 @@ public class StarIteratorTest {
             assertEquals("English", er.value(DcTerm.language));
           }
         }
+        System.out.println(rec);
         assertEquals(4, i);
       } else if (rec.core().id().equals("105838")) {
         found++;

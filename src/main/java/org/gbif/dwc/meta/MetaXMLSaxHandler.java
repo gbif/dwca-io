@@ -15,6 +15,7 @@
  */
 package org.gbif.dwc.meta;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveField;
 import org.gbif.dwc.ArchiveFile;
@@ -25,8 +26,6 @@ import org.gbif.dwc.terms.TermFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
-import com.google.common.base.Strings;
 
 /**
  * SAX handler to parse a meta.xml descriptor for Darwin Core Archives. It populates a given archive instance and ignores
@@ -170,7 +169,8 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
    * @return attributes value or null
    */
   private static String getAttr(Attributes attributes, String key) {
-    return Strings.emptyToNull(getAttrRaw(attributes, key));
+    String result = getAttrRaw(attributes, key);
+    return StringUtils.isBlank(result) ? null : result;
   }
 
   /**
