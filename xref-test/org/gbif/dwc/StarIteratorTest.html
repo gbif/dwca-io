@@ -13,7 +13,7 @@
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> *</em>
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *     <a href="http://www.apache.org/licenses/LICENSE-2." target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.</a>0</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *     <a href="http://www.apache.org/licenses/LICENSE-2.0" target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.0</a></em>
 <a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
 <a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
@@ -36,7 +36,7 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.jupiter.api.Assertions.assertEquals;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.jupiter.api.Assertions.assertNotNull;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/gbif/dwc/StarIteratorTest.html">StarIteratorTest</a> {
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="StarIteratorTest" href="../../../org/gbif/dwc/StarIteratorTest.html#StarIteratorTest">StarIteratorTest</a> {
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>    @Test
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testIterator() <strong class="jxr_keyword">throws</strong> IOException, UnsupportedArchiveException {
@@ -81,41 +81,42 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>              assertEquals(<span class="jxr_string">"English"</span>, er.value(DcTerm.language));
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>            }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          }
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          assertEquals(4, i);
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>        } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (rec.core().id().equals(<span class="jxr_string">"105838"</span>)) {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>          found++;
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_comment">//      105838  Delfin de La Plata  Spanish</em>
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_comment">//      105838  Franciscana Spanish</em>
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_comment">//      105838  Franciscano Portuguese</em>
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_comment">//      105838  La Plata dolphin  English</em>
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_comment">//      105838  Tonina  Spanish</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_comment">//      105838  Toninha Portuguese</em>
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">int</strong> i = 0;
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">for</strong> (Record er : rec) {
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>            i++;
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>            <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Delfin de La Plata"</span>.equals(er.value(DwcTerm.vernacularName))) {
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>              assertEquals(<span class="jxr_string">"Spanish"</span>, er.value(DcTerm.language));
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Franciscana"</span>.equals(er.value(DwcTerm.vernacularName))) {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>              assertEquals(<span class="jxr_string">"Spanish"</span>, er.value(DcTerm.language));
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Franciscano"</span>.equals(er.value(DwcTerm.vernacularName))) {
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>              assertEquals(<span class="jxr_string">"Portuguese"</span>, er.value(DcTerm.language));
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"La Plata dolphin"</span>.equals(er.value(DwcTerm.vernacularName))) {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>              assertEquals(<span class="jxr_string">"English"</span>, er.value(DcTerm.language));
-<a class="jxr_linenumber" name="L96" href="#L96">96</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Tonina"</span>.equals(er.value(DwcTerm.vernacularName))) {
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              assertEquals(<span class="jxr_string">"Spanish"</span>, er.value(DcTerm.language));
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>            } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L99" href="#L99">99</a>              assertEquals(<span class="jxr_string">"Toninha"</span>, er.value(DwcTerm.vernacularName));
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>             assertEquals(<span class="jxr_string">"Portuguese"</span>, er.value(DcTerm.language));
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>           }
-<a class="jxr_linenumber" name="L102" href="#L102">102</a>         }
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>         assertEquals(6, i);
-<a class="jxr_linenumber" name="L104" href="#L104">104</a>       }
-<a class="jxr_linenumber" name="L105" href="#L105">105</a> 
-<a class="jxr_linenumber" name="L106" href="#L106">106</a>     }
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>     assertEquals(3, found);
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>     assertEquals(1057, extensionRecords);
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>   }
-<a class="jxr_linenumber" name="L110" href="#L110">110</a> }
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          System.out.println(rec);
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          assertEquals(4, i);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>        } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (rec.core().id().equals(<span class="jxr_string">"105838"</span>)) {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          found++;
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_comment">//      105838  Delfin de La Plata  Spanish</em>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_comment">//      105838  Franciscana Spanish</em>
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_comment">//      105838  Franciscano Portuguese</em>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_comment">//      105838  La Plata dolphin  English</em>
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_comment">//      105838  Tonina  Spanish</em>
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_comment">//      105838  Toninha Portuguese</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">int</strong> i = 0;
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">for</strong> (Record er : rec) {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>            i++;
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>            <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Delfin de La Plata"</span>.equals(er.value(DwcTerm.vernacularName))) {
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>              assertEquals(<span class="jxr_string">"Spanish"</span>, er.value(DcTerm.language));
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Franciscana"</span>.equals(er.value(DwcTerm.vernacularName))) {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              assertEquals(<span class="jxr_string">"Spanish"</span>, er.value(DcTerm.language));
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Franciscano"</span>.equals(er.value(DwcTerm.vernacularName))) {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>              assertEquals(<span class="jxr_string">"Portuguese"</span>, er.value(DcTerm.language));
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"La Plata dolphin"</span>.equals(er.value(DwcTerm.vernacularName))) {
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>              assertEquals(<span class="jxr_string">"English"</span>, er.value(DcTerm.language));
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>            } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"Tonina"</span>.equals(er.value(DwcTerm.vernacularName))) {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>              assertEquals(<span class="jxr_string">"Spanish"</span>, er.value(DcTerm.language));
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>            } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>             assertEquals(<span class="jxr_string">"Toninha"</span>, er.value(DwcTerm.vernacularName));
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             assertEquals(<span class="jxr_string">"Portuguese"</span>, er.value(DcTerm.language));
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>           }
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         }
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         assertEquals(6, i);
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>       }
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     }
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     assertEquals(3, found);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     assertEquals(1057, extensionRecords);
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>   }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2021 <a href="https://www.gbif.org">Global Biodiversity Information Facility</a>. All rights reserved.</div>

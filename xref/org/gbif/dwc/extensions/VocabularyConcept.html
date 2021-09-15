@@ -13,7 +13,7 @@
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> *</em>
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *     <a href="http://www.apache.org/licenses/LICENSE-2." target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.</a>0</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *     <a href="http://www.apache.org/licenses/LICENSE-2.0" target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.0</a></em>
 <a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
 <a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
@@ -36,9 +36,9 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * preferred term in German, but both Germany and Deutschland are simply terms representing a single concept in a</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * vocabulary.</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> *</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * Taken from https://github.com/gbif/dwca-validator3/</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * Taken from <a href="https://github.com/gbif/dwca-validator3/" target="alexandria_uri">https://github.com/gbif/dwca-validator3/</a></em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/gbif/dwc/extensions/VocabularyConcept.html">VocabularyConcept</a> <strong class="jxr_keyword">implements</strong> Comparable&lt;org.gbif.dwc.extensions.VocabularyConcept&gt; {
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="VocabularyConcept" href="../../../../org/gbif/dwc/extensions/VocabularyConcept.html#VocabularyConcept">VocabularyConcept</a> <strong class="jxr_keyword">implements</strong> Comparable&lt;org.gbif.dwc.extensions.VocabularyConcept&gt; {
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Comparator&lt;org.gbif.dwc.extensions.VocabularyConcept&gt; COMPARATOR =
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>            Comparator.comparing(org.gbif.dwc.extensions.VocabularyConcept::getVocabulary,
@@ -46,7 +46,7 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>                    .thenComparing(org.gbif.dwc.extensions.VocabularyConcept::getOrder)
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>                    .thenComparing(org.gbif.dwc.extensions.VocabularyConcept::getUri);
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>    <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwc/extensions/Vocabulary.html">Vocabulary</a> vocabulary;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>    <strong class="jxr_keyword">private</strong> <a name="Vocabulary" href="../../../../org/gbif/dwc/extensions/Vocabulary.html#Vocabulary">Vocabulary</a> vocabulary;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>    <strong class="jxr_keyword">private</strong> String identifier; <em class="jxr_comment">// usually short, e.g. DE</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>    <strong class="jxr_keyword">private</strong> String description;
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> String uri; <em class="jxr_comment">// a URI denoting the concept, mostly used in rdf</em>
@@ -113,7 +113,7 @@
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">return</strong> uri;
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>   }
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> 
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">public</strong> <a href="../../../../org/gbif/dwc/extensions/Vocabulary.html">Vocabulary</a> getVocabulary() {
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>   <strong class="jxr_keyword">public</strong> <a name="Vocabulary" href="../../../../org/gbif/dwc/extensions/Vocabulary.html#Vocabulary">Vocabulary</a> getVocabulary() {
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">return</strong> vocabulary;
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>   }
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> 
@@ -154,7 +154,7 @@
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">this</strong>.uri = uri;
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>   }
 <a class="jxr_linenumber" name="L148" href="#L148">148</a> 
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setVocabulary(<a href="../../../../org/gbif/dwc/extensions/Vocabulary.html">Vocabulary</a> vocabulary) {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setVocabulary(<a name="Vocabulary" href="../../../../org/gbif/dwc/extensions/Vocabulary.html#Vocabulary">Vocabulary</a> vocabulary) {
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>     <strong class="jxr_keyword">this</strong>.vocabulary = vocabulary;
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>   }
 <a class="jxr_linenumber" name="L152" href="#L152">152</a> 

@@ -13,7 +13,7 @@
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * you may not use this file except in compliance with the License.</em>
 <a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * You may obtain a copy of the License at</em>
 <a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> *</em>
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *     <a href="http://www.apache.org/licenses/LICENSE-2." target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.</a>0</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> *     <a href="http://www.apache.org/licenses/LICENSE-2.0" target="alexandria_uri">http://www.apache.org/licenses/LICENSE-2.0</a></em>
 <a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
 <a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
@@ -47,7 +47,7 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> * Collections of static methods to work with Metadata files (e.g. metadata.xml, eml.xml) in</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * the context of Darwin Core (archive) files.</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/gbif/dwc/meta/DwcMetaFiles.html">DwcMetaFiles</a> {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="DwcMetaFiles" href="../../../../org/gbif/dwc/meta/DwcMetaFiles.html#DwcMetaFiles">DwcMetaFiles</a> {
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> SAXParserFactory SAX_FACTORY = SAXParserFactory.newInstance();
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>    <strong class="jxr_keyword">static</strong> {
@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> List&lt;String&gt; POSSIBLE_METADATA_FILE =
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>            Collections.unmodifiableList(Arrays.asList(<span class="jxr_string">"eml.xml"</span>, <span class="jxr_string">"metadata.xml"</span>));
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">private</strong> <a href="../../../../org/gbif/dwc/meta/DwcMetaFiles.html">DwcMetaFiles</a>(){}
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>    <strong class="jxr_keyword">private</strong> <a name="DwcMetaFiles" href="../../../../org/gbif/dwc/meta/DwcMetaFiles.html#DwcMetaFiles">DwcMetaFiles</a>(){}
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>    <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">   * Read the provided meta descriptor (e.g. meta.xml) and return a {@link Archive}.</em>
@@ -69,11 +69,11 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">   * @throws UnsupportedArchiveException</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">   * @return a new {@link Archive}, never null</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/gbif/dwc/Archive.html">Archive</a> fromMetaDescriptor(InputStream metaDescriptor) <strong class="jxr_keyword">throws</strong> SAXException, IOException, UnsupportedArchiveException {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <a href="../../../../org/gbif/dwc/Archive.html">Archive</a> archive = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/Archive.html">Archive</a>();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a name="Archive" href="../../../../org/gbif/dwc/Archive.html#Archive">Archive</a> fromMetaDescriptor(InputStream metaDescriptor) <strong class="jxr_keyword">throws</strong> SAXException, IOException, <a name="UnsupportedArchiveException" href="../../../../org/gbif/dwc/UnsupportedArchiveException.html#UnsupportedArchiveException">UnsupportedArchiveException</a> {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <a name="Archive" href="../../../../org/gbif/dwc/Archive.ht<a name="Archive" href="../../../../org/gbif/dwc/Archive.html#Archive">Archive</a>ive">Archive</a> archive = <strong class="jxr_keyword">new</strong> <a name="Archive" href="../../../../org/gbif/dwc/Archive.html#Archive">Archive</a>();
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">try</strong> (BOMInputStream bomInputStream = <strong class="jxr_keyword">new</strong> BOMInputStream(metaDescriptor)) {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>        SAXParser p = SAX_FACTORY.newSAXParser();
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>        <a href="../../../../org/gbif/dwc/meta/MetaXMLSaxHandler.html">MetaXMLSaxHandler</a> mh = <strong class="jxr_keyword">new</strong> <a href="../../../../org/gbif/dwc/meta/MetaXMLSaxHandler.html">MetaXMLSaxHandler</a>(archive);
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>        <a name="MetaXMLSaxHandler" href="../../../../org/gbif/dwc/meta/<a name="MetaXMLSaxHandler" href="../../../../org/gbif/dwc/meta/MetaXMLSaxHandler.html#MetaXMLSaxHandler">MetaXMLSaxHandler</a>.html#MetaXMLSaxHandler">MetaXMLSaxHandler</a> mh = <strong class="jxr_keyword">new</strong> <a name="MetaXMLSaxHandler" href="../../../../org/gbif/dwc/meta/MetaXMLSaxHandler.html#MetaXMLSaxHandler">MetaXMLSaxHandler</a>(archive);
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>        p.parse(bomInputStream, mh);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      } <strong class="jxr_keyword">catch</strong> (ParserConfigurationException e) {
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>        <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> SAXException(e);
