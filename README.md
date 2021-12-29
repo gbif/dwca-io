@@ -74,9 +74,11 @@ Add the dwca-io artifact
   <dependency>
     <groupId>org.gbif</groupId>
     <artifactId>dwca-io</artifactId>
-    <version>1.31</version>
+    <version>{latest-version}</version>
   </dependency>
 ```
+
+where `{latest-version}` can be found [here](https://github.com/gbif/dwca-io/tags)
 
 ## Change Log
 [Change Log](CHANGELOG.md)
