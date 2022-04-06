@@ -1,6 +1,4 @@
 /*
- * Copyright 2021 Global Biodiversity Information Facility (GBIF)
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +13,6 @@
  */
 package org.gbif.dwc.meta;
 
-import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.Archive;
 import org.gbif.dwc.ArchiveField;
 import org.gbif.dwc.ArchiveFile;
@@ -24,6 +21,7 @@ import org.gbif.dwc.UnsupportedArchiveException;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

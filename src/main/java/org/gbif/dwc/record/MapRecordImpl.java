@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class RecordImpl implements Record {
+public class MapRecordImpl implements Record {
 
   private final ArchiveField id;
   private final Map<Term, ArchiveField> fields;
@@ -37,9 +37,9 @@ public class RecordImpl implements Record {
    * @param replaceNulls if true record values will have literal nulls replaced with NULL.
    * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
-  public RecordImpl(ArchiveField id, Collection<ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
+  public MapRecordImpl(ArchiveField id, Collection<ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
     this.id = id;
-    this.fields = new HashMap<Term, ArchiveField>();
+    this.fields = new HashMap<>();
     for (ArchiveField f : fields) {
       this.fields.put(f.getTerm(), f);
     }
@@ -52,7 +52,7 @@ public class RecordImpl implements Record {
    * @param replaceNulls if true record values will have literal nulls replaced with NULL.
    * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
-  public RecordImpl(ArchiveField id, Map<Term, ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
+  public MapRecordImpl(ArchiveField id, Map<Term, ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
     this.id = id;
     this.fields = fields;
     this.rowType = rowType;
@@ -64,7 +64,7 @@ public class RecordImpl implements Record {
    * @param replaceNulls if true record values will have literal nulls replaced with NULL.
    * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
-  public RecordImpl(ArchiveFile af, boolean replaceNulls, boolean replaceEntities) {
+  public MapRecordImpl(ArchiveFile af, boolean replaceNulls, boolean replaceEntities) {
     this.id = af.getId();
     this.fields = af.getFields();
     this.rowType = af.getRowType();
