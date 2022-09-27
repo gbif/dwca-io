@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a Darwin Core Archive and its components (metadata, core, extensions).
  *
- * @see <a href="http://tdwg.github.io/dwc/terms/guides/text/">Darwin Core Text Guide</a>
+ * @see <a href="https://dwc.tdwg.org/text/">Darwin Core Text Guide</a>
  */
 public class Archive implements Iterable<StarRecord> {
   public static final String CONSTITUENT_DIR = "dataset";
@@ -166,27 +166,42 @@ public class Archive implements Iterable<StarRecord> {
   }
 
   /**
-   * Performs necessary preparation for iteration over StarRecords.  If the Archive has extensions, all the data files
-   * must be sorted by the identifier column to allow iteration.  This can take significant processing time.
+   * We sort the file if
+   * - a core/extension is backed by more than one file
+   * - extensions are present
+   */
+  private boolean normalizeAndSort() {
+    boolean multiFile = getCore().isMultiLocation();
+    for (ArchiveFile extension : getExtensions()) {
+      multiFile |= extension.isMultiLocation();
+    }
+
+    boolean hasExtensions = !getExtensions().isEmpty();
+
+    return multiFile || hasExtensions;
+  }
+
+  /**
+   * Performs necessary preparation for iteration over StarRecords.  If the Archive has extensions or multiple files,
+   * all the data files must be sorted by the identifier column to allow iteration.  This can take significant
+   * processing time.
    */
   public void initialize() throws IOException {
     if (normalizedAndSorted) return;
 
     Objects.requireNonNull(getCore(), "The archive shall have a core");
 
-    // If no extensions are provided we don't need to sort the file
-    if (getExtensions().isEmpty()) {
-      LOG.debug("Archive has no extensions, so initialization is unnecessary.");
-      normalizedAndSorted = true;
-      return;
-    }
+    if (normalizeAndSort()) {
+      LOG.info("Initializing Darwin Core Archive for iteration. This can take some minutes on large archives.");
 
-    LOG.info("Initializing Darwin Core Archive for iteration. This can take some minutes on large archives.");
+      // Otherwise, we need to sort core + extensions
+      getCore().normalizeAndSort();
+      for (ArchiveFile archiveFile : getExtensions()) {
+        archiveFile.normalizeAndSort();
+      }
 
-    // Otherwise, we need to sort core + extensions
-    getCore().normalizeAndSort();
-    for (ArchiveFile archiveFile : getExtensions()) {
-      archiveFile.normalizeAndSort();
+    } else {
+      LOG.debug("Archive is single-file and has no extensions, so initialization is unnecessary.");
     }
 
     normalizedAndSorted = true;
@@ -223,15 +238,15 @@ public class Archive implements Iterable<StarRecord> {
     try {
       initialize();
 
-      if (getExtensions().isEmpty()) {
+      if (normalizeAndSort()) {
         return new StarRecordIterator(
-            getCore().iterator(replaceNulls, replaceEntities),
-            null
+          getCore().sortedIterator(replaceNulls, replaceEntities),
+          getExtensionIterators(replaceNulls, replaceEntities)
         );
       } else {
         return new StarRecordIterator(
-            getCore().sortedIterator(replaceNulls, replaceEntities),
-            getExtensionIterators(replaceNulls, replaceEntities)
+          getCore().iterator(replaceNulls, replaceEntities),
+          null
         );
       }
     } catch (Exception e) {
@@ -256,7 +271,6 @@ public class Archive implements Iterable<StarRecord> {
     }
     return extensionIterators;
   }
-
 
   public void setCore(ArchiveFile core) {
     core.setArchive(this);
@@ -285,8 +299,6 @@ public class Archive implements Iterable<StarRecord> {
 
   @Override
   public String toString() {
-    String result = "";
-    result += location == null ? "no archive file" : location.getAbsoluteFile();
-    return result;
+    return location == null ? "no archive file" : "" + location.getAbsoluteFile();
   }
 }

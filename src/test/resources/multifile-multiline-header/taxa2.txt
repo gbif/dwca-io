@@ -1,0 +1,7 @@
+# Testing that a five-line header is OK.
+# Second line
+# Third line
+# Fourth line
+# Fifth line
+3	Quercus alba	Species
+4	Quercus alba	Species

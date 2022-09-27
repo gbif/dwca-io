@@ -30,7 +30,7 @@
 
   <properties>
     <dwc-api.version>1.36</dwc-api.version>
-    <gbif-common.version>0.53</gbif-common.version>
+    <gbif-common.version>0.54-SNAPSHOT</gbif-common.version>
     <commons-io.version>2.7</commons-io.version>
     <commons-lang.version>3.9</commons-lang.version>
     <commons-collections.version>4.4</commons-collections.version>

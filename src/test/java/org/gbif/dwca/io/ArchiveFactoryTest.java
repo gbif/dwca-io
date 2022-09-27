@@ -225,7 +225,7 @@ public class ArchiveFactoryTest {
     assertEquals(356, ids.size(), "Core taxon file has 356 unique ids");
 
     // read extension file on its own and extract core ids to be cross checked with core id set
-    File file = arch.getExtension(DwcTerm.Occurrence).getLocationFile();
+    File file = arch.getExtension(DwcTerm.Occurrence).getFirstLocationFile();
 
     TabularDataFileReader<List<String>> occReader = TabularFiles.newTabularFileReader(
         Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8),
@@ -281,14 +281,14 @@ public class ArchiveFactoryTest {
     assertNotNull(arch.getCore().getId());
     assertTrue(arch.getCore().hasTerm(DwcTerm.scientificName));
     assertEquals(2, arch.getExtensions().size());
-    assertEquals("DarwinCore.txt", arch.getCore().getLocation());
+    assertEquals("DarwinCore.txt", arch.getCore().getFirstLocation());
 
     // test meta.xml with xml entities as attribute values
     arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("xml-entity-meta").toPath());
     assertNotNull(arch.getCore());
     assertNotNull(arch.getCore().getId());
     assertEquals(new Character('"'), arch.getCore().getFieldsEnclosedBy());
-    assertEquals("test", arch.getCore().getLocation());
+    assertEquals("test", arch.getCore().getFirstLocation());
 
     // test direct pointer to core data file (with taxonID, meaning it has dwc:Taxon rowType)
     arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc/DarwinCore.txt").toPath());
@@ -318,7 +318,7 @@ public class ArchiveFactoryTest {
     star = dwci.next();
     assertEquals("Globicephala melaena melaena Traill", star.core().value(DwcTerm.scientificName));
     assertEquals("1559060", star.core().value(DwcTerm.taxonID));
-    assertEquals("DarwinCore.txt", arch.getCore().getLocation());
+    assertEquals("DarwinCore.txt", arch.getCore().getFirstLocation());
     assertEquals(DwcLayout.DIRECTORY_ROOT, arch.getDwcLayout());
   }
 
@@ -399,8 +399,11 @@ public class ArchiveFactoryTest {
     assertTrue(found);
   }
 
+  /**
+   * Test reading a single-file Simple Darwin Core Archive.
+   */
   @Test
-  public void testTab2() throws UnsupportedArchiveException, IOException {
+  public void testSimpleDWCA() throws UnsupportedArchiveException, IOException {
     File tab = FileUtils.getClasspathFile("issues/Borza.txt");
     // Read single-file DWC "archive".
     Archive arch = DwcFiles.fromLocation(tab.toPath());

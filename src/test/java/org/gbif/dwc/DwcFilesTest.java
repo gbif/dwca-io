@@ -154,7 +154,7 @@ public class DwcFilesTest {
 
     Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());
     ArchiveFile core = arch.getCore();
-    File sortedFile = ArchiveFile.getLocationFileSorted(core.getLocationFile());
+    File sortedFile = ArchiveFile.getLocationFileSorted(core.getFirstLocationFile());
 
     //ensure the sorted file for the core doesn't exist
     if(sortedFile.exists()) {
