@@ -162,7 +162,7 @@
 <span class="sourceLineNo">154</span><a name="line.154"></a>
 <span class="sourceLineNo">155</span>    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("archive-dwc").toPath());<a name="line.155"></a>
 <span class="sourceLineNo">156</span>    ArchiveFile core = arch.getCore();<a name="line.156"></a>
-<span class="sourceLineNo">157</span>    File sortedFile = ArchiveFile.getLocationFileSorted(core.getLocationFile());<a name="line.157"></a>
+<span class="sourceLineNo">157</span>    File sortedFile = ArchiveFile.getLocationFileSorted(core.getFirstLocationFile());<a name="line.157"></a>
 <span class="sourceLineNo">158</span><a name="line.158"></a>
 <span class="sourceLineNo">159</span>    //ensure the sorted file for the core doesn't exist<a name="line.159"></a>
 <span class="sourceLineNo">160</span>    if(sortedFile.exists()) {<a name="line.160"></a>

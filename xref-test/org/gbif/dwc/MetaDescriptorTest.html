@@ -138,7 +138,7 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>       assertNotNull(core);
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>       assertNotNull(core.getId());
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>       assertTrue(core.hasTerm(DwcTerm.scientificName));
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>       assertEquals(<span class="jxr_string">"DarwinCore.txt"</span>, core.getLocation());
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>       assertEquals(<span class="jxr_string">"DarwinCore.txt"</span>, core.getFirstLocation());
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>       assertEquals(<span class="jxr_string">"\t"</span>, core.getFieldsTerminatedBy());
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>       assertNull(core.getField(DwcTerm.scientificName).getDelimitedBy());
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>       assertEquals(<span class="jxr_string">";"</span>, core.getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
@@ -156,8 +156,8 @@
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>       filenames.add(<span class="jxr_string">"media.txt"</span>);
 <a class="jxr_linenumber" name="L149" href="#L149">149</a> 
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>       <strong class="jxr_keyword">for</strong> (ArchiveFile ext : arch2.getExtensions()) {
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         assertTrue(filenames.contains(ext.getLocation()));
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         filenames.remove(ext.getLocation());
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         assertTrue(filenames.contains(ext.getFirstLocation()));
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         filenames.remove(ext.getFirstLocation());
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>       }
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>       assertTrue(filenames.isEmpty());
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> 
@@ -198,7 +198,7 @@
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>       assertNotNull(core);
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>       assertNotNull(core.getId());
 <a class="jxr_linenumber" name="L192" href="#L192">192</a>       assertTrue(core.hasTerm(DwcTerm.scientificName));
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>       assertEquals(<span class="jxr_string">"test"</span>, core.getLocation());
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>       assertEquals(<span class="jxr_string">"test"</span>, core.getFirstLocation());
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>       <strong class="jxr_keyword">for</strong> (ArchiveField f : arch.getCore().getFields().values()) {
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>         assertTrue(core.hasTerm(f.getTerm().qualifiedName()));
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>         assertEquals(core.getField(f.getTerm().qualifiedName()).getIndex(), f.getIndex());
@@ -207,7 +207,7 @@
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>       <em class="jxr_comment">// extensions props</em>
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>       assertEquals(1, arch2.getExtensions().size());
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>       ArchiveFile ext = arch2.getExtensions().iterator().next();
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>       assertEquals(<span class="jxr_string">"test2"</span>, ext.getLocation());
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>       assertEquals(<span class="jxr_string">"test2"</span>, ext.getFirstLocation());
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>       assertEquals(2, ext.getFields().size());
 <a class="jxr_linenumber" name="L204" href="#L204">204</a> 
 <a class="jxr_linenumber" name="L205" href="#L205">205</a>     } <strong class="jxr_keyword">catch</strong> (Exception e) {

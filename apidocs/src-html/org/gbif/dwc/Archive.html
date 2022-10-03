@@ -44,7 +44,7 @@
 <span class="sourceLineNo">036</span>/**<a name="line.36"></a>
 <span class="sourceLineNo">037</span> * Represents a Darwin Core Archive and its components (metadata, core, extensions).<a name="line.37"></a>
 <span class="sourceLineNo">038</span> *<a name="line.38"></a>
-<span class="sourceLineNo">039</span> * @see &lt;a href="http://tdwg.github.io/dwc/terms/guides/text/"&gt;Darwin Core Text Guide&lt;/a&gt;<a name="line.39"></a>
+<span class="sourceLineNo">039</span> * @see &lt;a href="https://dwc.tdwg.org/text/"&gt;Darwin Core Text Guide&lt;/a&gt;<a name="line.39"></a>
 <span class="sourceLineNo">040</span> */<a name="line.40"></a>
 <span class="sourceLineNo">041</span>public class Archive implements Iterable&lt;StarRecord&gt; {<a name="line.41"></a>
 <span class="sourceLineNo">042</span>  public static final String CONSTITUENT_DIR = "dataset";<a name="line.42"></a>
@@ -174,130 +174,142 @@
 <span class="sourceLineNo">166</span>  }<a name="line.166"></a>
 <span class="sourceLineNo">167</span><a name="line.167"></a>
 <span class="sourceLineNo">168</span>  /**<a name="line.168"></a>
-<span class="sourceLineNo">169</span>   * Performs necessary preparation for iteration over StarRecords.  If the Archive has extensions, all the data files<a name="line.169"></a>
-<span class="sourceLineNo">170</span>   * must be sorted by the identifier column to allow iteration.  This can take significant processing time.<a name="line.170"></a>
-<span class="sourceLineNo">171</span>   */<a name="line.171"></a>
-<span class="sourceLineNo">172</span>  public void initialize() throws IOException {<a name="line.172"></a>
-<span class="sourceLineNo">173</span>    if (normalizedAndSorted) return;<a name="line.173"></a>
-<span class="sourceLineNo">174</span><a name="line.174"></a>
-<span class="sourceLineNo">175</span>    Objects.requireNonNull(getCore(), "The archive shall have a core");<a name="line.175"></a>
-<span class="sourceLineNo">176</span><a name="line.176"></a>
-<span class="sourceLineNo">177</span>    // If no extensions are provided we don't need to sort the file<a name="line.177"></a>
-<span class="sourceLineNo">178</span>    if (getExtensions().isEmpty()) {<a name="line.178"></a>
-<span class="sourceLineNo">179</span>      LOG.debug("Archive has no extensions, so initialization is unnecessary.");<a name="line.179"></a>
-<span class="sourceLineNo">180</span>      normalizedAndSorted = true;<a name="line.180"></a>
-<span class="sourceLineNo">181</span>      return;<a name="line.181"></a>
-<span class="sourceLineNo">182</span>    }<a name="line.182"></a>
+<span class="sourceLineNo">169</span>   * We sort the file if<a name="line.169"></a>
+<span class="sourceLineNo">170</span>   * - a core/extension is backed by more than one file<a name="line.170"></a>
+<span class="sourceLineNo">171</span>   * - extensions are present<a name="line.171"></a>
+<span class="sourceLineNo">172</span>   */<a name="line.172"></a>
+<span class="sourceLineNo">173</span>  private boolean normalizeAndSort() {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>    boolean multiFile = getCore().isMultiLocation();<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    for (ArchiveFile extension : getExtensions()) {<a name="line.175"></a>
+<span class="sourceLineNo">176</span>      multiFile |= extension.isMultiLocation();<a name="line.176"></a>
+<span class="sourceLineNo">177</span>    }<a name="line.177"></a>
+<span class="sourceLineNo">178</span><a name="line.178"></a>
+<span class="sourceLineNo">179</span>    boolean hasExtensions = !getExtensions().isEmpty();<a name="line.179"></a>
+<span class="sourceLineNo">180</span><a name="line.180"></a>
+<span class="sourceLineNo">181</span>    return multiFile || hasExtensions;<a name="line.181"></a>
+<span class="sourceLineNo">182</span>  }<a name="line.182"></a>
 <span class="sourceLineNo">183</span><a name="line.183"></a>
-<span class="sourceLineNo">184</span>    LOG.info("Initializing Darwin Core Archive for iteration. This can take some minutes on large archives.");<a name="line.184"></a>
-<span class="sourceLineNo">185</span><a name="line.185"></a>
-<span class="sourceLineNo">186</span>    // Otherwise, we need to sort core + extensions<a name="line.186"></a>
-<span class="sourceLineNo">187</span>    getCore().normalizeAndSort();<a name="line.187"></a>
-<span class="sourceLineNo">188</span>    for (ArchiveFile archiveFile : getExtensions()) {<a name="line.188"></a>
-<span class="sourceLineNo">189</span>      archiveFile.normalizeAndSort();<a name="line.189"></a>
-<span class="sourceLineNo">190</span>    }<a name="line.190"></a>
+<span class="sourceLineNo">184</span>  /**<a name="line.184"></a>
+<span class="sourceLineNo">185</span>   * Performs necessary preparation for iteration over StarRecords.  If the Archive has extensions or multiple files,<a name="line.185"></a>
+<span class="sourceLineNo">186</span>   * all the data files must be sorted by the identifier column to allow iteration.  This can take significant<a name="line.186"></a>
+<span class="sourceLineNo">187</span>   * processing time.<a name="line.187"></a>
+<span class="sourceLineNo">188</span>   */<a name="line.188"></a>
+<span class="sourceLineNo">189</span>  public void initialize() throws IOException {<a name="line.189"></a>
+<span class="sourceLineNo">190</span>    if (normalizedAndSorted) return;<a name="line.190"></a>
 <span class="sourceLineNo">191</span><a name="line.191"></a>
-<span class="sourceLineNo">192</span>    normalizedAndSorted = true;<a name="line.192"></a>
-<span class="sourceLineNo">193</span>  }<a name="line.193"></a>
-<span class="sourceLineNo">194</span><a name="line.194"></a>
-<span class="sourceLineNo">195</span>  /**<a name="line.195"></a>
-<span class="sourceLineNo">196</span>   * @return a complete iterator using star records with all extension records that replaces literal null values and<a name="line.196"></a>
-<span class="sourceLineNo">197</span>   * HTML entities.<a name="line.197"></a>
-<span class="sourceLineNo">198</span>   * &lt;p&gt;<a name="line.198"></a>
-<span class="sourceLineNo">199</span>   * Replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL", and replaces HTML &amp; XML entities in<a name="line.199"></a>
-<span class="sourceLineNo">200</span>   * record values with the interpreted value.<a name="line.200"></a>
-<span class="sourceLineNo">201</span>   * &lt;p&gt;<a name="line.201"></a>
-<span class="sourceLineNo">202</span>   * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.<a name="line.202"></a>
-<span class="sourceLineNo">203</span>   * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,<a name="line.203"></a>
-<span class="sourceLineNo">204</span>   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)<a name="line.204"></a>
-<span class="sourceLineNo">205</span>   */<a name="line.205"></a>
-<span class="sourceLineNo">206</span>  @Override<a name="line.206"></a>
-<span class="sourceLineNo">207</span>  public ClosableIterator&lt;StarRecord&gt; iterator() {<a name="line.207"></a>
-<span class="sourceLineNo">208</span>    return iterator(true, true);<a name="line.208"></a>
-<span class="sourceLineNo">209</span>  }<a name="line.209"></a>
-<span class="sourceLineNo">210</span><a name="line.210"></a>
-<span class="sourceLineNo">211</span>  /**<a name="line.211"></a>
-<span class="sourceLineNo">212</span>   * @return a complete iterator using star records with all extension records that may replace literal null values and<a name="line.212"></a>
-<span class="sourceLineNo">213</span>   * HTML entities.<a name="line.213"></a>
-<span class="sourceLineNo">214</span>   * &lt;p&gt;<a name="line.214"></a>
-<span class="sourceLineNo">215</span>   * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.<a name="line.215"></a>
-<span class="sourceLineNo">216</span>   * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,<a name="line.216"></a>
-<span class="sourceLineNo">217</span>   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)<a name="line.217"></a>
-<span class="sourceLineNo">218</span>   *<a name="line.218"></a>
-<span class="sourceLineNo">219</span>   * @param replaceNulls if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"<a name="line.219"></a>
-<span class="sourceLineNo">220</span>   * @param replaceEntities if true HTML &amp; XML entities in record values will be replaced with the interpreted value.<a name="line.220"></a>
-<span class="sourceLineNo">221</span>   */<a name="line.221"></a>
-<span class="sourceLineNo">222</span>  public ClosableIterator&lt;StarRecord&gt; iterator(boolean replaceNulls, boolean replaceEntities) {<a name="line.222"></a>
-<span class="sourceLineNo">223</span>    try {<a name="line.223"></a>
-<span class="sourceLineNo">224</span>      initialize();<a name="line.224"></a>
+<span class="sourceLineNo">192</span>    Objects.requireNonNull(getCore(), "The archive shall have a core");<a name="line.192"></a>
+<span class="sourceLineNo">193</span><a name="line.193"></a>
+<span class="sourceLineNo">194</span>    if (normalizeAndSort()) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>      LOG.info("Initializing Darwin Core Archive for iteration. This can take some minutes on large archives.");<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>      // Otherwise, we need to sort core + extensions<a name="line.197"></a>
+<span class="sourceLineNo">198</span>      getCore().normalizeAndSort();<a name="line.198"></a>
+<span class="sourceLineNo">199</span>      for (ArchiveFile archiveFile : getExtensions()) {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        archiveFile.normalizeAndSort();<a name="line.200"></a>
+<span class="sourceLineNo">201</span>      }<a name="line.201"></a>
+<span class="sourceLineNo">202</span><a name="line.202"></a>
+<span class="sourceLineNo">203</span>    } else {<a name="line.203"></a>
+<span class="sourceLineNo">204</span>      LOG.debug("Archive is single-file and has no extensions, so initialization is unnecessary.");<a name="line.204"></a>
+<span class="sourceLineNo">205</span>    }<a name="line.205"></a>
+<span class="sourceLineNo">206</span><a name="line.206"></a>
+<span class="sourceLineNo">207</span>    normalizedAndSorted = true;<a name="line.207"></a>
+<span class="sourceLineNo">208</span>  }<a name="line.208"></a>
+<span class="sourceLineNo">209</span><a name="line.209"></a>
+<span class="sourceLineNo">210</span>  /**<a name="line.210"></a>
+<span class="sourceLineNo">211</span>   * @return a complete iterator using star records with all extension records that replaces literal null values and<a name="line.211"></a>
+<span class="sourceLineNo">212</span>   * HTML entities.<a name="line.212"></a>
+<span class="sourceLineNo">213</span>   * &lt;p&gt;<a name="line.213"></a>
+<span class="sourceLineNo">214</span>   * Replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL", and replaces HTML &amp; XML entities in<a name="line.214"></a>
+<span class="sourceLineNo">215</span>   * record values with the interpreted value.<a name="line.215"></a>
+<span class="sourceLineNo">216</span>   * &lt;p&gt;<a name="line.216"></a>
+<span class="sourceLineNo">217</span>   * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.<a name="line.217"></a>
+<span class="sourceLineNo">218</span>   * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,<a name="line.218"></a>
+<span class="sourceLineNo">219</span>   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)<a name="line.219"></a>
+<span class="sourceLineNo">220</span>   */<a name="line.220"></a>
+<span class="sourceLineNo">221</span>  @Override<a name="line.221"></a>
+<span class="sourceLineNo">222</span>  public ClosableIterator&lt;StarRecord&gt; iterator() {<a name="line.222"></a>
+<span class="sourceLineNo">223</span>    return iterator(true, true);<a name="line.223"></a>
+<span class="sourceLineNo">224</span>  }<a name="line.224"></a>
 <span class="sourceLineNo">225</span><a name="line.225"></a>
-<span class="sourceLineNo">226</span>      if (getExtensions().isEmpty()) {<a name="line.226"></a>
-<span class="sourceLineNo">227</span>        return new StarRecordIterator(<a name="line.227"></a>
-<span class="sourceLineNo">228</span>            getCore().iterator(replaceNulls, replaceEntities),<a name="line.228"></a>
-<span class="sourceLineNo">229</span>            null<a name="line.229"></a>
-<span class="sourceLineNo">230</span>        );<a name="line.230"></a>
-<span class="sourceLineNo">231</span>      } else {<a name="line.231"></a>
-<span class="sourceLineNo">232</span>        return new StarRecordIterator(<a name="line.232"></a>
-<span class="sourceLineNo">233</span>            getCore().sortedIterator(replaceNulls, replaceEntities),<a name="line.233"></a>
-<span class="sourceLineNo">234</span>            getExtensionIterators(replaceNulls, replaceEntities)<a name="line.234"></a>
-<span class="sourceLineNo">235</span>        );<a name="line.235"></a>
-<span class="sourceLineNo">236</span>      }<a name="line.236"></a>
-<span class="sourceLineNo">237</span>    } catch (Exception e) {<a name="line.237"></a>
-<span class="sourceLineNo">238</span>      throw new UnsupportedArchiveException(e);<a name="line.238"></a>
-<span class="sourceLineNo">239</span>    }<a name="line.239"></a>
-<span class="sourceLineNo">240</span>  }<a name="line.240"></a>
-<span class="sourceLineNo">241</span><a name="line.241"></a>
-<span class="sourceLineNo">242</span>  /**<a name="line.242"></a>
-<span class="sourceLineNo">243</span>   * Build an iterator (pointing to the sorted tabular file) for each extension of the {@link Archive}.<a name="line.243"></a>
-<span class="sourceLineNo">244</span>   *<a name="line.244"></a>
-<span class="sourceLineNo">245</span>   * @param replaceNulls<a name="line.245"></a>
-<span class="sourceLineNo">246</span>   * @param replaceEntities<a name="line.246"></a>
-<span class="sourceLineNo">247</span>   *<a name="line.247"></a>
-<span class="sourceLineNo">248</span>   * @return a map of iterators<a name="line.248"></a>
-<span class="sourceLineNo">249</span>   *<a name="line.249"></a>
-<span class="sourceLineNo">250</span>   * @throws IOException<a name="line.250"></a>
-<span class="sourceLineNo">251</span>   */<a name="line.251"></a>
-<span class="sourceLineNo">252</span>  private Map&lt;Term, ClosableIterator&lt;Record&gt;&gt; getExtensionIterators(boolean replaceNulls, boolean replaceEntities) throws IOException {<a name="line.252"></a>
-<span class="sourceLineNo">253</span>    Map&lt;Term, ClosableIterator&lt;Record&gt;&gt; extensionIterators = new HashMap&lt;&gt;();<a name="line.253"></a>
-<span class="sourceLineNo">254</span>    for (ArchiveFile ext : getExtensions()) {<a name="line.254"></a>
-<span class="sourceLineNo">255</span>      extensionIterators.put(ext.getRowType(), ext.sortedIterator(replaceNulls, replaceEntities));<a name="line.255"></a>
-<span class="sourceLineNo">256</span>    }<a name="line.256"></a>
-<span class="sourceLineNo">257</span>    return extensionIterators;<a name="line.257"></a>
-<span class="sourceLineNo">258</span>  }<a name="line.258"></a>
-<span class="sourceLineNo">259</span><a name="line.259"></a>
-<span class="sourceLineNo">260</span><a name="line.260"></a>
-<span class="sourceLineNo">261</span>  public void setCore(ArchiveFile core) {<a name="line.261"></a>
-<span class="sourceLineNo">262</span>    core.setArchive(this);<a name="line.262"></a>
-<span class="sourceLineNo">263</span>    this.core = core;<a name="line.263"></a>
-<span class="sourceLineNo">264</span>  }<a name="line.264"></a>
-<span class="sourceLineNo">265</span><a name="line.265"></a>
-<span class="sourceLineNo">266</span>  public void setExtensions(Set&lt;ArchiveFile&gt; extensions) {<a name="line.266"></a>
-<span class="sourceLineNo">267</span>    this.extensions = extensions;<a name="line.267"></a>
-<span class="sourceLineNo">268</span>  }<a name="line.268"></a>
-<span class="sourceLineNo">269</span><a name="line.269"></a>
-<span class="sourceLineNo">270</span>  public void setLocation(File location) {<a name="line.270"></a>
-<span class="sourceLineNo">271</span>    this.location = location;<a name="line.271"></a>
-<span class="sourceLineNo">272</span>  }<a name="line.272"></a>
-<span class="sourceLineNo">273</span><a name="line.273"></a>
-<span class="sourceLineNo">274</span>  public void setMetadataLocation(String metadataLocation) {<a name="line.274"></a>
-<span class="sourceLineNo">275</span>    this.metadataLocation = metadataLocation;<a name="line.275"></a>
-<span class="sourceLineNo">276</span>  }<a name="line.276"></a>
-<span class="sourceLineNo">277</span><a name="line.277"></a>
-<span class="sourceLineNo">278</span>  public DwcLayout getDwcLayout() {<a name="line.278"></a>
-<span class="sourceLineNo">279</span>    return dwcLayout;<a name="line.279"></a>
-<span class="sourceLineNo">280</span>  }<a name="line.280"></a>
-<span class="sourceLineNo">281</span><a name="line.281"></a>
-<span class="sourceLineNo">282</span>  public void setDwcLayout(DwcLayout dwcLayout) {<a name="line.282"></a>
-<span class="sourceLineNo">283</span>    this.dwcLayout = dwcLayout;<a name="line.283"></a>
-<span class="sourceLineNo">284</span>  }<a name="line.284"></a>
-<span class="sourceLineNo">285</span><a name="line.285"></a>
-<span class="sourceLineNo">286</span>  @Override<a name="line.286"></a>
-<span class="sourceLineNo">287</span>  public String toString() {<a name="line.287"></a>
-<span class="sourceLineNo">288</span>    String result = "";<a name="line.288"></a>
-<span class="sourceLineNo">289</span>    result += location == null ? "no archive file" : location.getAbsoluteFile();<a name="line.289"></a>
-<span class="sourceLineNo">290</span>    return result;<a name="line.290"></a>
-<span class="sourceLineNo">291</span>  }<a name="line.291"></a>
-<span class="sourceLineNo">292</span>}<a name="line.292"></a>
+<span class="sourceLineNo">226</span>  /**<a name="line.226"></a>
+<span class="sourceLineNo">227</span>   * @return a complete iterator using star records with all extension records that may replace literal null values and<a name="line.227"></a>
+<span class="sourceLineNo">228</span>   * HTML entities.<a name="line.228"></a>
+<span class="sourceLineNo">229</span>   * &lt;p&gt;<a name="line.229"></a>
+<span class="sourceLineNo">230</span>   * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.<a name="line.230"></a>
+<span class="sourceLineNo">231</span>   * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,<a name="line.231"></a>
+<span class="sourceLineNo">232</span>   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)<a name="line.232"></a>
+<span class="sourceLineNo">233</span>   *<a name="line.233"></a>
+<span class="sourceLineNo">234</span>   * @param replaceNulls if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"<a name="line.234"></a>
+<span class="sourceLineNo">235</span>   * @param replaceEntities if true HTML &amp; XML entities in record values will be replaced with the interpreted value.<a name="line.235"></a>
+<span class="sourceLineNo">236</span>   */<a name="line.236"></a>
+<span class="sourceLineNo">237</span>  public ClosableIterator&lt;StarRecord&gt; iterator(boolean replaceNulls, boolean replaceEntities) {<a name="line.237"></a>
+<span class="sourceLineNo">238</span>    try {<a name="line.238"></a>
+<span class="sourceLineNo">239</span>      initialize();<a name="line.239"></a>
+<span class="sourceLineNo">240</span><a name="line.240"></a>
+<span class="sourceLineNo">241</span>      if (normalizeAndSort()) {<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        return new StarRecordIterator(<a name="line.242"></a>
+<span class="sourceLineNo">243</span>          getCore().sortedIterator(replaceNulls, replaceEntities),<a name="line.243"></a>
+<span class="sourceLineNo">244</span>          getExtensionIterators(replaceNulls, replaceEntities)<a name="line.244"></a>
+<span class="sourceLineNo">245</span>        );<a name="line.245"></a>
+<span class="sourceLineNo">246</span>      } else {<a name="line.246"></a>
+<span class="sourceLineNo">247</span>        return new StarRecordIterator(<a name="line.247"></a>
+<span class="sourceLineNo">248</span>          getCore().iterator(replaceNulls, replaceEntities),<a name="line.248"></a>
+<span class="sourceLineNo">249</span>          null<a name="line.249"></a>
+<span class="sourceLineNo">250</span>        );<a name="line.250"></a>
+<span class="sourceLineNo">251</span>      }<a name="line.251"></a>
+<span class="sourceLineNo">252</span>    } catch (Exception e) {<a name="line.252"></a>
+<span class="sourceLineNo">253</span>      throw new UnsupportedArchiveException(e);<a name="line.253"></a>
+<span class="sourceLineNo">254</span>    }<a name="line.254"></a>
+<span class="sourceLineNo">255</span>  }<a name="line.255"></a>
+<span class="sourceLineNo">256</span><a name="line.256"></a>
+<span class="sourceLineNo">257</span>  /**<a name="line.257"></a>
+<span class="sourceLineNo">258</span>   * Build an iterator (pointing to the sorted tabular file) for each extension of the {@link Archive}.<a name="line.258"></a>
+<span class="sourceLineNo">259</span>   *<a name="line.259"></a>
+<span class="sourceLineNo">260</span>   * @param replaceNulls<a name="line.260"></a>
+<span class="sourceLineNo">261</span>   * @param replaceEntities<a name="line.261"></a>
+<span class="sourceLineNo">262</span>   *<a name="line.262"></a>
+<span class="sourceLineNo">263</span>   * @return a map of iterators<a name="line.263"></a>
+<span class="sourceLineNo">264</span>   *<a name="line.264"></a>
+<span class="sourceLineNo">265</span>   * @throws IOException<a name="line.265"></a>
+<span class="sourceLineNo">266</span>   */<a name="line.266"></a>
+<span class="sourceLineNo">267</span>  private Map&lt;Term, ClosableIterator&lt;Record&gt;&gt; getExtensionIterators(boolean replaceNulls, boolean replaceEntities) throws IOException {<a name="line.267"></a>
+<span class="sourceLineNo">268</span>    Map&lt;Term, ClosableIterator&lt;Record&gt;&gt; extensionIterators = new HashMap&lt;&gt;();<a name="line.268"></a>
+<span class="sourceLineNo">269</span>    for (ArchiveFile ext : getExtensions()) {<a name="line.269"></a>
+<span class="sourceLineNo">270</span>      extensionIterators.put(ext.getRowType(), ext.sortedIterator(replaceNulls, replaceEntities));<a name="line.270"></a>
+<span class="sourceLineNo">271</span>    }<a name="line.271"></a>
+<span class="sourceLineNo">272</span>    return extensionIterators;<a name="line.272"></a>
+<span class="sourceLineNo">273</span>  }<a name="line.273"></a>
+<span class="sourceLineNo">274</span><a name="line.274"></a>
+<span class="sourceLineNo">275</span>  public void setCore(ArchiveFile core) {<a name="line.275"></a>
+<span class="sourceLineNo">276</span>    core.setArchive(this);<a name="line.276"></a>
+<span class="sourceLineNo">277</span>    this.core = core;<a name="line.277"></a>
+<span class="sourceLineNo">278</span>  }<a name="line.278"></a>
+<span class="sourceLineNo">279</span><a name="line.279"></a>
+<span class="sourceLineNo">280</span>  public void setExtensions(Set&lt;ArchiveFile&gt; extensions) {<a name="line.280"></a>
+<span class="sourceLineNo">281</span>    this.extensions = extensions;<a name="line.281"></a>
+<span class="sourceLineNo">282</span>  }<a name="line.282"></a>
+<span class="sourceLineNo">283</span><a name="line.283"></a>
+<span class="sourceLineNo">284</span>  public void setLocation(File location) {<a name="line.284"></a>
+<span class="sourceLineNo">285</span>    this.location = location;<a name="line.285"></a>
+<span class="sourceLineNo">286</span>  }<a name="line.286"></a>
+<span class="sourceLineNo">287</span><a name="line.287"></a>
+<span class="sourceLineNo">288</span>  public void setMetadataLocation(String metadataLocation) {<a name="line.288"></a>
+<span class="sourceLineNo">289</span>    this.metadataLocation = metadataLocation;<a name="line.289"></a>
+<span class="sourceLineNo">290</span>  }<a name="line.290"></a>
+<span class="sourceLineNo">291</span><a name="line.291"></a>
+<span class="sourceLineNo">292</span>  public DwcLayout getDwcLayout() {<a name="line.292"></a>
+<span class="sourceLineNo">293</span>    return dwcLayout;<a name="line.293"></a>
+<span class="sourceLineNo">294</span>  }<a name="line.294"></a>
+<span class="sourceLineNo">295</span><a name="line.295"></a>
+<span class="sourceLineNo">296</span>  public void setDwcLayout(DwcLayout dwcLayout) {<a name="line.296"></a>
+<span class="sourceLineNo">297</span>    this.dwcLayout = dwcLayout;<a name="line.297"></a>
+<span class="sourceLineNo">298</span>  }<a name="line.298"></a>
+<span class="sourceLineNo">299</span><a name="line.299"></a>
+<span class="sourceLineNo">300</span>  @Override<a name="line.300"></a>
+<span class="sourceLineNo">301</span>  public String toString() {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>    return location == null ? "no archive file" : "" + location.getAbsoluteFile();<a name="line.302"></a>
+<span class="sourceLineNo">303</span>  }<a name="line.303"></a>
+<span class="sourceLineNo">304</span>}<a name="line.304"></a>
 
 
 
