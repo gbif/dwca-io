@@ -13,6 +13,7 @@
  */
 package org.gbif.dwc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
@@ -21,6 +22,8 @@ import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
 import org.gbif.utils.file.tabular.TabularFileNormalizer;
 import org.gbif.utils.file.tabular.TabularFiles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,13 +45,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This class encapsulates information about a file contained within a Darwin Core Archive. It
- * represents the fileType object described in the Darwin Core Archive XSD.
+ * represents the fileType object described in the Darwin Core Archive XSD, i.e. the core or extension elements.
+ *
+ * In the case of a fake single-file archive, it represents that.  In this case, archive is null.
  *
  * @see <a href="http://rs.tdwg.org/dwc/text/tdwg_dwc_text.xsd">Darwin Core Archive XSD</a>
  */
@@ -127,11 +128,13 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   protected void validate() throws UnsupportedArchiveException {
-    if (getLocation() == null) {
+    if (getFirstLocation() == null) {
       throw new UnsupportedArchiveException("DwC-A data file »" + title + "« requires a location");
     }
-    if (!getLocationFile().exists()) {
-      throw new UnsupportedArchiveException("DwC-A data file »" + title + "« does not exist");
+    for (File f : getLocationFiles()) {
+      if (!f.exists()) {
+        throw new UnsupportedArchiveException("DwC-A data file »" + title + "« does not exist");
+      }
     }
     if (encoding == null) {
       throw new UnsupportedArchiveException("DwC-A data file »" + title + "« requires a character encoding");
@@ -152,10 +155,10 @@ public class ArchiveFile implements Iterable<Record> {
    * and uses an advisory lock to avoid conflict between multiple processes.
    */
   protected synchronized boolean normalizeAndSort() throws IOException {
-    File fileToSort = getLocationFile();
-    File sortedFile = getLocationFileSorted(getLocationFile());
+    List<File> filesToSort = getLocationFiles();
+    File sortedFile = getLocationFileSorted(getFirstLocationFile());
 
-    File lockFile = getLocationLockFile(getLocationFile());
+    File lockFile = getLocationLockFile(getFirstLocationFile());
     RandomAccessFile lockFileRA = new RandomAccessFile(lockFile, "rw");
 
     FileLock lock = lockFileRA.getChannel().tryLock();
@@ -167,23 +170,28 @@ public class ArchiveFile implements Iterable<Record> {
 
     try {
       // If we already sorted the file and its source didn't change we can avoid doing it again
-      if (sortedFile.exists() && Files.getLastModifiedTime(sortedFile.toPath()).toInstant().isAfter(
-          Files.getLastModifiedTime(fileToSort.toPath()).toInstant())) {
+      long youngestFileTime = Long.MIN_VALUE;
+      for (File f : filesToSort) {
+        youngestFileTime = Math.max(youngestFileTime, f.lastModified());
+      }
+      if (sortedFile.exists() && sortedFile.lastModified() > youngestFileTime) {
         LOG.debug("File {} is already sorted ({}B)", sortedFile, sortedFile.length());
         return false;
       }
 
-      File normalizedFile = normalizeIfRequired();
-      if (normalizedFile != null) {
-        fileToSort = normalizedFile;
+      List<File> normalizedFiles = normalizeIfRequired();
+      if (normalizedFiles != null) {
+        filesToSort = normalizedFiles;
       }
 
-      FILE_UTILS.sort(fileToSort, getLocationFileSorted(getLocationFile()), getEncoding(),
+      FILE_UTILS.sort(filesToSort, sortedFile, getEncoding(),
           getId().getIndex(), getFieldsTerminatedBy(), getFieldsEnclosedBy(),
           TabularFileNormalizer.NORMALIZED_END_OF_LINE, getIgnoreHeaderLines());
 
-      if (normalizedFile != null) {
-        Files.deleteIfExists(normalizedFile.toPath());
+      if (normalizedFiles != null) {
+        for (File f : normalizedFiles) {
+          Files.deleteIfExists(f.toPath());
+        }
       }
 
       return true;
@@ -200,18 +208,22 @@ public class ArchiveFile implements Iterable<Record> {
    *
    * @throws IOException
    */
-  protected File normalizeIfRequired() throws IOException {
+  protected List<File> normalizeIfRequired() throws IOException {
     // If the linesTerminatedBy used is the same as TabularFileNormalizer and no quoted cells are used
     // we can skip normalization
     boolean normalizationRequired = ! TabularFileNormalizer.NORMALIZED_END_OF_LINE.equals(getLinesTerminatedBy())
         || getFieldsEnclosedBy() != null;
 
     if (normalizationRequired) {
-      File normalizedFile = getLocationFileNormalized(getLocationFile());
-      TabularFileNormalizer.normalizeFile(getLocationFile().toPath(), normalizedFile.toPath(),
+      List<File> normalizedFiles = new ArrayList<>();
+      for (File f : getLocationFiles()) {
+        File normalizedFile = getLocationFileNormalized(f);
+        TabularFileNormalizer.normalizeFile(f.toPath(), normalizedFile.toPath(),
           Charset.forName(getEncoding()), getFieldsTerminatedByChar(),
           getLinesTerminatedBy(), getFieldsEnclosedBy());
-      return normalizedFile;
+        normalizedFiles.add(normalizedFile);
+      }
+      return normalizedFiles;
     }
     return null;
   }
@@ -291,7 +303,6 @@ public class ArchiveFile implements Iterable<Record> {
    * Return a copy of the raw {@link ArchiveField}.
    * This function is mostly used for validation purpose.
    * May include duplicates.
-   * @return
    */
   public List<ArchiveField> getRawArchiveFields() {
     return new ArrayList<>(rawArchiveFields);
@@ -397,41 +408,82 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   /**
-   * Get the first file location.
-   * TODO: check if we got more than 1 file and implement some unix concat into a single file first before sorting that
+   * Get the first file location.  Note archive files may use more than one location.
    * @return first location or null if none
    */
-  public String getLocation() {
-    if(locations.isEmpty()){
+  public String getFirstLocation() {
+    if (locations.isEmpty()) {
       return null;
     }
     return locations.getFirst();
   }
 
-  public File getLocationFile() {
+  /**
+   * Get the first file location.  Note archive files may use more than one location.
+   * @return first file or null if none
+   */
+  public File getFirstLocationFile() {
     File dataFile;
     if (archive != null) {
-      if (getLocation() == null) {
+      if (getFirstLocation() == null) {
         // use only archive
         dataFile = archive.getLocation();
-      } else if (getLocation().startsWith("/")) {
+      } else if (getFirstLocation().startsWith("/")) {
         // absolute already
-        dataFile = new File(getLocation());
+        dataFile = new File(getFirstLocation());
       } else {
         // use source file relative to archive dir
         Path archiveLocation = archive.getLocation().toPath();
         File directory = Files.isDirectory(archiveLocation) ? archiveLocation.toFile() : archiveLocation.getParent().toFile();
-        dataFile = new File(directory, getLocation());
+        dataFile = new File(directory, getFirstLocation());
       }
     } else {
-      dataFile = new File(getLocation());
+      dataFile = new File(getFirstLocation());
     }
 
     return dataFile;
   }
 
+  /**
+   * Get the list of locations for this archive file.
+   */
   public List<String> getLocations() {
     return locations;
+  }
+
+  /**
+   * True if this ArchiveFile consists of multiple files.
+   */
+  public boolean isMultiLocation() {
+    return getLocations() != null && getLocations().size() > 1;
+  }
+
+  /**
+   * Get Files for each location.  Note archive files may use more than one location.
+   */
+  public List<File> getLocationFiles() {
+    if (archive != null) {
+      if (getLocations() == null) {
+        // use only archive
+        return Collections.singletonList(archive.getLocation());
+      } else {
+        List<File> locations = new ArrayList<>();
+        for (String s : getLocations()) {
+          if (s.startsWith("/")) {
+            // absolute already
+            locations.add(new File(s));
+          } else {
+            // use source file relative to archive dir
+            Path archiveLocation = archive.getLocation().toPath();
+            File directory = Files.isDirectory(archiveLocation) ? archiveLocation.toFile() : archiveLocation.getParent().toFile();
+            locations.add(new File(directory, s));
+          }
+        }
+        return locations;
+      }
+    } else {
+      return Collections.singletonList(new File(getFirstLocation()));
+    }
   }
 
   public Term getRowType() {
@@ -466,7 +518,7 @@ public class ArchiveFile implements Iterable<Record> {
 
   private Reader getReader(boolean sorted) throws IOException {
     // ArchiveFile location, or Archive in case this is a fake single-file "archive".
-    File file = getLocationFile() != null ? getLocationFile() : getArchive().getLocation();
+    File file = getFirstLocationFile() != null ? getFirstLocationFile() : getArchive().getLocation();
     if (sorted) {
       file = getLocationFileSorted(file);
     }
@@ -481,6 +533,11 @@ public class ArchiveFile implements Iterable<Record> {
    */
   public ClosableIterator<Record> iterator(boolean replaceNulls, boolean replaceEntities) {
     try {
+      // Use the sortedIterator (sorted into a single file) if there are multiple files.
+      if (getLocations().size() > 1) {
+        return sortedIterator(replaceNulls, replaceEntities);
+      }
+
       TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(getReader(false),
           getFieldsTerminatedByChar(), getLinesTerminatedBy(), getFieldsEnclosedBy(),
           areHeaderLinesIncluded(), getLinesToSkipBeforeHeader());
@@ -494,12 +551,8 @@ public class ArchiveFile implements Iterable<Record> {
    * Build an iterator pointing to the sorted tabular file.
    * The sorted tabular file is also assumed to have been normalized.
    *
-   * @param replaceNulls
-   * @param replaceEntities
-   *
-   * @return
-   *
-   * @throws IOException
+   * @param replaceNulls    if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
+   * @param replaceEntities if true HTML & XML entities in record values will be replaced with the interpreted value.
    */
   protected ClosableIterator<Record> sortedIterator(boolean replaceNulls, boolean replaceEntities) throws IOException {
     TabularDataFileReader<List<String>> tabularFileReader = TabularFiles.newTabularFileReader(getReader(true),

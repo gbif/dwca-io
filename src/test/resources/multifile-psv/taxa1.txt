@@ -1,0 +1,3 @@
+scientificName|id|rank
+Quercus alba|1|Species
+Quercus alba|2|Species

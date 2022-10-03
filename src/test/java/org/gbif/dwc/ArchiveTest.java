@@ -14,7 +14,9 @@
 package org.gbif.dwc;
 
 import org.gbif.dwc.record.StarRecord;
+import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
+import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.FileUtils;
 
@@ -53,11 +55,47 @@ public class ArchiveTest {
 
     int count = 0;
     for (StarRecord rec : arch) {
+      count++;
+      assertEquals(String.valueOf(count), rec.core().id());
       assertEquals("Quercus alba", rec.core().value(DwcTerm.scientificName));
       assertEquals("Species", rec.core().value(DwcTerm.taxonRank));
-      count++;
     }
     assertEquals(2, count);
+  }
+
+  /**
+   * Check we can handle an archive file with multiple |SV files in the core and extension.
+   */
+  @Test
+  public void testMultifile() throws Exception {
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("multifile-psv").toPath());
+
+    int count = 0;
+    for (StarRecord rec : arch) {
+      count++;
+      assertEquals(String.valueOf(count), rec.core().id());
+      assertEquals("Quercus alba", rec.core().value(DwcTerm.scientificName));
+      assertEquals("Species", rec.core().value(DwcTerm.taxonRank));
+      assertEquals("id"+count, rec.extension(GbifTerm.Multimedia).get(0).value(DcTerm.identifier));
+    }
+    assertEquals(6, count);
+  }
+
+  /**
+   * Check we can handle an archive file with multiple files each with multiple header lines
+   */
+  @Test
+  public void testMultifileMultilineHeader() throws Exception {
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("multifile-multiline-header").toPath());
+
+    int count = 0;
+    for (StarRecord rec : arch) {
+      count++;
+      assertEquals(String.valueOf(count), rec.core().id());
+      assertEquals("Quercus alba", rec.core().value(DwcTerm.scientificName));
+      assertEquals("Species", rec.core().value(DwcTerm.taxonRank));
+    }
+    assertEquals(6, count);
   }
 
   @Test

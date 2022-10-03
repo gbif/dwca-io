@@ -130,7 +130,7 @@ public class MetaDescriptorTest {
       assertNotNull(core);
       assertNotNull(core.getId());
       assertTrue(core.hasTerm(DwcTerm.scientificName));
-      assertEquals("DarwinCore.txt", core.getLocation());
+      assertEquals("DarwinCore.txt", core.getFirstLocation());
       assertEquals("\t", core.getFieldsTerminatedBy());
       assertNull(core.getField(DwcTerm.scientificName).getDelimitedBy());
       assertEquals(";", core.getField(DwcTerm.nomenclaturalStatus).getDelimitedBy());
@@ -148,8 +148,8 @@ public class MetaDescriptorTest {
       filenames.add("media.txt");
 
       for (ArchiveFile ext : arch2.getExtensions()) {
-        assertTrue(filenames.contains(ext.getLocation()));
-        filenames.remove(ext.getLocation());
+        assertTrue(filenames.contains(ext.getFirstLocation()));
+        filenames.remove(ext.getFirstLocation());
       }
       assertTrue(filenames.isEmpty());
 
@@ -190,7 +190,7 @@ public class MetaDescriptorTest {
       assertNotNull(core);
       assertNotNull(core.getId());
       assertTrue(core.hasTerm(DwcTerm.scientificName));
-      assertEquals("test", core.getLocation());
+      assertEquals("test", core.getFirstLocation());
       for (ArchiveField f : arch.getCore().getFields().values()) {
         assertTrue(core.hasTerm(f.getTerm().qualifiedName()));
         assertEquals(core.getField(f.getTerm().qualifiedName()).getIndex(), f.getIndex());
@@ -199,7 +199,7 @@ public class MetaDescriptorTest {
       // extensions props
       assertEquals(1, arch2.getExtensions().size());
       ArchiveFile ext = arch2.getExtensions().iterator().next();
-      assertEquals("test2", ext.getLocation());
+      assertEquals("test2", ext.getFirstLocation());
       assertEquals(2, ext.getFields().size());
 
     } catch (Exception e) {
