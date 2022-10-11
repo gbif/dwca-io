@@ -13,6 +13,7 @@
  */
 package org.gbif.dwc;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.Term;
@@ -174,9 +175,14 @@ public class ArchiveFile implements Iterable<Record> {
       for (File f : filesToSort) {
         youngestFileTime = Math.max(youngestFileTime, f.lastModified());
       }
-      if (sortedFile.exists() && sortedFile.lastModified() > youngestFileTime) {
-        LOG.debug("File {} is already sorted ({}B)", sortedFile, sortedFile.length());
-        return false;
+      if (sortedFile.exists()) {
+        if (sortedFile.lastModified() > youngestFileTime) {
+          LOG.debug("File {} is already sorted ({}B)", sortedFile, sortedFile.length());
+          return false;
+        } else {
+          LOG.info("Deleting existing (old) sorted file {} ({}B)", sortedFile, sortedFile.length());
+          sortedFile.delete();
+        }
       }
 
       List<File> normalizedFiles = normalizeIfRequired();
@@ -184,7 +190,11 @@ public class ArchiveFile implements Iterable<Record> {
         filesToSort = normalizedFiles;
       }
 
-      FILE_UTILS.sort(filesToSort, sortedFile, getEncoding(),
+      // Sort to this temporary location, then move the file in place once the sort is completed.
+      // (Avoids leaving half-sorted files lying around.)
+      File temporarySortedFile = getLocationTempFileSorted(getFirstLocationFile());
+
+      FILE_UTILS.sort(filesToSort, temporarySortedFile, getEncoding(),
           getId().getIndex(), getFieldsTerminatedBy(), getFieldsEnclosedBy(),
           TabularFileNormalizer.NORMALIZED_END_OF_LINE, getIgnoreHeaderLines());
 
@@ -194,6 +204,7 @@ public class ArchiveFile implements Iterable<Record> {
         }
       }
 
+      Files.move(temporarySortedFile.toPath(), sortedFile.toPath());
       return true;
     } finally {
       lock.release();
@@ -234,6 +245,10 @@ public class ArchiveFile implements Iterable<Record> {
 
   protected static File getLocationFileSorted(File location) {
     return new File(location.getParentFile(), location.getName() + "-sorted");
+  }
+
+  protected static File getLocationTempFileSorted(File location) {
+    return new File(location.getParentFile(), location.getName() + "-sorted_" + RandomStringUtils.randomAlphabetic(10));
   }
 
   private static File getLocationLockFile(File location) {

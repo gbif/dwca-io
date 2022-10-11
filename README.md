@@ -22,9 +22,9 @@ Path myArchiveFile = Paths.get("myArchive.zip");
 Path extractToFolder = Paths.get("/tmp/myarchive");
 Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
 
-// Loop over core core records and display id, basis of record and scientific name
+// Loop over core records and display id, genus, specific epithet
 for (Record rec : dwcArchive.getCore()) {
-  System.out.println(String.format("%s: %s (%s)", rec.id(), rec.value(DwcTerm.basisOfRecord), rec.value(DwcTerm.scientificName)));
+  System.out.printf("%s: %s %s%n", rec.id(), rec.value(DwcTerm.genus), rec.value(DwcTerm.specificEpithet));
 }
 ```
 ### Reading DarwinCore archive + extensions
@@ -37,11 +37,12 @@ Archive dwcArchive = DwcFiles.fromCompressed(myArchiveFile, extractToFolder);
 System.out.println("Archive rowtype: " + dwcArchive.getCore().getRowType() + ", "
     + dwcArchive.getExtensions().size() + " extension(s)");
 
+// Loop over star records and display id, core record data, and extension data
 for (StarRecord rec : dwcArchive) {
-  System.out.println(String.format("%s: %s", rec.core().id(), rec.core().value(DwcTerm.scientificName)));
-  if (rec.hasExtension(GbifTerm.VernacularName)) {
-    for (Record extRec : rec.extension(GbifTerm.VernacularName)) {
-      System.out.println(" - " + extRec.value(DwcTerm.vernacularName));
+  System.out.printf("%s: %s %s%n", rec.core().id(), rec.core().value(DwcTerm.genus), rec.core().value(DwcTerm.specificEpithet));
+  if (rec.hasExtension(DwcTerm.Occurrence)) {
+    for (Record extRec : rec.extension(DwcTerm.Occurrence)) {
+      System.out.println(" - " + extRec.value(DwcTerm.country));
     }
   }
 }
@@ -56,7 +57,6 @@ The `DwcFiles.fromLocation` method also supports the following file types:
 * The `dateFormat` attribute of a file is not supported.
 * Iterating over an Archive with extensions requires pre-sorting the data files.  This can take seconds to minutes,
   depending on the size of the archive.  If you prefer, you can use `Archive#initialize()` to sort the archive beforehand.
-* Archives with data from a single core/extension split across multiple files are not supported.
 
 ## Maven
 Ensure you have the GBIF repository in your `pom.xml`
@@ -64,7 +64,7 @@ Ensure you have the GBIF repository in your `pom.xml`
 <repositories>
   <repository>
     <id>gbif-repository</id>
-    <url>http://repository.gbif.org/content/groups/gbif</url>
+    <url>https://repository.gbif.org/content/groups/gbif</url>
   </repository>
 </repositories>
 ```
@@ -84,7 +84,7 @@ where `{latest-version}` can be found [here](https://github.com/gbif/dwca-io/tag
 [Change Log](CHANGELOG.md)
 
 ## Documentation
-[JavaDocs](http://gbif.github.io/dwca-io/apidocs/)
+[JavaDocs](https://gbif.github.io/dwca-io/apidocs/)
 
 ## Unsupported archives
 
@@ -92,6 +92,5 @@ where `{latest-version}` can be found [here](https://github.com/gbif/dwca-io/tag
 
 * A `<core>` or `<extension>` setting a `dateFormat`
 * A `<files>` `<location>` which is a URL
-* Multiple `<location>`s for a single `<files>` element
 
 These features are very rarely used, and will not be implemented without good reason.

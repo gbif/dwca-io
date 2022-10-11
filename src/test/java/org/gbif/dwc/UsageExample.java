@@ -38,17 +38,17 @@ public class UsageExample {
     System.out.println("Reading archive from " + dwcArchive.getLocation().getAbsolutePath());
     System.out.println("Archive of rowtype " + dwcArchive.getCore().getRowType() + " with " + dwcArchive.getExtensions().size() + " extensions");
 
-    // Loop over core records and display id, basis of record and scientific name
+    // Loop over core records and display id, genus, specific epithet
     for (Record rec : dwcArchive.getCore()) {
-      System.out.printf("%s: %s (%s)%n", rec.id(), rec.value(DwcTerm.basisOfRecord), rec.value(DwcTerm.scientificName));
+      System.out.printf("%s: %s %s%n", rec.id(), rec.value(DwcTerm.genus), rec.value(DwcTerm.specificEpithet));
     }
 
     // Loop over star records and display id, core record data, and extension data
     for (StarRecord rec : dwcArchive) {
-      System.out.printf("%s: %s%n", rec.core().id(), rec.core().value(DwcTerm.scientificName));
-      if (rec.hasExtension(GbifTerm.VernacularName)) {
-        for (Record extRec : rec.extension(GbifTerm.VernacularName)) {
-          System.out.println(" - " + extRec.value(DwcTerm.vernacularName));
+      System.out.printf("%s: %s %s%n", rec.core().id(), rec.core().value(DwcTerm.genus), rec.core().value(DwcTerm.specificEpithet));
+      if (rec.hasExtension(DwcTerm.Occurrence)) {
+        for (Record extRec : rec.extension(DwcTerm.Occurrence)) {
+          System.out.println(" - " + extRec.value(DwcTerm.country));
         }
       }
     }
