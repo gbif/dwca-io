@@ -46,17 +46,17 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      System.out.println(<span class="jxr_string">"Reading archive from "</span> + dwcArchive.getLocation().getAbsolutePath());
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      System.out.println(<span class="jxr_string">"Archive of rowtype "</span> + dwcArchive.getCore().getRowType() + <span class="jxr_string">" with "</span> + dwcArchive.getExtensions().size() + <span class="jxr_string">" extensions"</span>);
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <em class="jxr_comment">// Loop over core records and display id, basis of record and scientific name</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <em class="jxr_comment">// Loop over core records and display id, genus, specific epithet</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">for</strong> (Record rec : dwcArchive.getCore()) {
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>        System.out.printf(<span class="jxr_string">"%s: %s (%s)%n"</span>, rec.id(), rec.value(DwcTerm.basisOfRecord), rec.value(DwcTerm.scientificName));
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>        System.out.printf(<span class="jxr_string">"%s: %s %s%n"</span>, rec.id(), rec.value(DwcTerm.genus), rec.value(DwcTerm.specificEpithet));
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      }
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <em class="jxr_comment">// Loop over star records and display id, core record data, and extension data</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">for</strong> (StarRecord rec : dwcArchive) {
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>        System.out.printf(<span class="jxr_string">"%s: %s%n"</span>, rec.core().id(), rec.core().value(DwcTerm.scientificName));
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>        <strong class="jxr_keyword">if</strong> (rec.hasExtension(GbifTerm.VernacularName)) {
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">for</strong> (Record extRec : rec.extension(GbifTerm.VernacularName)) {
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>            System.out.println(<span class="jxr_string">" - "</span> + extRec.value(DwcTerm.vernacularName));
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>        System.out.printf(<span class="jxr_string">"%s: %s %s%n"</span>, rec.core().id(), rec.core().value(DwcTerm.genus), rec.core().value(DwcTerm.specificEpithet));
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>        <strong class="jxr_keyword">if</strong> (rec.hasExtension(DwcTerm.Occurrence)) {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">for</strong> (Record extRec : rec.extension(DwcTerm.Occurrence)) {
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>            System.out.println(<span class="jxr_string">" - "</span> + extRec.value(DwcTerm.country));
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          }
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>        }
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      }
