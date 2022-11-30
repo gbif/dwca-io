@@ -29,15 +29,15 @@
   </distributionManagement>
 
   <properties>
-    <dwc-api.version>1.41</dwc-api.version>
-    <gbif-common.version>0.56</gbif-common.version>
+    <dwc-api.version>1.42</dwc-api.version>
+    <gbif-common.version>0.58</gbif-common.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-lang.version>3.12.0</commons-lang.version>
     <commons-collections.version>4.4</commons-collections.version>
     <commons-digester.version>3.2</commons-digester.version>
     <freemarker.version>2.3.31</freemarker.version>
     <junit.version>5.9.1</junit.version>
-    <logback.version>1.4.5</logback.version>
+    <logback.version>1.2.11</logback.version>
     <slf4j.version>1.7.36</slf4j.version>
     <validation-api.version>2.0.1.Final</validation-api.version>
 
