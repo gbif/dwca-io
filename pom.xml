@@ -29,7 +29,7 @@
   </distributionManagement>
 
   <properties>
-    <dwc-api.version>2.0.0</dwc-api.version>
+    <dwc-api.version>2.1.5-SNAPSHOT</dwc-api.version>
     <gbif-common.version>0.58</gbif-common.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-lang.version>3.12.0</commons-lang.version>
