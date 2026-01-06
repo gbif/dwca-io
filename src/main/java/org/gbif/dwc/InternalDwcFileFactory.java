@@ -223,8 +223,8 @@ class InternalDwcFileFactory {
    * The end of line character can only be {@link #DEFAULT_ENDLINE_CHAR}.
    * @param dataFile
    * @return
-   * @throws UnsupportedArchiveException
-   * @throws IOException
+   * @throws UnsupportedArchiveException if the file could not be read as tabular file
+   * @throws IOException if the file could not be accessed
    */
   static ArchiveFile fromSingleFile(Path dataFile) throws UnsupportedArchiveException, IOException {
     if (!Files.isRegularFile(dataFile)) {

@@ -16,7 +16,6 @@ package org.gbif.dwc;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.dwc.terms.GbifTerm;
 import org.gbif.utils.file.FileUtils;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-public class UsageExample {
+public class UsageExampleTest {
 
   @Test
   public void testUsageExample() throws IOException {

@@ -13,16 +13,17 @@
  */
 package org.gbif.dwc;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import javax.annotation.Nonnull;
+import org.apache.commons.io.IOUtils;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.Term;
 import org.gbif.utils.file.ClosableIterator;
-import org.gbif.utils.file.FileUtils;
-import org.gbif.utils.file.InputStreamUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +71,7 @@ public class Archive implements Iterable<StarRecord> {
 
   /**
    * Get an extension by its rowType.
-   * @param rowType
+   * @param rowType the term representing the rowType of the extension
    * @return ArchiveFile or {@code null} is not found
    */
   public ArchiveFile getExtension(Term rowType) {
@@ -94,15 +95,13 @@ public class Archive implements Iterable<StarRecord> {
     if (metadata == null) {
       File mf = getMetadataLocationFile();
       try {
-        InputStream stream;
         if (mf.exists()) {
-          stream = FileUtils.getInputStream(mf);
+          metadata = Files.readString(mf.toPath(), StandardCharsets.UTF_8);
         } else {
           // try as url
           URL url = new URL(metadataLocation);
-          stream = url.openStream();
+          metadata = IOUtils.toString(url, StandardCharsets.UTF_8);
         }
-        metadata = new InputStreamUtils().readEntireStream(stream, FileUtils.UTF8);
       } catch (IOException | RuntimeException e) {
         throw new MetadataException(e);
       }
@@ -216,10 +215,10 @@ public class Archive implements Iterable<StarRecord> {
    * <p>
    * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.
    * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,
-   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)
+   * but it is documented for completeness. Further detail in {@link org.gbif.utils.file.FileUtils#sort(File, File, String, int, String, Character, String, int)}.)
    */
   @Override
-  public ClosableIterator<StarRecord> iterator() {
+  public @Nonnull ClosableIterator<StarRecord> iterator() {
     return iterator(true, true);
   }
 
@@ -229,7 +228,7 @@ public class Archive implements Iterable<StarRecord> {
    * <p>
    * Archives with extensions, where the core id contains extravagant Unicode characters, may not be handled correctly.
    * (This will not affect you, since you don't have ancient scripts, emoji or mathematical symbols in your core ids,
-   * but it is documented for completeness. Further detail in {@link FileUtils#sort(File, File, String, int, String, Character, String, int)}.)
+   * but it is documented for completeness. Further detail in {@link org.gbif.utils.file.FileUtils#sort(File, File, String, int, String, Character, String, int)}.)
    *
    * @param replaceNulls if true replaces common, literal NULL values with real nulls, e.g. "\N" or "NULL"
    * @param replaceEntities if true HTML & XML entities in record values will be replaced with the interpreted value.
@@ -257,8 +256,8 @@ public class Archive implements Iterable<StarRecord> {
   /**
    * Build an iterator (pointing to the sorted tabular file) for each extension of the {@link Archive}.
    *
-   * @param replaceNulls
-   * @param replaceEntities
+   * @param replaceNulls flag to replace common, literal NULL values with real nulls, e.g. "\N" or "NULL"
+   * @param replaceEntities flag to replace HTML & XML entities in record values with the interpreted value.
    *
    * @return a map of iterators
    *

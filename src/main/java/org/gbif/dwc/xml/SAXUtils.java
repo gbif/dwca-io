@@ -32,7 +32,7 @@ public class SAXUtils {
       saxf.setValidating(false);
       saxf.setNamespaceAware(true);
     } catch (Exception e) {
-      LOG.error("Can't create namespace aware SAX Parser Factory: " + e.getMessage(), e);
+      LOG.error("Can't create namespace aware SAX Parser Factory: {}", e.getMessage(), e);
     }
     return saxf;
   }

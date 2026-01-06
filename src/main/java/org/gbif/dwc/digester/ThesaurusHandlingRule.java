@@ -35,7 +35,7 @@ public class ThesaurusHandlingRule extends Rule {
 
   public static final String ATTRIBUTE_THESAURUS = "thesaurus";
 
-  private VocabulariesManager vocabManager;
+  private final VocabulariesManager vocabManager;
 
   public ThesaurusHandlingRule(VocabulariesManager vocabManager) {
     super();
@@ -52,7 +52,7 @@ public class ThesaurusHandlingRule extends Rule {
           URL vocabURL = new URL(attributes.getValue(i));
           tv = vocabManager.get(vocabURL);
         } catch (Exception e) {
-          LOG.error("Could not load vocabulary with location {}: {}", new Object[]{attributes.getValue(i), e.getMessage(), e});
+          LOG.error("Could not load vocabulary with location {}: {}", attributes.getValue(i), e.getMessage(), e);
         }
 
         if (tv != null) {

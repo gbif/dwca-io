@@ -42,8 +42,7 @@ public class DwcaStreamWriter implements AutoCloseable {
   private final Term coreIdTerm;
   private final boolean useHeaders;
   private final Archive archive = new Archive();
-  private String metadata;
-  private Map<String, String> constituents = new HashMap<>();
+  private final Map<String, String> constituents = new HashMap<>();
 
   /**
    * @param dir the directory to use as the archive

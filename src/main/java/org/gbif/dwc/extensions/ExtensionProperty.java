@@ -57,7 +57,7 @@ public class ExtensionProperty implements Comparable<ExtensionProperty>, Term {
    * @see Comparable#compareTo(Object)
    */
   @Override
-  public int compareTo(org.gbif.dwc.extensions.ExtensionProperty prop) {
+  public int compareTo(ExtensionProperty prop) {
     if (group != null) {
       int x = this.group.compareTo(prop.group);
       if (x != 0) {
@@ -77,10 +77,10 @@ public class ExtensionProperty implements Comparable<ExtensionProperty>, Term {
     if (this == other) {
       return true;
     }
-    if (!(other instanceof org.gbif.dwc.extensions.ExtensionProperty)) {
+    if (!(other instanceof ExtensionProperty)) {
       return false;
     }
-    org.gbif.dwc.extensions.ExtensionProperty o = (org.gbif.dwc.extensions.ExtensionProperty) other;
+    org.gbif.dwc.extensions.ExtensionProperty o = (ExtensionProperty) other;
     return Objects.equals(extension, o.extension) && Objects.equals(qualname, o.qualname);
   }
 
@@ -102,7 +102,7 @@ public class ExtensionProperty implements Comparable<ExtensionProperty>, Term {
     return examples;
   }
 
-  public org.gbif.dwc.extensions.Extension getExtension() {
+  public Extension getExtension() {
     return extension;
   }
 

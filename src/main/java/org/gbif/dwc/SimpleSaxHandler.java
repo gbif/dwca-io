@@ -32,7 +32,7 @@ public abstract class SimpleSaxHandler extends DefaultHandler {
   protected final Logger log = LoggerFactory.getLogger(getClass());
   protected String content;
   private StringBuffer chars;
-  private Pattern normWhitespace = Pattern.compile("\\s+");
+  private final Pattern normWhitespace = Pattern.compile("\\s+");
   protected String parents = "";
 
   @Override

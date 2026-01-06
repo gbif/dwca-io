@@ -46,10 +46,10 @@ public class VocabularyTerm {
     if (this == other) {
       return true;
     }
-    if (!(other instanceof org.gbif.dwc.extensions.VocabularyTerm)) {
+    if (!(other instanceof VocabularyTerm)) {
       return false;
     }
-    org.gbif.dwc.extensions.VocabularyTerm o = (org.gbif.dwc.extensions.VocabularyTerm) other;
+    VocabularyTerm o = (VocabularyTerm) other;
     return Objects.equals(title, o.title) && Objects.equals(lang, o.lang);
   }
 

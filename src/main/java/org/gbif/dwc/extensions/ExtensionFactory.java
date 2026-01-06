@@ -32,8 +32,8 @@ public class ExtensionFactory {
 
   protected static Logger log = LoggerFactory.getLogger(ExtensionFactory.class);
   public static final String EXTENSION_NAMESPACE = "http://rs.gbif.org/extension/";
-  private ThesaurusHandlingRule thesaurusRule;
-  private SAXParserFactory saxf;
+  private final ThesaurusHandlingRule thesaurusRule;
+  private final SAXParserFactory saxf;
 
   public ExtensionFactory(ThesaurusHandlingRule thesaurusRule, SAXParserFactory factory) {
     super();

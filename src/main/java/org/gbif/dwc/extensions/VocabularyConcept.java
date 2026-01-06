@@ -28,13 +28,13 @@ import java.util.Set;
  *
  * Taken from https://github.com/gbif/dwca-validator3/
  */
-public class VocabularyConcept implements Comparable<org.gbif.dwc.extensions.VocabularyConcept> {
+public class VocabularyConcept implements Comparable<VocabularyConcept> {
 
-  private static final Comparator<org.gbif.dwc.extensions.VocabularyConcept> COMPARATOR =
-          Comparator.comparing(org.gbif.dwc.extensions.VocabularyConcept::getVocabulary,
+  private static final Comparator<VocabularyConcept> COMPARATOR =
+          Comparator.comparing(VocabularyConcept::getVocabulary,
                   Comparator.nullsFirst(Comparator.naturalOrder()))
-                  .thenComparing(org.gbif.dwc.extensions.VocabularyConcept::getOrder)
-                  .thenComparing(org.gbif.dwc.extensions.VocabularyConcept::getUri);
+                  .thenComparing(VocabularyConcept::getOrder)
+                  .thenComparing(VocabularyConcept::getUri);
 
   private Vocabulary vocabulary;
   private String identifier; // usually short, e.g. DE
@@ -42,19 +42,19 @@ public class VocabularyConcept implements Comparable<org.gbif.dwc.extensions.Voc
   private String uri; // a URI denoting the concept, mostly used in rdf
   private URL link; // web link to some more human documentation
   private int order = -1; // to maintain any custom order not based on a natural concept property
-  private Set<org.gbif.dwc.extensions.VocabularyTerm> alternativeTerms = new HashSet<>();
-  private Set<org.gbif.dwc.extensions.VocabularyTerm> preferredTerms = new HashSet<>();
+  private Set<VocabularyTerm> alternativeTerms = new HashSet<>();
+  private Set<VocabularyTerm> preferredTerms = new HashSet<>();
 
-  public void addAlternativeTerm(org.gbif.dwc.extensions.VocabularyTerm term) {
+  public void addAlternativeTerm(VocabularyTerm term) {
     alternativeTerms.add(term);
   }
 
-  public void addPreferredTerm(org.gbif.dwc.extensions.VocabularyTerm term) {
+  public void addPreferredTerm(VocabularyTerm term) {
     preferredTerms.add(term);
   }
 
 
-  public Set<org.gbif.dwc.extensions.VocabularyTerm> getAlternativeTerms() {
+  public Set<VocabularyTerm> getAlternativeTerms() {
     return alternativeTerms;
   }
 
@@ -74,9 +74,9 @@ public class VocabularyConcept implements Comparable<org.gbif.dwc.extensions.Voc
     return order;
   }
 
-  public org.gbif.dwc.extensions.VocabularyTerm getPreferredTerm(String lang) {
-    org.gbif.dwc.extensions.VocabularyTerm tEN = null;
-    for (org.gbif.dwc.extensions.VocabularyTerm t : preferredTerms) {
+  public VocabularyTerm getPreferredTerm(String lang) {
+    VocabularyTerm tEN = null;
+    for (VocabularyTerm t : preferredTerms) {
       if (t.getLang().equalsIgnoreCase(lang)) {
         return t;
       } else if (t.getLang().equalsIgnoreCase("en")) {
@@ -86,15 +86,15 @@ public class VocabularyConcept implements Comparable<org.gbif.dwc.extensions.Voc
     return tEN;
   }
 
-  public Set<org.gbif.dwc.extensions.VocabularyTerm> getPreferredTerms() {
+  public Set<VocabularyTerm> getPreferredTerms() {
     return preferredTerms;
   }
 
   /**
    * @return a set of all terms, preferred or alternative, for this concept
    */
-  public Set<org.gbif.dwc.extensions.VocabularyTerm> getTerms() {
-    Set<org.gbif.dwc.extensions.VocabularyTerm> t = new HashSet<org.gbif.dwc.extensions.VocabularyTerm>(preferredTerms);
+  public Set<VocabularyTerm> getTerms() {
+    Set<VocabularyTerm> t = new HashSet<>(preferredTerms);
     t.addAll(alternativeTerms);
     return t;
   }
@@ -108,7 +108,7 @@ public class VocabularyConcept implements Comparable<org.gbif.dwc.extensions.Voc
   }
 
 
-  public void setAlternativeTerms(Set<org.gbif.dwc.extensions.VocabularyTerm> alternativeTerms) {
+  public void setAlternativeTerms(Set<VocabularyTerm> alternativeTerms) {
     this.alternativeTerms = alternativeTerms;
   }
 
@@ -155,7 +155,7 @@ public class VocabularyConcept implements Comparable<org.gbif.dwc.extensions.Voc
   }
 
   @Override
-  public int compareTo(org.gbif.dwc.extensions.VocabularyConcept object) {
+  public int compareTo(VocabularyConcept object) {
     return COMPARATOR.compare(this, object);
   }
 
@@ -164,10 +164,10 @@ public class VocabularyConcept implements Comparable<org.gbif.dwc.extensions.Voc
     if (this == other) {
       return true;
     }
-    if (!(other instanceof org.gbif.dwc.extensions.VocabularyConcept)) {
+    if (!(other instanceof VocabularyConcept)) {
       return false;
     }
-    org.gbif.dwc.extensions.VocabularyConcept o = (org.gbif.dwc.extensions.VocabularyConcept) other;
+    VocabularyConcept o = (VocabularyConcept) other;
     return Objects.equals(vocabulary, o.vocabulary) &&
             Objects.equals(identifier, o.identifier) &&
             Objects.equals(uri, o.uri);

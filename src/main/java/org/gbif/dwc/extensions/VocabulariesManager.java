@@ -27,7 +27,7 @@ public interface VocabulariesManager {
    * @param uri unique URI identifying the vocabulary as given in the vocabulary definition
    * @return the installed vocabulary or null if not found
    */
-  org.gbif.dwc.extensions.Vocabulary get(String uri);
+  Vocabulary get(String uri);
 
   /**
    * Returns the parsed vocabulary located at the given URL. If downloaded already it will return the cached copy or
@@ -36,7 +36,7 @@ public interface VocabulariesManager {
    * @param url the resolvable URL that locates the xml vocabulary definition
    * @return
    */
-  org.gbif.dwc.extensions.Vocabulary get(URL url);
+  Vocabulary get(URL url);
 
   /**
    * Returns a regular map than can be used to populate html select drop downs with
