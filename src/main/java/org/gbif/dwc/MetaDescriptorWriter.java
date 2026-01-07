@@ -24,8 +24,6 @@ import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
-import static freemarker.template.Configuration.VERSION_2_3_26;
-
 /**
  * Utils class to write a meta.xml descriptor file.
  */
@@ -46,13 +44,11 @@ public class MetaDescriptorWriter {
   }
 
   public static void writeMetaFile(File f, Archive archive) throws IOException {
-    Writer writer = new FileWriter(f);
-    try {
+    try (Writer writer = new FileWriter(f)) {
       FTL.getTemplate(META_TEMPLATE).process(archive, writer);
     } catch (TemplateException e) {
       throw new IOException("Error while processing the meta.xml template", e);
     }
-    writer.close();
   }
 
   /**
@@ -63,7 +59,7 @@ public class MetaDescriptorWriter {
     // load templates from classpath by prefixing /templates
     TemplateLoader tl = new ClassTemplateLoader(MetaDescriptorWriter.class, TEMPLATE_PATH);
 
-    Configuration fm = new Configuration(VERSION_2_3_26);
+    Configuration fm = new Configuration(Configuration.VERSION_2_3_26);
     fm.setDefaultEncoding("utf8");
     fm.setTemplateLoader(tl);
     fm.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);

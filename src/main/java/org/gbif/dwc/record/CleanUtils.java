@@ -15,7 +15,7 @@ package org.gbif.dwc.record;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class CleanUtils {
   private static final Pattern NULL_REPL = Pattern.compile("^\\s*(null|\\\\N)?\\s*$", Pattern.CASE_INSENSITIVE);

@@ -13,6 +13,7 @@
  */
 package org.gbif.dwc.record;
 
+import javax.annotation.Nonnull;
 import org.gbif.dwc.terms.Term;
 
 import java.util.ArrayList;
@@ -29,9 +30,9 @@ public class StarRecordImpl implements StarRecord {
   private final Map<Term, List<Record>> extensions;
 
   public StarRecordImpl(Collection<Term> extensions) {
-    this.extensions = new HashMap<Term, List<Record>>();
+    this.extensions = new HashMap<>();
     for (Term rowType : extensions) {
-      this.extensions.put(rowType, new ArrayList<Record>());
+      this.extensions.put(rowType, new ArrayList<>());
     }
   }
 
@@ -82,7 +83,7 @@ public class StarRecordImpl implements StarRecord {
    * @return the ExtensionRecord iterator, reusing the same instance for each call
    */
   @Override
-  public Iterator<Record> iterator() {
+  public @Nonnull Iterator<Record> iterator() {
     List<Record> records = new ArrayList<>();
     for (List<Record> recs : extensions.values()) {
       records.addAll(recs);

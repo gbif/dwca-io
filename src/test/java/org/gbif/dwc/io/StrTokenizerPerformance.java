@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang3.text.StrTokenizer;
+import org.apache.commons.text.StringTokenizer;
 import org.junit.jupiter.api.Test;
 
 public class StrTokenizerPerformance {
 
-  private long test(StrTokenizer tokenizer, File source) throws IOException {
+  private long test(StringTokenizer tokenizer, File source) throws IOException {
     FileInputStream fis = new FileInputStream(source);
     InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
     BufferedReader br = new BufferedReader(reader);
@@ -50,7 +50,7 @@ public class StrTokenizerPerformance {
     File source = FileUtils.getClasspathFile("irmng.tail");
 
     // test CHAR
-    StrTokenizer tokenizer = new StrTokenizer();
+    StringTokenizer tokenizer = new StringTokenizer();
     tokenizer.setDelimiterChar('\t');
     tokenizer.setEmptyTokenAsNull(true);
     tokenizer.setIgnoreEmptyTokens(false);
@@ -58,7 +58,7 @@ public class StrTokenizerPerformance {
     System.out.println(time + " milliseconds for CHAR based tokenizer.");
 
     // test STRING
-    tokenizer = new StrTokenizer();
+    tokenizer = new StringTokenizer();
     tokenizer.setDelimiterString("\t");
     tokenizer.setEmptyTokenAsNull(true);
     time = test(tokenizer, source);

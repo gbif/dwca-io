@@ -13,8 +13,8 @@
  */
 package org.gbif.dwc;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.gbif.dwc.record.Record;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
@@ -94,6 +94,12 @@ public class ArchiveFile implements Iterable<Record> {
   private Integer ignoreHeaderLines = 0;
   private String dateFormat = "YYYY-MM-DD";
 
+  // At class level, create a reusable generator:
+  private static final RandomStringGenerator RANDOM_STRING_GENERATOR =
+      new RandomStringGenerator.Builder()
+          .withinRange('a', 'z')
+          .get();
+
   // TODO: Change to SortedMap and remove rawArchiveFields?
   private final Map<Term, ArchiveField> fields = new HashMap<>();
   private final List<ArchiveField> rawArchiveFields = new ArrayList<>();
@@ -115,7 +121,9 @@ public class ArchiveFile implements Iterable<Record> {
   protected void validateAsCore(boolean hasExtensions) throws UnsupportedArchiveException {
     if (hasExtensions) {
       if (id == null) {
-        LOG.warn("DwC-A core data file »" + title + "« is lacking an id column. No extensions allowed in this case");
+        LOG.warn(
+            "DwC-A core data file »{}« is lacking an id column. No extensions allowed in this case",
+            title);
       }
     }
     validate();
@@ -248,7 +256,7 @@ public class ArchiveFile implements Iterable<Record> {
   }
 
   protected static File getLocationTempFileSorted(File location) {
-    return new File(location.getParentFile(), location.getName() + "-sorted_" + RandomStringUtils.randomAlphabetic(10));
+    return new File(location.getParentFile(), location.getName() + "-sorted_" + RANDOM_STRING_GENERATOR.generate(10));
   }
 
   private static File getLocationLockFile(File location) {
@@ -263,7 +271,7 @@ public class ArchiveFile implements Iterable<Record> {
   public void addLocation(String location) {
     if (title == null) {
       if (location != null && location.lastIndexOf('/') > 1) {
-        title = location.substring(location.lastIndexOf('/') + 1, location.length());
+        title = location.substring(location.lastIndexOf('/') + 1);
       } else {
         title = location;
       }
@@ -310,7 +318,7 @@ public class ArchiveFile implements Iterable<Record> {
    */
   public List<ArchiveField> getFieldsSorted() {
     List<ArchiveField> list = new ArrayList<>(fields.values());
-    Collections.sort(list, AF_IDX_COMPARATOR);
+    list.sort(AF_IDX_COMPARATOR);
     return list;
   }
 
@@ -340,7 +348,7 @@ public class ArchiveFile implements Iterable<Record> {
 
     Optional<Integer> idIndex = id != null ? Optional.of(id.getIndex()) : Optional.empty();
 
-    if (archiveFieldsWithIndex.isEmpty() && !idIndex.isPresent()){
+    if (archiveFieldsWithIndex.isEmpty() && idIndex.isEmpty()){
       return new ArrayList<>();
     }
 
@@ -349,9 +357,9 @@ public class ArchiveFile implements Iterable<Record> {
 
     List<List<Term>> terms = new ArrayList<>();
     for (int i = 0; i <= maxIndex; i++) {
-      terms.add(new ArrayList<Term>());
+      terms.add(new ArrayList<>());
     }
-    archiveFieldsWithIndex.stream().forEach(af -> terms.get(af.getIndex()).add(af.getTerm()));
+    archiveFieldsWithIndex.forEach(af -> terms.get(af.getIndex()).add(af.getTerm()));
     // Assign default term for id column.
     idIndex.ifPresent(idx -> terms.get(idx).add(DEFAULT_ID_TERM));
     return terms;

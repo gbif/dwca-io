@@ -20,8 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,19 +29,14 @@ import org.apache.commons.lang3.StringUtils;
 public class TabWriter implements AutoCloseable {
 
   private static final Pattern escapeChars = Pattern.compile("[\t\n\r]");
-  private int records = 0;
-  private Writer writer;
+  private final Writer writer;
 
   public static TabWriter fromFile(File file) throws FileNotFoundException {
     return new TabWriter(new FileOutputStream(file));
   }
 
   public TabWriter(OutputStream stream) {
-    try {
-      writer = new BufferedWriter(new OutputStreamWriter(stream, "UTF8"));
-    } catch (UnsupportedEncodingException e) {
-      throw new IllegalStateException(e);
-    }
+    writer = new BufferedWriter(new OutputStreamWriter(stream, StandardCharsets.UTF_8));
   }
 
   public TabWriter(Writer writer) {

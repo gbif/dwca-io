@@ -13,6 +13,7 @@
  */
 package org.gbif.dwc.extensions;
 
+import javax.annotation.Nonnull;
 import org.gbif.dwc.terms.Term;
 import org.gbif.dwc.terms.TermFactory;
 
@@ -29,10 +30,10 @@ import java.util.Objects;
  *
  * Taken from https://github.com/gbif/dwca-validator3/
  */
-public class Extension implements Comparable<org.gbif.dwc.extensions.Extension>{
+public class Extension implements Comparable<Extension>{
 
-  private static final Comparator<org.gbif.dwc.extensions.Extension> COMPARATOR =
-          Comparator.comparing(((org.gbif.dwc.extensions.Extension ext) -> ext.getRowType() == null ? null :
+  private static final Comparator<Extension> COMPARATOR =
+          Comparator.comparing(((Extension ext) -> ext.getRowType() == null ? null :
                   ext.getRowType().qualifiedName()), Comparator.nullsLast(Comparator.naturalOrder()))
                   .thenComparing(ext -> ext.getUrl() == null ? null : ext.getUrl().toString(),
                           Comparator.nullsLast(Comparator.naturalOrder()));
@@ -48,7 +49,7 @@ public class Extension implements Comparable<org.gbif.dwc.extensions.Extension>{
   private boolean installed;
   private List<ExtensionProperty> properties = new ArrayList<>();
   private boolean core = false;
-  private boolean dev = false;
+  private final boolean dev;
   private Date modified = new Date();
 
   public Extension(URL url, boolean dev) {
@@ -63,7 +64,7 @@ public class Extension implements Comparable<org.gbif.dwc.extensions.Extension>{
   }
 
   @Override
-  public int compareTo(org.gbif.dwc.extensions.Extension object) {
+  public int compareTo(@Nonnull Extension object) {
     return COMPARATOR.compare(this, object);
   }
 
@@ -72,10 +73,10 @@ public class Extension implements Comparable<org.gbif.dwc.extensions.Extension>{
     if (this == other) {
       return true;
     }
-    if (!(other instanceof org.gbif.dwc.extensions.Extension)) {
+    if (!(other instanceof Extension)) {
       return false;
     }
-    org.gbif.dwc.extensions.Extension o = (org.gbif.dwc.extensions.Extension) other;
+    Extension o = (Extension) other;
     return Objects.equals(rowType, o.rowType) &&
             Objects.equals(url.toString(), o.url.toString());
   }
@@ -223,7 +224,7 @@ public class Extension implements Comparable<org.gbif.dwc.extensions.Extension>{
 
   @Override
   public String toString() {
-    return new StringBuilder().append("name:" + this.name).append(", rowType:" + this.rowType).toString();
+    return "name:" + this.name + ", rowType:" + this.rowType;
   }
 
 }

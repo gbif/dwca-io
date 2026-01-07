@@ -50,7 +50,7 @@ public class CallParamNoNSRule extends CallParamRule {
     }
     // add to the params stack
     if (param != null) {
-      Object parameters[] = getDigester().peekParams();
+      Object[] parameters = getDigester().peekParams();
       parameters[paramIndex] = param;
     }
   }

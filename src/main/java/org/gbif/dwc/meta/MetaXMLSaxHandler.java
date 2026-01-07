@@ -42,7 +42,7 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
   }
 
   private static Character getFirstChar(String x) throws UnsupportedArchiveException {
-    if (x == null || x.length() == 0) {
+    if (x == null || x.isEmpty()) {
       return null;
     }
     if (x.length() == 1) {
@@ -65,7 +65,7 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
   }
 
   private static String unescapeBackslash(String x) {
-    if (x == null || x.length() == 0) {
+    if (x == null || x.isEmpty()) {
       return null;
     }
     return x.replaceAll("\\\\t", String.valueOf('\t')).replaceAll("\\\\n", String.valueOf('\n'))
@@ -147,7 +147,7 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
       if (af.getId() != null && af.getId().getIndex() != null) {
         archive.addExtension(af);
       } else {
-        log.warn("Skipping extension [" + af.getRowType() + "] with no index attribute");
+        log.warn("Skipping extension [{}] with no index attribute", af.getRowType());
       }
     } else if (localName.equalsIgnoreCase("location")) {
       // a file location

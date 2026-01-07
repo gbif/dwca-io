@@ -13,7 +13,7 @@
  */
 package org.gbif.dwc.io;
 
-import org.apache.commons.lang3.text.StrTokenizer;
+import org.apache.commons.text.StringTokenizer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +23,7 @@ public class StrTokenizerTest {
 
   @Test
   public void testCsvQuoted() {
-    StrTokenizer tokenizer = new StrTokenizer();
+    StringTokenizer tokenizer = new StringTokenizer();
     tokenizer.setDelimiterString(",");
     tokenizer.setQuoteChar('"');
     tokenizer.setEmptyTokenAsNull(true);
@@ -61,7 +61,7 @@ public class StrTokenizerTest {
 
   @Test
   public void testCsvUnquoted() {
-    StrTokenizer tokenizer = new StrTokenizer();
+    StringTokenizer tokenizer = new StringTokenizer();
     tokenizer.setDelimiterString(",");
     tokenizer.setEmptyTokenAsNull(true);
     tokenizer.setIgnoreEmptyTokens(false);
@@ -86,7 +86,7 @@ public class StrTokenizerTest {
 
   @Test
   public void testPipes() {
-    StrTokenizer tokenizer = new StrTokenizer();
+    StringTokenizer tokenizer = new StringTokenizer();
     tokenizer.setDelimiterChar('|');
     tokenizer.setQuoteChar('"');
     tokenizer.setEmptyTokenAsNull(true);
@@ -124,7 +124,7 @@ public class StrTokenizerTest {
 
   @Test
   public void testTabQuoted() {
-    StrTokenizer tokenizer = new StrTokenizer();
+    StringTokenizer tokenizer = new StringTokenizer();
     tokenizer.setDelimiterString("\t");
     tokenizer.setQuoteChar('"');
     tokenizer.setEmptyTokenAsNull(true);
@@ -162,7 +162,7 @@ public class StrTokenizerTest {
 
   @Test
   public void testTabUnquoted() {
-    StrTokenizer tokenizer = new StrTokenizer();
+    StringTokenizer tokenizer = new StringTokenizer();
     tokenizer.setDelimiterString("\t");
     tokenizer.setEmptyTokenAsNull(true);
     tokenizer.setIgnoreEmptyTokens(false);

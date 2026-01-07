@@ -92,7 +92,7 @@ class DwcRecordIterator implements ClosableIterator<Record> {
       record = new RecordImpl(id, fields, rowType, replaceNulls, replaceEntities);
       List<String> currentLine = nextLine;
       nextLine = null;
-      record.setRow(currentLine.toArray(new String[currentLine.size()]));
+      record.setRow(currentLine.toArray(String[]::new));
     } else {
       end = true;
       record = null;

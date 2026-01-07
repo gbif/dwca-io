@@ -41,8 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ParallelOpeningTest {
   private static final Logger LOG = LoggerFactory.getLogger(ParallelOpeningTest.class);
 
-  private Archive arch;
-
   /**
    * Check we don't get a race condition when opening an archive which needs sorting.
    *
@@ -51,6 +49,7 @@ public class ParallelOpeningTest {
   public void testParallelOpening() throws Exception {
     Path archivePath = Paths.get("/tmp/parallel-opening-test-archive.zip");
     Path extractToFolder = Paths.get("/tmp/parallel-opening-test-archive");
+    Archive arch;
     if (!archivePath.toFile().exists()) {
       URL download = new URL("http://api.gbif.org/v1/occurrence/download/request/0012957-180131172636756.zip");
       Files.copy(download.openStream(), archivePath);

@@ -37,10 +37,10 @@ public class MapRecordImpl implements Record {
    * @param replaceNulls if true record values will have literal nulls replaced with NULL.
    * @param replaceEntities if true html & xml entities in record values will be replaced with the interpreted value.
    */
-  public MapRecordImpl(ArchiveField id, Collection<ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
+  public MapRecordImpl(ArchiveField id, Collection<ArchiveField> archiveFields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
     this.id = id;
     this.fields = new HashMap<>();
-    for (ArchiveField f : fields) {
+    for (ArchiveField f : archiveFields) {
       this.fields.put(f.getTerm(), f);
     }
     this.rowType = rowType;

@@ -17,7 +17,7 @@ import java.io.File;
 
 /**
  * A DarwinCore file can be represented under different "layout".
- *
+
  * Considering the file /myDcw/DarwinCore.txt
  *
  * If we provide the path /myDcw/DarwinCore.txt we have a FILE_ROOT.

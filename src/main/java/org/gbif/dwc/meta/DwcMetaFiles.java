@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +45,7 @@ public class DwcMetaFiles {
 
   //common filenames used for the metadata file
   private static final List<String> POSSIBLE_METADATA_FILE =
-          Collections.unmodifiableList(Arrays.asList("eml.xml", "metadata.xml"));
+      List.of("eml.xml", "metadata.xml");
 
   private DwcMetaFiles(){}
 
@@ -61,7 +59,7 @@ public class DwcMetaFiles {
    */
   public static Archive fromMetaDescriptor(InputStream metaDescriptor) throws SAXException, IOException, UnsupportedArchiveException {
     Archive archive = new Archive();
-    try (BOMInputStream bomInputStream = new BOMInputStream(metaDescriptor)) {
+    try (BOMInputStream bomInputStream = BOMInputStream.builder().setInputStream(metaDescriptor).get()) {
       SAXParser p = SAX_FACTORY.newSAXParser();
       MetaXMLSaxHandler mh = new MetaXMLSaxHandler(archive);
       p.parse(bomInputStream, mh);

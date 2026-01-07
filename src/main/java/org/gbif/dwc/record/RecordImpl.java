@@ -39,7 +39,7 @@ public class RecordImpl implements Record {
    */
   public RecordImpl(ArchiveField id, Collection<ArchiveField> fields, Term rowType, boolean replaceNulls, boolean replaceEntities) {
     this.id = id;
-    this.fields = new HashMap<Term, ArchiveField>();
+    this.fields = new HashMap<>();
     for (ArchiveField f : fields) {
       this.fields.put(f.getTerm(), f);
     }

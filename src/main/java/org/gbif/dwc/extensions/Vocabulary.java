@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Taken from https://github.com/gbif/dwca-validator3/
  */
-public class Vocabulary implements Comparable<org.gbif.dwc.extensions.Vocabulary> {
+public class Vocabulary implements Comparable<Vocabulary> {
   private String uri;
   private String title;
   private String description;
@@ -139,10 +139,10 @@ public class Vocabulary implements Comparable<org.gbif.dwc.extensions.Vocabulary
     if (this == other) {
       return true;
     }
-    if (!(other instanceof org.gbif.dwc.extensions.Vocabulary)) {
+    if (!(other instanceof Vocabulary)) {
       return false;
     }
-    org.gbif.dwc.extensions.Vocabulary o = (org.gbif.dwc.extensions.Vocabulary) other;
+    Vocabulary o = (Vocabulary) other;
     return Objects.equals(uri, o.uri);
   }
 

@@ -13,9 +13,9 @@
  */
 package org.gbif.dwc;
 
+import jakarta.validation.constraints.NotNull;
 import org.gbif.dwc.terms.Term;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * Container object representing a metafile content &lt;field&gt; element as defined in the Darwin Core Text Guide.

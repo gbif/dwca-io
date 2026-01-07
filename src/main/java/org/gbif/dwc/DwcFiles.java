@@ -64,8 +64,8 @@ public class DwcFiles {
    *
    * @return new {@link Archive}, never null. But, the {@link Archive} can be empty (e.g. no core)
    *
-   * @throws IOException
-   * @throws UnsupportedArchiveException
+   * @throws IOException if the compressed file cannot be read or uncompressed
+   * @throws UnsupportedArchiveException if the content is not a valid Darwin Core Archive
    */
   public static Archive fromCompressed(Path dwcaLocation, Path destination) throws IOException, UnsupportedArchiveException {
     // delegate to InternalDwcFileFactory
