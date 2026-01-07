@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>dwca-io</artifactId>
-  <version>3.0.1-SNAPSHOT</version>
+  <version>3.0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Darwin Core Archive IO Library</name>
