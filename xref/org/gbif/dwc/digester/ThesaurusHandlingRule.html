@@ -43,7 +43,7 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String ATTRIBUTE_THESAURUS = <span class="jxr_string">"thesaurus"</span>;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>    <strong class="jxr_keyword">private</strong> <a name="VocabulariesManager" href="../../../../org/gbif/dwc/extensions/VocabulariesManager.html#VocabulariesManager">VocabulariesManager</a> vocabManager;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>    <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="VocabulariesManager" href="../../../../org/gbif/dwc/extensions/VocabulariesManager.html#VocabulariesManager">VocabulariesManager</a> vocabManager;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">public</strong> <a name="ThesaurusHandlingRule" href="../../../../org/gbif/dwc/digester/ThesaurusHandlingRule.html#ThesaurusHandlingRule">ThesaurusHandlingRule</a>(<a name="VocabulariesManager" href="../../../../org/gbif/dwc/extensions/VocabulariesManager.html#VocabulariesManager">VocabulariesManager</a> vocabManager) {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">super</strong>();
@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>            URL vocabURL = <strong class="jxr_keyword">new</strong> URL(attributes.getValue(i));
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>            tv = vocabManager.get(vocabURL);
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          } <strong class="jxr_keyword">catch</strong> (Exception e) {
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>            LOG.error(<span class="jxr_string">"Could not load vocabulary with location {}: {}"</span>, <strong class="jxr_keyword">new</strong> Object[]{attributes.getValue(i), e.getMessage(), e});
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>            LOG.error(<span class="jxr_string">"Could not load vocabulary with location {}: {}"</span>, attributes.getValue(i), e.getMessage(), e);
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          }
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">if</strong> (tv != <strong class="jxr_keyword">null</strong>) {
@@ -81,6 +81,6 @@
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2024 <a href="https://www.gbif.org">Global Biodiversity Information Facility (GBIF)</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2026 <a href="https://www.gbif.org">Global Biodiversity Information Facility (GBIF)</a>. All rights reserved.</div>
 </body>
 </html>

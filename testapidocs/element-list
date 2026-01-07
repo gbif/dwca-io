@@ -1,0 +1,17 @@
+org.gbif.dwc
+org.gbif.dwc.extensions
+org.gbif.dwc.io
+org.gbif.dwc.meta
+org.gbif.dwc.record
+org.gbif.dwc.terms
+org.gbif.dwc.terms.jackson
+org.gbif.dwca.io
+org.gbif.utils
+org.gbif.utils.collection
+org.gbif.utils.concurrent
+org.gbif.utils.file
+org.gbif.utils.file.csv
+org.gbif.utils.file.tabular
+org.gbif.utils.number
+org.gbif.utils.rs
+org.gbif.utils.text

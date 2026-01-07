@@ -45,10 +45,10 @@
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">   * @param replaceNulls if true record values will have literal nulls replaced with NULL.</em>
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">   * @param replaceEntities if true html &amp; xml entities in record values will be replaced with the interpreted value.</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">   */</em>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">public</strong> <a name="MapRecordImpl" href="../../../../org/gbif/dwc/record/MapRecordImpl.html#MapRecordImpl">MapRecordImpl</a>(<a name="ArchiveField" href="../../../../org/gbif/dwc/ArchiveField.html#ArchiveField">ArchiveField</a> id, Collection&lt;ArchiveField&gt; fields, Term rowType, <strong class="jxr_keyword">boolean</strong> replaceNulls, <strong class="jxr_keyword">boolean</strong> replaceEntities) {
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>    <strong class="jxr_keyword">public</strong> <a name="MapRecordImpl" href="../../../../org/gbif/dwc/record/MapRecordImpl.html#MapRecordImpl">MapRecordImpl</a>(<a name="ArchiveField" href="../../../../org/gbif/dwc/ArchiveField.html#ArchiveField">ArchiveField</a> id, Collection&lt;ArchiveField&gt; archiveFields, Term rowType, <strong class="jxr_keyword">boolean</strong> replaceNulls, <strong class="jxr_keyword">boolean</strong> replaceEntities) {
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">this</strong>.fields = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">for</strong> (<a name="ArchiveField" href="../../../../org/gbif/dwc/ArchiveField.html#ArchiveField">ArchiveField</a> f : fields) {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">for</strong> (<a name="ArchiveField" href="../../../../org/gbif/dwc/ArchiveField.html#ArchiveField">ArchiveField</a> f : archiveFields) {
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>        <strong class="jxr_keyword">this</strong>.fields.put(f.getTerm(), f);
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      }
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">this</strong>.rowType = rowType;
@@ -152,6 +152,6 @@
 <a class="jxr_linenumber" name="L144" href="#L144">144</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2024 <a href="https://www.gbif.org">Global Biodiversity Information Facility (GBIF)</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2026 <a href="https://www.gbif.org">Global Biodiversity Information Facility (GBIF)</a>. All rights reserved.</div>
 </body>
 </html>

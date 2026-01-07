@@ -21,7 +21,7 @@
 <a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">package</strong> org.gbif.dwc.io;
 <a class="jxr_linenumber" name="L15" href="#L15">15</a>  
-<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.text.StrTokenizer;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.text.StringTokenizer;
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <strong class="jxr_keyword">import</strong> org.junit.jupiter.api.Test;
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">import</strong> <strong class="jxr_keyword">static</strong> org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +31,7 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>    @Test
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCsvQuoted() {
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>      StrTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StrTokenizer();
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>      StringTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StringTokenizer();
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>      tokenizer.setDelimiterString(<span class="jxr_string">","</span>);
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>      tokenizer.setQuoteChar('&quot;');
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>      tokenizer.setEmptyTokenAsNull(<strong class="jxr_keyword">true</strong>);
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>    @Test
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testCsvUnquoted() {
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      StrTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StrTokenizer();
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      StringTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StringTokenizer();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      tokenizer.setDelimiterString(<span class="jxr_string">","</span>);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      tokenizer.setEmptyTokenAsNull(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      tokenizer.setIgnoreEmptyTokens(false);
@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>    @Test
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>    <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPipes() {
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      StrTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StrTokenizer();
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      StringTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StringTokenizer();
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      tokenizer.setDelimiterChar('|');
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      tokenizer.setQuoteChar('&quot;');
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      tokenizer.setEmptyTokenAsNull(<strong class="jxr_keyword">true</strong>);
@@ -132,7 +132,7 @@
 <a class="jxr_linenumber" name="L124" href="#L124">124</a> 
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>   @Test
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTabQuoted() {
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>     StrTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StrTokenizer();
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     StringTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StringTokenizer();
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>     tokenizer.setDelimiterString(<span class="jxr_string">"\t"</span>);
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>     tokenizer.setQuoteChar('&quot;');
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     tokenizer.setEmptyTokenAsNull(<strong class="jxr_keyword">true</strong>);
@@ -170,7 +170,7 @@
 <a class="jxr_linenumber" name="L162" href="#L162">162</a> 
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>   @Test
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testTabUnquoted() {
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     StrTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StrTokenizer();
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>     StringTokenizer tokenizer = <strong class="jxr_keyword">new</strong> StringTokenizer();
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>     tokenizer.setDelimiterString(<span class="jxr_string">"\t"</span>);
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>     tokenizer.setEmptyTokenAsNull(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>     tokenizer.setIgnoreEmptyTokens(false);
@@ -208,6 +208,6 @@
 <a class="jxr_linenumber" name="L200" href="#L200">200</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2024 <a href="https://www.gbif.org">Global Biodiversity Information Facility (GBIF)</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2026 <a href="https://www.gbif.org">Global Biodiversity Information Facility (GBIF)</a>. All rights reserved.</div>
 </body>
 </html>
