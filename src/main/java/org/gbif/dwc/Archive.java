@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -49,7 +49,8 @@ public class Archive implements Iterable<StarRecord> {
   private String metadata;
   private File location;
   private ArchiveFile core;
-  private Set<ArchiveFile> extensions = new HashSet<>();
+  // Preserve insertion order for easier testing/comparison
+  private Set<ArchiveFile> extensions = new LinkedHashSet<>();
 
   private DwcLayout dwcLayout;
 
