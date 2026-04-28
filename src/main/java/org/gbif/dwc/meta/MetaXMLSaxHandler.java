@@ -79,8 +79,13 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
     if (getAttr(attr, "encoding") != null) {
       dwcFile.setEncoding(getAttr(attr, "encoding"));
     }
-    if (getAttr(attr, "fieldsTerminatedBy") != null) {
-      dwcFile.setFieldsTerminatedBy(unescapeBackslash(getAttr(attr, "fieldsTerminatedBy")));
+    // Use getAttrRaw (not getAttr) so whitespace characters (e.g. tab from &#x9;) are preserved;
+    // only apply if unescapeBackslash returns a non-null result (guards against empty string values)
+    if (getAttrRaw(attr, "fieldsTerminatedBy") != null) {
+      String val = unescapeBackslash(getAttrRaw(attr, "fieldsTerminatedBy"));
+      if (val != null) {
+        dwcFile.setFieldsTerminatedBy(val);
+      }
     }
     // for fieldsEnclosedBy there is a distinction between not provided and provided with an empty string
     if (getAttr(attr, "fieldsEnclosedBy") != null) {
@@ -89,8 +94,13 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
     else if (getAttrRaw(attr, "fieldsEnclosedBy") != null) {
       dwcFile.setFieldsEnclosedBy(null);
     }
-    if (getAttr(attr, "linesTerminatedBy") != null) {
-      dwcFile.setLinesTerminatedBy(unescapeBackslash(getAttr(attr, "linesTerminatedBy")));
+    // Use getAttrRaw (not getAttr) so whitespace characters (e.g. newline from &#xA;) are preserved;
+    // only apply if unescapeBackslash returns a non-null result (guards against empty string values)
+    if (getAttrRaw(attr, "linesTerminatedBy") != null) {
+      String val = unescapeBackslash(getAttrRaw(attr, "linesTerminatedBy"));
+      if (val != null) {
+        dwcFile.setLinesTerminatedBy(val);
+      }
     }
     if (getAttr(attr, "rowType") != null) {
       dwcFile.setRowType(TERM_FACTORY.findClassTerm(getAttr(attr, "rowType")));

@@ -209,6 +209,20 @@ public class MetaDescriptorTest {
   }
 
   /**
+   * Test that fieldsTerminatedBy specified as an XML character entity (e.g. &#x9; for tab) is
+   * correctly parsed. Previously StringUtils.isBlank() treated the resulting whitespace character
+   * as blank, causing the attribute to be ignored and the default comma separator to be used.
+   */
+  @Test
+  public void testXmlEntityFieldsTerminatedBy() throws Exception {
+    Archive arch = DwcMetaFiles.fromMetaDescriptor(
+        new FileInputStream(FileUtils.getClasspathFile("xml-entity-tab-separator/meta.xml")));
+    assertNotNull(arch.getCore());
+    // &#x9; is TAB — must not be treated as blank and fall back to the default ","
+    assertEquals("\t", arch.getCore().getFieldsTerminatedBy());
+  }
+
+  /**
    * Test the reading of a static meta.xml file.
    */
   @Test

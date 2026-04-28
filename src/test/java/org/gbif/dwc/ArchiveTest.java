@@ -31,6 +31,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ArchiveTest {
 
   /**
+   * Check we can handle an archive where fieldsTerminatedBy is specified as an XML character
+   * entity (&#x9; for tab). Previously StringUtils.isBlank() caused the tab to be treated as blank,
+   * falling back to the default comma separator and causing a ParseException on iteration.
+   */
+  @Test
+  public void testXmlEntityTabSeparator() throws Exception {
+    Archive arch = DwcFiles.fromLocation(FileUtils.getClasspathFile("xml-entity-tab-separator").toPath());
+
+    assertEquals("\t", arch.getCore().getFieldsTerminatedBy());
+
+    int count = 0;
+    for (StarRecord rec : arch) {
+      count++;
+      assertEquals(String.valueOf(count), rec.core().id());
+      assertEquals("Species", rec.core().value(DwcTerm.taxonRank));
+    }
+    assertEquals(2, count);
+  }
+
+  /**
    * Check we can handle the simplest of archives.
    */
   @Test
