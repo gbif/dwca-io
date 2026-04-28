@@ -23,6 +23,7 @@ import org.gbif.dwc.record.StarRecord;
 import org.gbif.dwc.terms.DcTerm;
 import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.dwc.terms.GbifTerm;
+import org.gbif.utils.file.ClosableIterator;
 import org.gbif.utils.file.CompressionUtil;
 import org.gbif.utils.file.FileUtils;
 import org.gbif.utils.file.tabular.TabularDataFileReader;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -608,5 +610,24 @@ public class ArchiveFactoryTest {
         () -> DwcFiles.fromLocation(FileUtils.getClasspathFile("invalid/extension-id-missing").toPath()),
         "Archive with extension and core missing id in meta.xml should not be opened."
     );
+  }
+
+  /**
+   * Test that the unusual terminated-by is read and handled correctly.
+   */
+  @Test
+  public void testTerminatedByArchive() throws IOException {
+    File tmpDir = Files.createTempDirectory("dwca-io-test").toFile();
+    Archive a = DwcFiles.fromCompressed(FileUtils.getClasspathFile("dwca-terminated-by/terminated-by.zip").toPath(), tmpDir.toPath());
+    ClosableIterator<StarRecord> iter = a.iterator();
+    int count = 0;
+    String id = "";
+    while (iter.hasNext()) {
+      StarRecord r = iter.next();
+      id = r.core().id();
+      count++;
+    }
+    assertEquals(9, count, "9 records should have been read, ignoring the header");
+    assertEquals("BE.0000008_60482521", id, "Last ID was BE.0000008_60482521");
   }
 }

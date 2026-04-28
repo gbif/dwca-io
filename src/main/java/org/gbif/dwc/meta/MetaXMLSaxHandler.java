@@ -79,8 +79,11 @@ class MetaXMLSaxHandler extends SimpleSaxHandler {
     if (getAttr(attr, "encoding") != null) {
       dwcFile.setEncoding(getAttr(attr, "encoding"));
     }
-    if (getAttr(attr, "fieldsTerminatedBy") != null) {
-      dwcFile.setFieldsTerminatedBy(unescapeBackslash(getAttr(attr, "fieldsTerminatedBy")));
+    if (getAttrRaw(attr, "fieldsTerminatedBy") != null) {
+      String val = unescapeBackslash(getAttrRaw(attr, "fieldsTerminatedBy"));
+      if (val != null) {
+        dwcFile.setFieldsTerminatedBy(val);
+      }
     }
     // for fieldsEnclosedBy there is a distinction between not provided and provided with an empty string
     if (getAttr(attr, "fieldsEnclosedBy") != null) {
